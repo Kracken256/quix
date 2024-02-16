@@ -6,6 +6,8 @@
 #include <iostream>
 #include <openssl/rand.h>
 
+#include <llvm-ctx.hpp>
+#include <generate.hpp>
 #include <lex.hpp>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
@@ -60,6 +62,8 @@ LIB_EXPORT jcc_job_t *jcc_new()
     memset(job, 0, sizeof(jcc_job_t));
 
     job->m_id = jcc_uuid();
+
+    job->m_inner = new libj::LLVMContext();
 
     return job;
 }
@@ -118,6 +122,11 @@ LIB_EXPORT bool jcc_dispose(jcc_job_t *job)
         job->m_result->m_feedback.m_messages = nullptr;
 
         free(job->m_result);
+    }
+
+    if (job->m_inner)
+    {
+        delete (libj::LLVMContext *)job->m_inner;
     }
 
     memset(job, 0, sizeof(jcc_job_t));
@@ -207,20 +216,22 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
 
     /*  DEBUG */
 
-    std::vector<Token> tokens;
-    while (true)
-    {
-        Token token = lexer.next();
-        if (token.type() == TokenType::Eof)
-            break;
-        tokens.push_back(token);
-    }
+    /* IR */
+    generate_llvm_ir(*(libj::LLVMContext *)job->m_inner, job->m_out);
 
-    for (const Token &token : tokens)
-    {
-        fprintf(job->m_out, "%s\n", token.serialize(true).c_str());
-    }
+    // std::vector<Token> tokens;
+    // while (true)
+    // {
+    //     Token token = lexer.next();
+    //     if (token.type() == TokenType::Eof)
+    //         break;
+    //     tokens.push_back(token);
+    // }
 
+    // for (const Token &token : tokens)
+    // {
+    //     fprintf(job->m_out, "%s\n", token.serialize(true).c_str());
+    // }
 
     return true;
 }

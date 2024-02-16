@@ -115,6 +115,9 @@ extern "C"
 
         /// @brief Internal flags
         uint32_t m_internal_flags;
+
+        /// @brief Internal data
+        void *m_inner;
     } jcc_job_t;
 
     /// @brief Create a new compiler job

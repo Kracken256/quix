@@ -39,10 +39,6 @@ def fib(x)
 fib(40)
 )";
 
-/*
-Comment( Compute the x'th fibonacci number.), Define, Identifier(fib), Operator((), Identifier(x), Operator()), Identifier(if), Identifier(x), Operator(<), Number(3.000000), Identifier(then), Number(1.000000), Identifier(else), Identifier(fib), Operator((), Identifier(x), Operator(-), Number(1.000000), Operator()), Operator(+), Identifier(fib), Operator((), Identifier(x), Operator(-), Number(2.000000), Operator()), Comment( This expression will compute the 40th number.), Identifier(fib), Operator((), Number(40.000000), Operator()),
-*/
-
 using namespace libj;
 
 static std::vector<libj::Token> expected = {

@@ -43,15 +43,13 @@ extern "C"
         uint64_t line;
         uint64_t column;
         const char *filename;
+        const char *message;
 
         /// @brief Message level
         enum jcc_msg_level_t m_level;
 
         /// @brief Is the message allocated dynamically?
         bool m_allocated;
-
-        /// @brief Disposal function
-        void (*f_dispose)(struct jcc_msg_t *msg);
     };
 
     struct jcc_feedback_t
@@ -61,9 +59,6 @@ extern "C"
 
         /// @brief Message count
         uint32_t m_count;
-
-        /// @brief Disposal function
-        void (*f_dispose)(struct jcc_feedback_t *feedback);
     };
 
     struct jcc_result_t
@@ -73,9 +68,6 @@ extern "C"
 
         /// @brief Internal flags
         uint32_t m_internal_flags;
-
-        /// @brief Disposal function
-        void (*f_dispose)(struct jcc_result_t *result);
     };
 
     typedef struct jcc_option_t
@@ -93,13 +85,10 @@ extern "C"
     typedef struct jcc_options_t
     {
         /// @brief Options
-        jcc_option_t *m_options;
+        jcc_option_t **m_options;
 
         /// @brief Option count
         uint32_t m_count;
-
-        /// @brief Disposal function
-        void (*f_dispose)(struct jcc_options_t *options);
     } jcc_options_t;
 
     typedef struct jcc_uuid_t
@@ -126,12 +115,6 @@ extern "C"
 
         /// @brief Internal flags
         uint32_t m_internal_flags;
-
-        /// @brief Run function
-        struct jcc_result_t *(*f_run)(struct jcc_job_t *job);
-
-        /// @brief Disposal function
-        void (*f_dispose)(struct jcc_job_t *job);
     } jcc_job_t;
 
     /// @brief Create a new compiler job
@@ -196,15 +179,7 @@ extern "C"
     /// @note This function is thread-safe
     /// @note This function is safe to call with NULL
     /// @note This function will return NULL if the job is still running
-    /// @note The caller is responsible for disposing the structure with `jcc_dispose_result()`
-    jcc_result_t *jcc_result(jcc_job_t *job);
-
-    /// @brief Dispose a compiler job result
-    /// @param result The compiler job result
-    /// @note The result is disposed and ALL associated resources are released
-    /// @note This function is thread-safe
-    /// @note This function is safe to call with NULL
-    void jcc_dispose_result(jcc_result_t *result);
+    const jcc_result_t *jcc_result(jcc_job_t *job);
 
 #ifdef __cplusplus
 }

@@ -18,10 +18,10 @@ FetchContent_MakeAvailable(googletest)
 file(GLOB_RECURSE TEST_SOURCES "unit/*.cc")
 
 add_executable(libj-tests ${TEST_SOURCES})
-target_include_directories( libj-tests PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/../include)
-target_compile_options(libj-tests PRIVATE -Wall -Wextra -Werror -O0)
-target_link_libraries(libj-tests GTest::gtest_main libj)
+target_include_directories(libj-tests PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/../lib/include ${CMAKE_CURRENT_SOURCE_DIR}/../lib/public )
 target_link_directories(libj-tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../lib)
+target_compile_options(libj-tests PRIVATE -Wall -Wextra -Werror -O0)
+target_link_libraries(libj-tests GTest::gtest_main libj.a)
 
 include(GoogleTest)
 gtest_discover_tests(libj-tests)

@@ -6,20 +6,6 @@
 
 using namespace libj;
 
-static bool parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node)
-{
-    /*
-        struct name {
-            a: typeA [= const_exprA];
-            b: typeB [= const_exprB];
-        };
-    */
-    (void)job;
-    (void)lexer;
-    (void)node;
-    return false;
-}
-
 bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
 {
     Token tok;
@@ -28,7 +14,7 @@ bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
     {
         if (tok.type() != TokenType::Keyword)
         {
-            PARMSG(tok, libj::Err::ERROR, "Parser failed because a keyword was expected, but the token %s was found", tok.serialize().c_str());
+            PARMSG(tok, libj::Err::ERROR, feedback[PARSER_EXPECTED_KEYWORD], tok.serialize().c_str());
             return false;
         }
 
@@ -42,10 +28,6 @@ bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
             break;
         case Keyword::Let:
             if (!parse_let(job, lexer, node))
-                return false;
-            break;
-        case Keyword::Struct:
-            if (!parse_struct(job, lexer, node))
                 return false;
             break;
         default:

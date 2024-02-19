@@ -8,6 +8,7 @@
 #include <string>
 #include <jcc.h>
 #include <token.hpp>
+#include <messages.hpp>
 
 namespace libj
 {

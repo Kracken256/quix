@@ -9,7 +9,7 @@
 #include <llvm-ctx.hpp>
 #include <generate.hpp>
 #include <lex.hpp>
-#include <error.hpp>
+#include <message.hpp>
 #include <parse.hpp>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
@@ -106,12 +106,9 @@ LIB_EXPORT bool jcc_dispose(jcc_job_t *job)
             if (!msg)
                 continue;
 
-            if (msg->filename)
-                free((void *)msg->filename);
             if (msg->message)
                 free((void *)msg->message);
 
-            msg->filename = nullptr;
             msg->message = nullptr;
             free(msg);
 
@@ -127,8 +124,12 @@ LIB_EXPORT bool jcc_dispose(jcc_job_t *job)
     }
 
     if (job->m_inner)
-    {
         delete (libj::LLVMContext *)job->m_inner;
+
+    if (job->m_filename)
+    {
+        free((void *)job->m_filename);
+        job->m_filename = nullptr;
     }
 
     memset(job, 0, sizeof(jcc_job_t));
@@ -190,12 +191,13 @@ LIB_EXPORT void jcc_remove_option(jcc_job_t *job, const char *name)
     }
 }
 
-LIB_EXPORT void jcc_set_input(jcc_job_t *job, FILE *in)
+LIB_EXPORT void jcc_set_input(jcc_job_t *job, FILE *in, const char *filename)
 {
-    if (!job || !in)
+    if (!job || !in || !filename)
         return;
 
     job->m_in = in;
+    job->m_filename = safe_strdup(filename);
 }
 
 LIB_EXPORT void jcc_set_output(jcc_job_t *job, FILE *out)
@@ -204,6 +206,38 @@ LIB_EXPORT void jcc_set_output(jcc_job_t *job, FILE *out)
         return;
 
     job->m_out = out;
+}
+
+static std::string get_datetime()
+{
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+    return buf;
+}
+
+static std::string base64_encode(const std::string &in)
+{
+    std::string out;
+
+    int val = 0, valb = -6;
+    for (unsigned char c : in)
+    {
+        val = (val << 8) + c;
+        valb += 8;
+        while (valb >= 0)
+        {
+            out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(val >> valb) & 0x3F]);
+            valb -= 6;
+        }
+    }
+    if (valb > -6)
+        out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[((val << 8) >> (valb + 8)) & 0x3F]);
+    while (out.size() % 4)
+        out.push_back('=');
+    return out;
 }
 
 LIB_EXPORT bool jcc_run(jcc_job_t *job)
@@ -215,39 +249,102 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     job->m_result = (jcc_result_t *)safe_malloc(sizeof(jcc_result_t));
     memset(job->m_result, 0, sizeof(jcc_result_t));
 
-    // Lex the input
+    libj::message(*job, libj::Err::DEBUG, "Starting jcc run @ %s", get_datetime().c_str());
+
+    // Create an AST before goto statements
+    libj::AST ast;
+
+    ///=========================================
+    /// BEGIN: LEXER
+    ///=========================================
     libj::Lexer lexer;
     if (!lexer.set_source(job->m_in))
     {
         libj::message(*job, libj::Err::ERROR, "failed to set source");
-        return false;
+        goto error;
     }
+    ///=========================================
+    /// END: LEXER
+    ///=========================================
 
-    // Parse the input
+    ///=========================================
+    /// BEGIN: PARSER
+    ///=========================================
     libj::Parser parser;
-    libj::AST ast;
-    libj::message(*job, libj::Err::DEBUG, "Parsing input");
+    libj::message(*job, libj::Err::DEBUG, "Building AST 1");
     if (!parser.parse(*job, lexer, ast))
     {
-        libj::message(*job, libj::Err::ERROR, "failed to parse input");
-        return false;
+        libj::message(*job, libj::Err::ERROR, "failed to parse source");
+        goto error;
     }
+    libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
+    libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (base64 JSON): %s",
+                  base64_encode(ast.to_json()).c_str());
+    ///=========================================
+    /// END: PARSER
+    ///=========================================
 
-    std::cout << ast.to_json() << std::endl;
-
-    // Generate the output
+    ///=========================================
+    /// BEGIN: GENERATOR
+    ///=========================================
     libj::Generator gen;
     libj::message(*job, libj::Err::DEBUG, "Generating output");
     if (!gen.synthesize_LLVM_IR(*job, ast))
     {
         libj::message(*job, libj::Err::ERROR, "failed to generate output");
-        return false;
+        goto error;
     }
+    ///=========================================
+    /// END: GENERATOR
+    ///=========================================
+
+    libj::message(*job, libj::Err::DEBUG, "Finished jcc run @ %s", get_datetime().c_str());
 
     return true;
+
+error:
+    libj::message(*job, libj::Err::ERROR, "Compilation failed");
+    libj::message(*job, libj::Err::DEBUG, "Finished jcc run @ %s", get_datetime().c_str());
+    return false;
 }
 
 LIB_EXPORT const jcc_result_t *jcc_result(jcc_job_t *job)
 {
-    return job->m_result;
+    jcc_result_t *result = job->m_result;
+
+    if (job->m_debug)
+        return result;
+
+    // remove debug messages
+    uint32_t i = 0;
+
+    while (i < result->m_feedback.m_count)
+    {
+        jcc_msg_t *msg = result->m_feedback.m_messages[i];
+        if (msg->m_level != JCC_DEBUG)
+        {
+            i++;
+            continue;
+        }
+
+        if (msg->message)
+            free((void *)msg->message);
+        msg->message = nullptr;
+        free(msg);
+
+        memmove(&result->m_feedback.m_messages[i], &result->m_feedback.m_messages[i + 1], (result->m_feedback.m_count - i - 1) * sizeof(jcc_msg_t *));
+        result->m_feedback.m_count--;
+    }
+
+    if (result->m_feedback.m_count == 0)
+    {
+        free(result->m_feedback.m_messages);
+        result->m_feedback.m_messages = nullptr;
+    }
+    else
+    {
+        result->m_feedback.m_messages = (jcc_msg_t **)safe_realloc(result->m_feedback.m_messages, result->m_feedback.m_count * sizeof(jcc_msg_t *));
+    }
+
+    return result;
 }

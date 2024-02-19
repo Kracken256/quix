@@ -1,7 +1,7 @@
 #include <generate.hpp>
 #include <stdlib.h>
 #include "llvm-ctx.hpp"
-#include <error.hpp>
+#include <message.hpp>
 
 #include <llvm/IR/Verifier.h>
 
@@ -43,8 +43,6 @@ bool libj::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, const AST &ast)
             message(ctx, libj::Err::ERROR, "Failed to generate code for node");
             return false;
         }
-
-        message(ctx, libj::Err::DEBUG, "Generated code for node");
     }
 
     // Verify the module
@@ -58,7 +56,8 @@ bool libj::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, const AST &ast)
     // Generate the IR
     message(ctx, libj::Err::DEBUG, "Generating LLVM IR");
     llvm_ctx.m_module->print(os, nullptr);
-    message(ctx, libj::Err::DEBUG, "Generated LLVM IR");
+
+    message(ctx, libj::Err::DEBUG, "Finished generating LLVM IR");
 
     return true;
 }

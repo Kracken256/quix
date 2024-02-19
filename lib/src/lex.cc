@@ -6,11 +6,6 @@
 
 ///=============================================================================
 
-std::map<int, std::vector<const char *>> libj::operators = {
-    {1, {"<", ">", "=", "@", "-", "+", "*", "/", "%", "&", "|", "^", "~", "!", "?"}},
-    {2, {"+=", "-=", "*=", "/=", "%=", "|=", "&=", "^=", "<<", ">>", "==", "!=", "&&", "||", "^^", "<=", ">=", "++", "--"}},
-    {3, {"^^=", "||=", "&&=", "<<=", ">>="}}};
-
 static std::map<std::string, libj::Keyword> keyword_map = {
     {"subsystem", libj::Keyword::Subsystem},
     {"import", libj::Keyword::Import},
@@ -57,7 +52,7 @@ static std::map<std::string, libj::Keyword> keyword_map = {
     {"true", libj::Keyword::True},
     {"false", libj::Keyword::False}};
 
-static std::map<libj::Keyword, std::string> keyword_map_inverse = {
+std::map<libj::Keyword, std::string> keyword_map_inverse = {
     {libj::Keyword::Subsystem, "subsystem"},
     {libj::Keyword::Import, "import"},
     {libj::Keyword::Export, "export"},
@@ -115,7 +110,7 @@ static std::map<std::string, libj::Punctor> punctor_map = {
     {":", libj::Punctor::Colon},
     {";", libj::Punctor::Semicolon}};
 
-static std::map<libj::Punctor, std::string> punctor_map_inverse = {
+std::map<libj::Punctor, std::string> punctor_map_inverse = {
     {libj::Punctor::OpenParen, "("},
     {libj::Punctor::CloseBrace, ")"},
     {libj::Punctor::OpenBrace, "{"},
@@ -127,55 +122,87 @@ static std::map<libj::Punctor, std::string> punctor_map_inverse = {
     {libj::Punctor::Colon, ":"},
     {libj::Punctor::Semicolon, ";"}};
 
+static std::map<std::string, libj::Operator> operator_map = {
+    {"<", libj::Operator::LessThan},
+    {">", libj::Operator::GreaterThan},
+    {"=", libj::Operator::Assign},
+    {"@", libj::Operator::At},
+    {"-", libj::Operator::Minus},
+    {"+", libj::Operator::Plus},
+    {"*", libj::Operator::Multiply},
+    {"/", libj::Operator::Divide},
+    {"%", libj::Operator::Modulo},
+    {"&", libj::Operator::BitAnd},
+    {"|", libj::Operator::BitOr},
+    {"^", libj::Operator::BitXor},
+    {"~", libj::Operator::BitNot},
+    {"!", libj::Operator::Not},
+    {"?", libj::Operator::Question},
+    {"+=", libj::Operator::PlusAssign},
+    {"-=", libj::Operator::MinusAssign},
+    {"*=", libj::Operator::MultiplyAssign},
+    {"/=", libj::Operator::DivideAssign},
+    {"%=", libj::Operator::ModuloAssign},
+    {"|=", libj::Operator::BitOrAssign},
+    {"&=", libj::Operator::BitAndAssign},
+    {"^=", libj::Operator::BitXorAssign},
+    {"<<", libj::Operator::LeftShift},
+    {">>", libj::Operator::RightShift},
+    {"==", libj::Operator::Equal},
+    {"!=", libj::Operator::NotEqual},
+    {"&&", libj::Operator::And},
+    {"||", libj::Operator::Or},
+    {"^^", libj::Operator::Xor},
+    {"<=", libj::Operator::LessThanEqual},
+    {">=", libj::Operator::GreaterThanEqual},
+    {"++", libj::Operator::Increment},
+    {"--", libj::Operator::Decrement},
+    {"^^=", libj::Operator::XorAssign},
+    {"||=", libj::Operator::OrAssign},
+    {"&&=", libj::Operator::AndAssign},
+    {"<<=", libj::Operator::LeftShiftAssign},
+    {">>=", libj::Operator::RightShiftAssign}};
 
-libj::Token::Token(libj::TokenType type, libj::TokVal value)
-{
-    m_type = type;
-    m_value = value;
-}
-
-libj::TokenType libj::Token::type() const
-{
-    return m_type;
-}
-
-const libj::TokVal &libj::Token::val() const
-{
-    return m_value;
-}
-
-std::string libj::Token::serialize(bool human_readable) const
-{
-    (void)human_readable;
-
-    switch (m_type)
-    {
-    case TokenType::Eof:
-        return "Eof";
-    case TokenType::Unknown:
-        return "Unknown";
-    case TokenType::Identifier:
-        return "Identifier(" + std::get<std::string>(m_value) + ")";
-    case TokenType::Keyword:
-        return "Keyword(" + keyword_map_inverse.at(std::get<Keyword>(m_value)) + ")";
-    case TokenType::Operator:
-        return "Operator(" + std::string(std::get<const char *>(m_value)) + ")";
-    case TokenType::Punctor:
-        return "Punctor(" + punctor_map_inverse.at(std::get<Punctor>(m_value)) + ")";
-    case TokenType::StringLiteral:
-        return "\"" + std::get<std::string>(m_value) + "\"";
-    case TokenType::CharLiteral:
-        return "'" + std::get<std::string>(m_value) + "'";
-    case TokenType::NumberLiteral:
-        return "Number(" + std::to_string(std::get<uint64_t>(m_value)) + ")";
-    case TokenType::Comment:
-        return "/* " + std::get<std::string>(m_value) + " */";
-    default:
-        return "Unknown";
-    }
-
-    return "Unknown";
-}
+std::map<libj::Operator, std::string> operator_map_inverse = {
+    {libj::Operator::LessThan, "<"},
+    {libj::Operator::GreaterThan, ">"},
+    {libj::Operator::Assign, "="},
+    {libj::Operator::At, "@"},
+    {libj::Operator::Minus, "-"},
+    {libj::Operator::Plus, "+"},
+    {libj::Operator::Multiply, "*"},
+    {libj::Operator::Divide, "/"},
+    {libj::Operator::Modulo, "%"},
+    {libj::Operator::BitAnd, "&"},
+    {libj::Operator::BitOr, "|"},
+    {libj::Operator::BitXor, "^"},
+    {libj::Operator::BitNot, "~"},
+    {libj::Operator::Not, "!"},
+    {libj::Operator::Question, "?"},
+    {libj::Operator::PlusAssign, "+="},
+    {libj::Operator::MinusAssign, "-="},
+    {libj::Operator::MultiplyAssign, "*="},
+    {libj::Operator::DivideAssign, "/="},
+    {libj::Operator::ModuloAssign, "%="},
+    {libj::Operator::BitOrAssign, "|="},
+    {libj::Operator::BitAndAssign, "&="},
+    {libj::Operator::BitXorAssign, "^="},
+    {libj::Operator::LeftShift, "<<"},
+    {libj::Operator::RightShift, ">>"},
+    {libj::Operator::Equal, "=="},
+    {libj::Operator::NotEqual, "!="},
+    {libj::Operator::And, "&&"},
+    {libj::Operator::Or, "||"},
+    {libj::Operator::Xor, "^^"},
+    {libj::Operator::LessThanEqual, "<="},
+    {libj::Operator::GreaterThanEqual, ">="},
+    {libj::Operator::Increment, "++"},
+    {libj::Operator::Decrement, "--"},
+    {libj::Operator::XorAssign, "^^="},
+    {libj::Operator::OrAssign, "||="},
+    {libj::Operator::AndAssign, "&&="},
+    {libj::Operator::LeftShiftAssign, "<<="},
+    {libj::Operator::RightShiftAssign, ">>="}};
 
 ///=============================================================================
 
@@ -186,6 +213,7 @@ libj::Lexer::Lexer()
     m_buffer = std::vector<char>(m_buf_pos);
     m_tok = std::nullopt;
     m_last = 0;
+    added_newline = false;
 }
 
 char libj::Lexer::getc()
@@ -194,7 +222,14 @@ char libj::Lexer::getc()
     {
         size_t read;
         if ((read = fread(m_buffer.data(), 1, m_buffer.size(), m_src)) == 0)
-            return EOF;
+        {
+            if (added_newline)
+                return EOF;
+
+            m_buffer[0] = '\n';
+            read = 1;
+            added_newline = true;
+        }
 
         if (m_buffer.size() != read)
             m_buffer.resize(read);
@@ -202,7 +237,21 @@ char libj::Lexer::getc()
         m_buf_pos = 0;
     }
 
-    return m_buffer[m_buf_pos++];
+    char c = m_buffer[m_buf_pos++];
+
+    m_loc = m_loc_curr;
+
+    if (c == '\n')
+    {
+        m_loc_curr.line++;
+        m_loc_curr.col = 1;
+    }
+    else
+    {
+        m_loc_curr.col++;
+    }
+
+    return c;
 }
 
 bool libj::Lexer::set_source(FILE *src)
@@ -218,12 +267,10 @@ bool libj::Lexer::set_source(FILE *src)
     return true;
 }
 
-libj::Token libj::Lexer::next()
+libj::Token libj::Lexer::next(bool include_comments)
 {
-    Token tok = peek();
-
+    Token tok = peek(include_comments);
     m_tok = std::nullopt;
-
     return tok;
 }
 
@@ -359,19 +406,19 @@ libj::Token libj::Lexer::read_token()
             {
                 if (buffer == kw.first)
                 {
-                    m_tok = Token(TokenType::Keyword, keyword_map.at(buffer));
+                    m_tok = Token(TokenType::Keyword, keyword_map.at(buffer), m_loc - buffer.size());
                     return m_tok.value();
                 }
             }
 
             if (!validate_identifier(buffer))
             {
-                m_tok = Token(TokenType::Unknown, buffer);
+                m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
                 return m_tok.value();
             }
 
             // it's an identifier
-            m_tok = Token(TokenType::Identifier, buffer);
+            m_tok = Token(TokenType::Identifier, buffer, m_loc - buffer.size());
             return m_tok.value();
         }
         case LexState::NumberLiteral:
@@ -386,12 +433,12 @@ libj::Token libj::Lexer::read_token()
             try
             {
                 // Parse the number
-                m_tok = Token(TokenType::NumberLiteral, std::stoull(buffer));
+                m_tok = Token(TokenType::NumberLiteral, std::stoull(buffer), m_loc - buffer.size());
             }
             catch (std::invalid_argument &)
             {
                 // Invalid number
-                m_tok = Token(TokenType::Unknown, buffer);
+                m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
             }
 
             m_last = c;
@@ -413,7 +460,7 @@ libj::Token libj::Lexer::read_token()
             {
                 // it's an operator
                 m_last = c;
-                m_tok = Token(TokenType::Operator, "/");
+                m_tok = Token(TokenType::Operator, Operator::Divide, m_loc);
                 return m_tok.value();
             }
         }
@@ -425,7 +472,7 @@ libj::Token libj::Lexer::read_token()
                 continue;
             }
 
-            m_tok = Token(TokenType::Comment, buffer);
+            m_tok = Token(TokenType::Comment, buffer, m_loc - buffer.size());
             return m_tok.value();
         }
         case LexState::CommentMultiLine:
@@ -438,7 +485,7 @@ libj::Token libj::Lexer::read_token()
 
             if ((c = getc()) == '/')
             {
-                m_tok = Token(TokenType::Comment, buffer);
+                m_tok = Token(TokenType::Comment, buffer, m_loc - buffer.size());
                 return m_tok.value();
             }
 
@@ -456,11 +503,11 @@ libj::Token libj::Lexer::read_token()
 
             if (buffer.front() == '\'' && buffer.size() == 2)
             {
-                m_tok = Token(TokenType::CharLiteral, std::string(1, buffer[1]));
+                m_tok = Token(TokenType::CharLiteral, std::string(1, buffer[1]), m_loc - 2);
             }
             else
             {
-                m_tok = Token(TokenType::StringLiteral, buffer.substr(1, buffer.size() - 1));
+                m_tok = Token(TokenType::StringLiteral, buffer.substr(1, buffer.size() - 1), m_loc - buffer.size());
             }
 
             return m_tok.value();
@@ -474,21 +521,18 @@ libj::Token libj::Lexer::read_token()
                     if (punc[0] == buffer[0])
                     {
                         m_last = c;
-                        m_tok = Token(TokenType::Punctor, punctor_map.at(buffer));
+                        m_tok = Token(TokenType::Punctor, punctor_map.at(buffer), m_loc - buffer.size());
                         return m_tok.value();
                     }
                 }
             }
             try
             {
-                for (const auto &op : operators.at(buffer.size()))
+                if (operator_map.find(buffer) != operator_map.end())
                 {
-                    if (strcmp(op, buffer.c_str()) == 0)
-                    {
-                        m_last = c;
-                        m_tok = Token(TokenType::Operator, op);
-                        return m_tok.value();
-                    }
+                    m_last = c;
+                    m_tok = Token(TokenType::Operator, operator_map.at(buffer), m_loc - buffer.size());
+                    return m_tok.value();
                 }
 
                 buffer += c;
@@ -496,22 +540,33 @@ libj::Token libj::Lexer::read_token()
             }
             catch (std::out_of_range &)
             {
-                m_tok = Token(TokenType::Unknown, buffer);
+                m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
                 return m_tok.value();
             }
         }
         }
     }
 
-    m_tok = Token(TokenType::Eof, "");
+    m_tok = Token(TokenType::Eof, "", m_loc);
     return m_tok.value();
 }
 
-libj::Token libj::Lexer::peek()
+libj::Token libj::Lexer::peek(bool include_comments)
 {
     try
     {
-        return read_token();
+        if (include_comments)
+            return read_token();
+
+        Token tok;
+        while (true)
+        {
+            tok = read_token();
+            if (tok.type() == TokenType::Comment)
+                m_tok = std::nullopt;
+            else
+                return tok;
+        }
     }
     catch (...)
     {

@@ -39,7 +39,6 @@ extern "C"
     {
         uint64_t line;
         uint64_t column;
-        const char *filename;
         const char *message;
 
         /// @brief Message level
@@ -117,6 +116,9 @@ extern "C"
 
         /// @brief Internal data
         void *m_inner;
+
+        /// @brief User may set to true to enable debug messages
+        bool m_debug;
     } jcc_job_t;
 
     /// @brief Create a new compiler job
@@ -155,9 +157,10 @@ extern "C"
     /// @brief Set the input stream for a compiler job
     /// @param job The compiler job
     /// @param in The input stream
+    /// @param filename The input filename (required for error messages)
     /// @note This function is thread-safe
     /// @note This function is safe to call with NULL
-    void jcc_set_input(jcc_job_t *job, FILE *in);
+    void jcc_set_input(jcc_job_t *job, FILE *in, const char *filename);
 
     /// @brief Set the output stream for a compiler job
     /// @param job The compiler job

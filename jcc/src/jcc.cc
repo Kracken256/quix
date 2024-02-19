@@ -10,10 +10,15 @@ int main(int argc, char *argv[])
 
     std::string file_in;
     std::string file_out;
+    bool debug = false;
 
     for (size_t i = 1; i < args.size(); i++)
     {
-        if (args[i] == "-o")
+        if (args[i] == "--debug")
+        {
+            debug = true;
+        }
+        else if (args[i] == "-o")
         {
             if (i + 1 < args.size())
             {
@@ -82,15 +87,16 @@ int main(int argc, char *argv[])
         fclose(out);
         return 1;
     }
+    
+    job->m_debug = debug;
 
-    jcc_set_input(job, in);
+    jcc_set_input(job, in, file_in.c_str());
     jcc_set_output(job, out);
 
     bool success = jcc_run(job);
 
     fclose(in);
     fclose(out);
-
 
     const jcc_result_t *result = jcc_result(job);
     if (!result)
@@ -104,34 +110,13 @@ int main(int argc, char *argv[])
     {
         const jcc_msg_t *msg = result->m_feedback.m_messages[i];
 
-        switch (msg->m_level)
-        {
-        case JCC_DEBUG:
-            std::cerr << "debug: " << msg->message << std::endl;
-            break;
-        case JCC_INFO:
-            std::cerr << "info: " << msg->message << std::endl;
-            break;
-        case JCC_WARN:
-            std::cerr << "warning: " << msg->message << std::endl;
-            break;
-        case JCC_ERROR:
-            std::cerr << "error: " << msg->message << std::endl;
-            break;
-        case JCC_FATAL:
-
-        default:
-            break;
-        }
+        std::cout << msg->message << std::endl;
     }
 
     jcc_dispose(job);
 
     if (!success)
-    {
-        std::cerr << "error: failed to compile" << std::endl;
         return 1;
-    }
 
     return 0;
 }

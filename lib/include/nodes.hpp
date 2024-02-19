@@ -209,7 +209,24 @@ namespace libj
 
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
-        std::shared_ptr<ConstExprNode> m_init;
+        std::shared_ptr<ExprNode> m_init;
+    };
+
+    class LetDeclNode : public DeclNode
+    {
+    public:
+        LetDeclNode() = default;
+        LetDeclNode(const std::string &name, const std::shared_ptr<TypeNode> &type, const std::shared_ptr<ConstExprNode> &init)
+            : m_name(name), m_type(type), m_init(init) {}
+        virtual ~LetDeclNode() = default;
+
+        std::string to_json() const override;
+        llvm::Value *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_name;
+        std::shared_ptr<TypeNode> m_type;
+        std::shared_ptr<ExprNode> m_init;
     };
 
 };

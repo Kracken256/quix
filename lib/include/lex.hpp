@@ -13,40 +13,10 @@
 #include <deque>
 #include <array>
 #include <map>
+#include <token.hpp>
 
 namespace libj
 {
-    enum class TokenType
-    {
-        Eof = -1,
-        Unknown,
-
-        Identifier,
-        Keyword,
-        Operator,
-
-        NumberLiteral,
-        StringLiteral,
-        CharLiteral,
-
-        Punctor,
-
-        Comment
-    };
-
-    enum class Operator
-    {
-        Plus = '+',
-        Minus = '-',
-        Multiply = '*',
-        Divide = '/',
-        Modulo = '%',
-        Assign = '=',
-        LessThan = '<',
-        GreaterThan = '>',
-    };
-
-    extern std::map<int, std::vector<const char *>> operators;
     constexpr std::array<const char *, 10> punctors = {
         "(", ")", "{", "}", "[", "]", ".", ",", ":", ";"};
 
@@ -99,84 +69,6 @@ namespace libj
         KWPair("false", 5),
     };
 
-    enum class Keyword {
-        Subsystem,
-        Import,
-        Export,
-        Let,
-        Var,
-        Struct,
-        Region,
-        Union,
-        Packet,
-        Fn,
-        Typedef,
-        Const,
-        Static,
-        Volatile,
-        Enum,
-        Class,
-        Bundle,
-        Public,
-        Private,
-        Protected,
-        Override,
-        Virtual,
-        Abstract,
-        Friend,
-        Interface,
-        Delete,
-        If,
-        Else,
-        For,
-        While,
-        Do,
-        Switch,
-        Case,
-        Default,
-        Break,
-        Continue,
-        Return,
-        Retif,
-        Abortif,
-        Retz,
-        Void,
-        Null,
-        True,
-        False,
-    };
-
-    enum class Punctor
-    {
-        OpenParen,
-        CloseParen,
-        OpenBrace,
-        CloseBrace,
-        OpenBracket,
-        CloseBracket,
-        Dot,
-        Comma,
-        Colon,
-        Semicolon,
-    };
-
-    typedef std::variant<std::string, uint64_t, Punctor, Keyword, const char*> TokVal;
-
-    class Token
-    {
-        TokenType m_type;
-        TokVal m_value;
-
-    public:
-        Token() : m_type(TokenType::Unknown), m_value(std::string()) {}
-        Token(TokenType type, TokVal value);
-
-        TokenType type() const;
-        const TokVal &val() const;
-
-        std::string serialize(bool human_readable = true) const;
-    };
-
     class Lexer
     {
         /// @brief C FILE* source. Object is owned by the caller.
@@ -186,6 +78,9 @@ namespace libj
         std::optional<Token> m_tok;
         size_t m_buf_pos;
         char m_last;
+        Loc m_loc_curr;
+        Loc m_loc;
+        bool added_newline;
 
         char getc();
         libj::Token read_token();
@@ -200,11 +95,11 @@ namespace libj
 
         /// @brief Get the next token
         /// @return The next token
-        Token next();
+        Token next(bool include_comments = false);
 
         /// @brief Peek the next token
         /// @return The next token
-        Token peek();
+        Token peek(bool include_comments = false);
     };
 };
 

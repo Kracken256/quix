@@ -1,41 +1,58 @@
 #include <parse.hpp>
+#include <macro.h>
+#include <message.hpp>
 
-std::string libj::VarDeclNode::to_json() const
+using namespace libj;
+
+bool libj::parse_var(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node)
 {
-    std::string json= "{\"type\": \"VarDeclNode\", \"name\": \"" + m_name + "\", \"type\": " + m_type->to_json();
-
-    if (m_init)
+    Token tok = lexer.next();
+    if (tok.type() != TokenType::Identifier)
     {
-        json += ", \"init\": " + m_init->to_json();
+        PARMSG(tok, libj::Err::ERROR, "Missing identifier in variable declaration. To fix the issue, name your variable. Syntax: var name: type [= const_expr];");
+        return false;
     }
 
-    json += "}";
+    std::string name = std::get<std::string>(tok.val());
 
-    return json;
-}
-
-llvm::Value *libj::VarDeclNode::codegen(libj::LLVMContext &ctx) const
-{
-    llvm::Type *type = m_type->codegen(ctx);
-    if (!type)
+    tok = lexer.next();
+    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Colon)
     {
-        return nullptr;
+        PARMSG(tok, libj::Err::ERROR, "Missing colon separator in variable declaration. To fix the issue, insert a colon between the variable name and the typename. Syntax: var name: type [= const_expr];");
+        return false;
     }
 
-    llvm::Constant *init = nullptr;
-    if (m_init)
+    std::shared_ptr<ParseNode> type;
+
+    // Parse type
+    if (!parse_type(job, lexer, type))
     {
-        init = static_cast<llvm::Constant *>(m_init->codegen(ctx));
-        if (!init)
+        PARMSG(tok, libj::Err::ERROR, "An error occurred while parsing the type of variable '%s'. Syntax: var name: type [= const_expr];", name.c_str());
+        return false;
+    }
+
+    tok = lexer.next();
+    if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
+    {
+        // No initializer
+        node = std::make_shared<VarDeclNode>(name, std::static_pointer_cast<TypeNode>(type), nullptr);
+    }
+    else if (tok.type() == TokenType::Operator && std::get<Operator>(tok.val()) == Operator::Assign)
+    {
+        // Parse initializer
+        std::shared_ptr<ConstExprNode> init;
+        if (!parse_const_expr(job, lexer, init))
         {
-            return nullptr;
+            PARMSG(tok, libj::Err::ERROR, "Declaration of variable '%s' requires an initializer, but an error occurred while parsing the initializer. Syntax: var name: type [= const_expr];", name.c_str());
         }
+
+        node = std::make_shared<VarDeclNode>(name, std::static_pointer_cast<TypeNode>(type), init);
+    }
+    else
+    {
+        PARMSG(tok, libj::Err::ERROR, "Declaration of variable '%s' requires an initializer OR a semicolon punctuator, but neither was found. Make sure to terminate all statements with a semicolon. Syntax: var name: type [= const_expr];", name.c_str());
+        return false;
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, m_name);
-}
-
-std::shared_ptr<libj::ParseNode> libj::VarDeclNode::clone() const
-{
-    return std::make_shared<VarDeclNode>(*this);
+    return true;
 }

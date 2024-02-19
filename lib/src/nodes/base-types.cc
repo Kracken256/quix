@@ -2,13 +2,13 @@
 
 std::string libj::RootNode::to_json() const
 {
-    std::string json = "{ \"type\": \"RootNode\", \"children\": [";
+    std::string json = "{\"type\":\"RootNode\",\"children\":[";
     for (auto &child : m_children)
     {
         json += child->to_json() + ",";
     }
     json.pop_back();
-    json += "] }";
+    json += "]}";
     return json;
 }
 

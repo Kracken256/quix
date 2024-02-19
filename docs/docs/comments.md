@@ -17,8 +17,6 @@ J allows you to add comments to your code. Comments are not executed by the comp
 Single-line comments are created by any of the following methods:
 - Using the `// ` prefix. Use for arbitrary text
 - Using the `/// ` prefix. Use for documentation
-- Using the `# ` prefix. Use for arbitrary text
-- Using the `-- ` prefix (Must have a space after the `--`)
 
 ### Multi-line comments
 Multi-line comments are created by enclosing the comment in `/*` and `*/` tags. 

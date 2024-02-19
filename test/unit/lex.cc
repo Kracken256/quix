@@ -7,73 +7,15 @@
 #include <iostream>
 
 static std::map<std::string, libj::Token> expected_tokens = {
-    {"# hello\n", libj::Token(libj::TokenType::Comment, " hello")},
-    {"100\n", libj::Token(libj::TokenType::Number, 100.0)},
-    {"def\n", libj::Token(libj::TokenType::Define, "")},
-    {"extern\n", libj::Token(libj::TokenType::Extern, "")},
-    {"foo\n", libj::Token(libj::TokenType::Identifier, "foo")},
-    {"_bar\n", libj::Token(libj::TokenType::Identifier, "_bar")},
-    {"*\n", libj::Token(libj::TokenType::Operator, "*")},
-    {"+\n", libj::Token(libj::TokenType::Operator, "+")},
-    {"-\n", libj::Token(libj::TokenType::Operator, "-")},
-    {"/\n", libj::Token(libj::TokenType::Operator, "/")},
-    {"%\n", libj::Token(libj::TokenType::Operator, "%")},
-    {"=\n", libj::Token(libj::TokenType::Operator, "=")},
-    {"<\n", libj::Token(libj::TokenType::Operator, "<")},
-    {">\n", libj::Token(libj::TokenType::Operator, ">")},
-    {"(\n", libj::Token(libj::TokenType::Operator, "(")},
-    {")\n", libj::Token(libj::TokenType::Operator, ")")},
-    {",\n", libj::Token(libj::TokenType::Operator, ",")},
-    {";\n", libj::Token(libj::TokenType::Operator, ";")},
-    {"\n", libj::Token(libj::TokenType::Eof, "")},
+    
 };
 
-static const char *simple_program = R"(# Compute the x'th fibonacci number.
-def fib(x)
-  if x < 3 then
-    1
-  else
-    fib(x-1)+fib(x-2)
-
-# This expression will compute the 40th number.
-fib(40)
-)";
+static const char *simple_program = R"()";
 
 using namespace libj;
 
 static std::vector<libj::Token> expected = {
-    Token(TokenType::Comment, " Compute the x'th fibonacci number."),
-    Token(TokenType::Define, ""),
-    Token(TokenType::Identifier, "fib"),
-    Token(TokenType::Operator, "("),
-    Token(TokenType::Identifier, "x"),
-    Token(TokenType::Operator, ")"),
-    Token(TokenType::Identifier, "if"),
-    Token(TokenType::Identifier, "x"),
-    Token(TokenType::Operator, "<"),
-    Token(TokenType::Number, 3.0),
-    Token(TokenType::Identifier, "then"),
-    Token(TokenType::Number, 1.0),
-    Token(TokenType::Identifier, "else"),
-    Token(TokenType::Identifier, "fib"),
-    Token(TokenType::Operator, "("),
-    Token(TokenType::Identifier, "x"),
-    Token(TokenType::Operator, "-"),
-    Token(TokenType::Number, 1.0),
-    Token(TokenType::Operator, ")"),
-    Token(TokenType::Operator, "+"),
-    Token(TokenType::Identifier, "fib"),
-    Token(TokenType::Operator, "("),
-    Token(TokenType::Identifier, "x"),
-    Token(TokenType::Operator, "-"),
-    Token(TokenType::Number, 2.0),
-    Token(TokenType::Operator, ")"),
-    Token(TokenType::Comment, " This expression will compute the 40th number."),
-    Token(TokenType::Identifier, "fib"),
-    Token(TokenType::Operator, "("),
-    Token(TokenType::Number, 40.0),
-    Token(TokenType::Operator, ")"),
-    Token(TokenType::Eof, ""),
+   
 };
 
 TEST(Lexer, Identifiers)

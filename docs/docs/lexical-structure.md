@@ -63,7 +63,6 @@ This table contains the types of tokens that are used in J:
 | union | keyword | Define or declare a union |
 | packet | keyword | Define or declare a packed union |
 | fn | keyword | Define or declare a function |
-| fallible | keyword | Mark a function as fallible |
 | typedef | keyword | Alias a type name |
 | const | keyword | Declare a constant |
 | static | keyword | Create a region of shared memory (like in C) |

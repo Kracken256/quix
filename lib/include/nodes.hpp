@@ -19,10 +19,8 @@ namespace libj
     public:
         ParseNode() = default;
         virtual ~ParseNode() = default;
-        virtual std::string to_string() const = 0;
-
-        virtual llvm::Value *codegen(LLVMContext &ctx) const = 0;
-        virtual std::unique_ptr<ParseNode> clone() const = 0;
+        virtual std::string to_json() const = 0;
+        virtual std::shared_ptr<ParseNode> clone() const = 0;
     };
 
     class ExprNode : public ParseNode
@@ -30,6 +28,15 @@ namespace libj
     public:
         ExprNode() = default;
         virtual ~ExprNode() = default;
+
+        virtual llvm::Value *codegen(LLVMContext &ctx) const = 0;
+    };
+
+    class ConstExprNode : public ExprNode
+    {
+    public:
+        ConstExprNode() = default;
+        virtual ~ConstExprNode() = default;
     };
 
     class StmtNode : public ParseNode
@@ -37,6 +44,29 @@ namespace libj
     public:
         StmtNode() = default;
         virtual ~StmtNode() = default;
+
+        virtual llvm::Value *codegen(LLVMContext &ctx) const = 0;
+    };
+
+    class TypeNode : public ParseNode
+    {
+    public:
+        TypeNode() = default;
+        virtual ~TypeNode() = default;
+
+        virtual llvm::Type *codegen(LLVMContext &ctx) const = 0;
+    };
+
+    class RootNode : public ParseNode
+    {
+    public:
+        RootNode() = default;
+        virtual ~RootNode() = default;
+
+        virtual std::string to_json() const override;
+        virtual std::shared_ptr<ParseNode> clone() const override;
+
+        std::vector<std::shared_ptr<StmtNode>> m_children;
     };
 
     ///=========================================================================
@@ -61,358 +91,127 @@ namespace libj
         BlockNode() = default;
         virtual ~BlockNode() = default;
 
-        std::vector<std::unique_ptr<StmtNode>> m_stmts;
+        std::vector<std::shared_ptr<StmtNode>> m_stmts;
     };
 
     ///=========================================================================
 
-    class TypeNode : public DeclNode
+    class BasicTypeNode : public TypeNode
     {
     public:
-        TypeNode() = default;
-        virtual ~TypeNode() = default;
-    };
-
-    class PrimTypeNode : public TypeNode
-    {
-    public:
-        PrimTypeNode() = default;
-        virtual ~PrimTypeNode() = default;
-    };
-
-    class CompTypeNode : public TypeNode
-    {
-    public:
-        CompTypeNode() = default;
-        virtual ~CompTypeNode() = default;
-    };
-
-    class FnTypeNode : public TypeNode
-    {
-    public:
-        FnTypeNode() = default;
-        virtual ~FnTypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::string m_name;
-        std::vector<std::unique_ptr<TypeNode>> m_params;
-        std::unique_ptr<TypeNode> m_ret_type;
+        BasicTypeNode() = default;
+        virtual ~BasicTypeNode() = default;
     };
 
     ///=========================================================================
 
-    class I8TypeNode : public PrimTypeNode
-    {
-    public:
-        I8TypeNode() = default;
-        virtual ~I8TypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        int8_t m_value;
-    };
-
-    class I16TypeNode : public PrimTypeNode
-    {
-    public:
-        I16TypeNode() = default;
-        virtual ~I16TypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        int16_t m_value;
-    };
-
-    class I32TypeNode : public PrimTypeNode
-    {
-    public:
-        I32TypeNode() = default;
-        virtual ~I32TypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        int32_t m_value;
-    };
-
-    class I64TypeNode : public PrimTypeNode
-    {
-    public:
-        I64TypeNode() = default;
-        virtual ~I64TypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        int64_t m_value;
-    };
-
-    class U8TypeNode : public PrimTypeNode
+    class U8TypeNode : public BasicTypeNode
     {
     public:
         U8TypeNode() = default;
         virtual ~U8TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        uint8_t m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class U16TypeNode : public PrimTypeNode
+    class U16TypeNode : public BasicTypeNode
     {
     public:
         U16TypeNode() = default;
         virtual ~U16TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        uint16_t m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class U32TypeNode : public PrimTypeNode
+    class U32TypeNode : public BasicTypeNode
     {
     public:
         U32TypeNode() = default;
         virtual ~U32TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        uint32_t m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class U64TypeNode : public PrimTypeNode
+    class U64TypeNode : public BasicTypeNode
     {
     public:
         U64TypeNode() = default;
         virtual ~U64TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        uint64_t m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class F32TypeNode : public PrimTypeNode
+    class I8TypeNode : public BasicTypeNode
     {
     public:
-        F32TypeNode() = default;
-        virtual ~F32TypeNode() = default;
+        I8TypeNode() = default;
+        virtual ~I8TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        float m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class F64TypeNode : public PrimTypeNode
+    class I16TypeNode : public BasicTypeNode
     {
     public:
-        F64TypeNode() = default;
-        virtual ~F64TypeNode() = default;
+        I16TypeNode() = default;
+        virtual ~I16TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        double m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class BoolTypeNode : public PrimTypeNode
+    class I32TypeNode : public BasicTypeNode
     {
     public:
-        BoolTypeNode() = default;
-        virtual ~BoolTypeNode() = default;
+        I32TypeNode() = default;
+        virtual ~I32TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        bool m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
-    class CharTypeNode : public PrimTypeNode
+    class I64TypeNode : public BasicTypeNode
     {
     public:
-        CharTypeNode() = default;
-        virtual ~CharTypeNode() = default;
+        I64TypeNode() = default;
+        virtual ~I64TypeNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        char m_value;
-    };
-
-    class StringTypeNode : public PrimTypeNode
-    {
-    public:
-        StringTypeNode() = default;
-        virtual ~StringTypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::string m_value;
-    };
-
-    class ArrayTypeNode : public PrimTypeNode
-    {
-    public:
-        ArrayTypeNode() = default;
-        virtual ~ArrayTypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::vector<std::unique_ptr<PrimTypeNode>> m_value;
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
     };
 
     ///=========================================================================
-
-    class StructTypeNode : public CompTypeNode
-    {
-    public:
-        StructTypeNode() = default;
-        virtual ~StructTypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::string m_name;
-    };
-
-    class UnionTypeNode : public CompTypeNode
-    {
-    public:
-        UnionTypeNode() = default;
-        virtual ~UnionTypeNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::string m_name;
-    };
-
-    ///=========================================================================
-
-    class StructDeclNode : public DeclNode
-    {
-    public:
-        StructDeclNode() = default;
-        virtual ~StructDeclNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<StructTypeNode> m_type;
-    };
-
-    class UnionDeclNode : public DeclNode
-    {
-    public:
-        UnionDeclNode() = default;
-        virtual ~UnionDeclNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<UnionTypeNode> m_type;        
-    };
 
     class VarDeclNode : public DeclNode
     {
     public:
         VarDeclNode() = default;
+        VarDeclNode(const std::string &name, const std::shared_ptr<TypeNode> &type, const std::shared_ptr<ConstExprNode> &init)
+            : m_name(name), m_type(type), m_init(init) {}
         virtual ~VarDeclNode() = default;
 
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
+        std::string to_json() const override;
+        llvm::Value *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_name;
-        std::unique_ptr<TypeNode> m_type;
-        std::unique_ptr<ExprNode> m_value;
+        std::shared_ptr<TypeNode> m_type;
+        std::shared_ptr<ConstExprNode> m_init;
     };
 
-    class FnDeclNode : public DeclNode
-    {
-    public:
-        FnDeclNode() = default;
-        virtual ~FnDeclNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<FnTypeNode> m_type;
-    };
-
-    ///=========================================================================
-
-    class FnDefNode : public DefNode
-    {
-    public:
-        FnDefNode() = default;
-        virtual ~FnDefNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<FnDeclNode> m_decl;
-        std::unique_ptr<BlockNode> m_body;
-    };
-
-    class StructDefNode : public DefNode
-    {
-    public:
-        StructDefNode() = default;
-        virtual ~StructDefNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<StructDeclNode> m_decl;
-        std::vector<std::pair<std::string, std::unique_ptr<TypeNode>>> m_fields;
-    };
-
-    class UnionDefNode : public DefNode
-    {
-    public:
-        UnionDefNode() = default;
-        virtual ~UnionDefNode() = default;
-
-        virtual std::string to_string() const override;
-        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::unique_ptr<ParseNode> clone() const override;
-
-        std::unique_ptr<UnionDeclNode> m_decl;
-        std::vector<std::pair<std::string, std::unique_ptr<TypeNode>>> m_fields;
-    };
 };
 
 #endif // __J_CC_PARSE_TREE_H__

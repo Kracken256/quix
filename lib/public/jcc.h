@@ -19,23 +19,20 @@ extern "C"
 
     enum jcc_msg_level_t
     {
-        /// @brief Nothing
-        JCC_NONE = 0,
-
         /// @brief Debug message
-        JCC_DEBUG = 1,
+        JCC_DEBUG,
 
         /// @brief Information message
-        JCC_INFO = 2,
+        JCC_INFO,
 
         /// @brief Warning message
-        JCC_WARN = 3,
+        JCC_WARN,
 
         /// @brief Error message
-        JCC_ERROR = 4,
+        JCC_ERROR,
 
         /// @brief Internal compiler error
-        JCC_FATAL = 5
+        JCC_FATAL
     };
 
     struct jcc_msg_t
@@ -109,6 +106,8 @@ extern "C"
 
         FILE *m_in;
         FILE *m_out;
+
+        const char *m_filename;
 
         /// @brief Job priority
         uint8_t m_priority;

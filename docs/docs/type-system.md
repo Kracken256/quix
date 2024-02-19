@@ -44,6 +44,13 @@ struct Point {
     y: i32;
 };
 // Type: struct(Point)
+
+region FileHeader {
+    magic: u32;
+    version: u32;
+    flags: u32;
+}; // `region` packs the struct members
+// Type: region(FileHeader)
 ```
 
 ### Union Types
@@ -59,6 +66,12 @@ union IntOrFloat {
     f: f32;
 };
 // Type: union(IntOrFloat)
+
+packet PackedUnion {
+    magic: u32;
+    data: union(IntOrFloat);
+}; // `packet` packs the union members
+// Type: packet(PackedUnion)
 ```
 ### Function Types
 Function types are types that represent a function. Function types are distinguished by the following properties:

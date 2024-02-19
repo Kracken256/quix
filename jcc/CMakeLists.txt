@@ -29,6 +29,6 @@ target_include_directories(jcc PRIVATE "src" ${CMAKE_CURRENT_SOURCE_DIR}/../lib/
 target_compile_options(jcc PRIVATE -g -Wall -Wextra -Wpedantic -Werror -O3 -flto  ${LLVM_CXX_FLAGS})
 target_link_options(jcc PRIVATE -flto ${LLVM_LD_FLAGS})
 target_link_directories(jcc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../lib)
-target_link_libraries(jcc PRIVATE libj.so ${LLVM_LIBS})
+target_link_libraries(jcc PRIVATE libj.so ${LLVM_LIBS} crypto)
 add_dependencies(jcc j-shared)
 

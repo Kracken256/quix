@@ -9,6 +9,8 @@
 #include <llvm-ctx.hpp>
 #include <generate.hpp>
 #include <lex.hpp>
+#include <error.hpp>
+#include <parse.hpp>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
 
@@ -209,29 +211,38 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     if (!job->m_in || !job->m_out)
         return false;
 
-    using namespace libj;
+    // Allocate memory for the result
+    job->m_result = (jcc_result_t *)safe_malloc(sizeof(jcc_result_t));
+    memset(job->m_result, 0, sizeof(jcc_result_t));
 
-    Lexer lexer;
-    lexer.set_source(job->m_in);
+    // Lex the input
+    libj::Lexer lexer;
+    if (!lexer.set_source(job->m_in))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to set source");
+        return false;
+    }
 
-    /*  DEBUG */
+    // Parse the input
+    libj::Parser parser;
+    libj::AST ast;
+    libj::message(*job, libj::Err::DEBUG, "Parsing input");
+    if (!parser.parse(*job, lexer, ast))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to parse input");
+        return false;
+    }
 
-    /* IR */
-    generate_llvm_ir(*(libj::LLVMContext *)job->m_inner, job->m_out);
+    std::cout << ast.to_json() << std::endl;
 
-    // std::vector<Token> tokens;
-    // while (true)
-    // {
-    //     Token token = lexer.next();
-    //     if (token.type() == TokenType::Eof)
-    //         break;
-    //     tokens.push_back(token);
-    // }
-
-    // for (const Token &token : tokens)
-    // {
-    //     fprintf(job->m_out, "%s\n", token.serialize(true).c_str());
-    // }
+    // Generate the output
+    libj::Generator gen;
+    libj::message(*job, libj::Err::DEBUG, "Generating output");
+    if (!gen.synthesize_LLVM_IR(*job, ast))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to generate output");
+        return false;
+    }
 
     return true;
 }

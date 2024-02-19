@@ -86,21 +86,17 @@ int main(int argc, char *argv[])
     jcc_set_input(job, in);
     jcc_set_output(job, out);
 
-    if (jcc_run(job))
-    {
-        jcc_dispose(job);
-        fclose(in);
-        fclose(out);
-        return 0;
-    }
+    bool success = jcc_run(job);
+
+    fclose(in);
+    fclose(out);
+
 
     const jcc_result_t *result = jcc_result(job);
     if (!result)
     {
         std::cerr << "error: failed to get result" << std::endl;
         jcc_dispose(job);
-        fclose(in);
-        fclose(out);
         return 1;
     }
 
@@ -130,6 +126,12 @@ int main(int argc, char *argv[])
     }
 
     jcc_dispose(job);
+
+    if (!success)
+    {
+        std::cerr << "error: failed to compile" << std::endl;
+        return 1;
+    }
 
     return 0;
 }

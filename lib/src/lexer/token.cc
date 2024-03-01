@@ -1,4 +1,4 @@
-#include <token.hpp>
+#include <lexer/token.hpp>
 #include <map>
 
 namespace libj

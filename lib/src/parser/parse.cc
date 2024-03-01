@@ -1,6 +1,6 @@
-#include <parse.hpp>
-#include <nodes.hpp>
-#include <message.hpp>
+#include <parse/parser.hpp>
+#include <parse/nodes.hpp>
+#include <error/message.hpp>
 #include <iostream>
 #include <macro.h>
 

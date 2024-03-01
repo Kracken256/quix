@@ -1,5 +1,5 @@
-#include <parse.hpp>
-#include <lex.hpp>
+#include <parse/parser.hpp>
+#include <lexer/lex.hpp>
 
 std::string libj::ConstUnaryExprNode::to_json() const
 {

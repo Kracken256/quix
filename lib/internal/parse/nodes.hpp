@@ -9,8 +9,8 @@
 #include <vector>
 #include <memory>
 
-#include <llvm-ctx.hpp>
-#include <lex.hpp>
+#include <llvm/llvm-ctx.hpp>
+#include <lexer/lex.hpp>
 
 namespace libj
 {

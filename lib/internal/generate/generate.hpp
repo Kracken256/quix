@@ -7,7 +7,7 @@
 
 #include <bits/types/FILE.h>
 #include <jcc.h>
-#include <parse.hpp>
+#include <parse/parser.hpp>
 
 namespace libj
 {

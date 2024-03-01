@@ -1,4 +1,4 @@
-#include <lex.hpp>
+#include <lexer/lex.hpp>
 #include <cstdio>
 #include <cctype>
 #include <stdexcept>

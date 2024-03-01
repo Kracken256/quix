@@ -5,8 +5,8 @@
 #error "This header requires C++"
 #endif
 
-#include <lex.hpp>
-#include <nodes.hpp>
+#include <lexer/lex.hpp>
+#include <parse/nodes.hpp>
 #include <jcc.h>
 
 namespace libj

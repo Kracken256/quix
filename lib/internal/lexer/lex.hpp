@@ -13,7 +13,7 @@
 #include <deque>
 #include <array>
 #include <map>
-#include <token.hpp>
+#include <lexer/token.hpp>
 
 namespace libj
 {

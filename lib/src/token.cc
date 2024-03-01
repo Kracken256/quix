@@ -1,9 +1,12 @@
 #include <token.hpp>
 #include <map>
 
-extern std::map<libj::Keyword, std::string> keyword_map_inverse;
-extern std::map<libj::Operator, std::string> operator_map_inverse;
-extern std::map<libj::Punctor, std::string> punctor_map_inverse;
+namespace libj
+{
+    extern std::map<libj::Keyword, std::string> keyword_map_inverse;
+    extern std::map<libj::Operator, std::string> operator_map_inverse;
+    extern std::map<libj::Punctor, std::string> punctor_map_inverse;
+}
 
 libj::Loc libj::Loc::Unk = libj::Loc(-1, -1);
 
@@ -37,7 +40,6 @@ libj::Token::Token(libj::TokenType type, libj::TokVal value, libj::Loc loc)
     m_value = value;
     m_loc = loc;
 }
-
 
 libj::TokenType libj::Token::type() const
 {
@@ -76,8 +78,10 @@ std::string libj::Token::serialize(bool human_readable) const
         return "\"" + std::get<std::string>(m_value) + "\"";
     case TokenType::CharLiteral:
         return "'" + std::get<std::string>(m_value) + "'";
-    case TokenType::NumberLiteral:
-        return "Number(" + std::to_string(std::get<uint64_t>(m_value)) + ")";
+    case TokenType::IntegerLiteral:
+        return "Number(" + std::get<std::string>(m_value) + ")";
+    case TokenType::FloatingLiteral:
+        return "Float(" + std::get<std::string>(m_value) + ")";
     case TokenType::Comment:
         return "/* " + std::get<std::string>(m_value) + " */";
     default:

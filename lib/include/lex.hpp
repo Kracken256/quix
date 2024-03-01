@@ -69,6 +69,13 @@ namespace libj
         KWPair("false", 5),
     };
 
+    extern std::map<std::string, libj::Keyword> keyword_map;
+    extern std::map<libj::Keyword, std::string> keyword_map_inverse;
+    extern std::map<std::string, libj::Punctor> punctor_map;
+    extern std::map<libj::Punctor, std::string> punctor_map_inverse;
+    extern std::map<std::string, libj::Operator> operator_map;
+    extern std::map<libj::Operator, std::string> operator_map_inverse;
+
     class Lexer
     {
         /// @brief C FILE* source. Object is owned by the caller.

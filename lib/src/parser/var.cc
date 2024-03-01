@@ -46,6 +46,13 @@ bool libj::parse_var(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::S
             return false;
         }
 
+        tok = lexer.next();
+        if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
+        {
+            PARMSG(tok, libj::Err::ERROR, feedback[VAR_DECL_MISSING_PUNCTOR], name.c_str());
+            return false;
+        }
+
         node = std::make_shared<VarDeclNode>(name, std::static_pointer_cast<TypeNode>(type), init);
     }
     else

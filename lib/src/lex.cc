@@ -3,207 +3,215 @@
 #include <cctype>
 #include <stdexcept>
 #include <cstring>
+#include <iomanip>
+#include <regex>
+#include <cmath>
+#include <iostream>
 
 ///=============================================================================
 
-static std::map<std::string, libj::Keyword> keyword_map = {
-    {"subsystem", libj::Keyword::Subsystem},
-    {"import", libj::Keyword::Import},
-    {"export", libj::Keyword::Export},
-    {"let", libj::Keyword::Let},
-    {"var", libj::Keyword::Var},
-    {"struct", libj::Keyword::Struct},
-    {"region", libj::Keyword::Region},
-    {"union", libj::Keyword::Union},
-    {"packet", libj::Keyword::Packet},
-    {"fn", libj::Keyword::Fn},
-    {"typedef", libj::Keyword::Typedef},
-    {"const", libj::Keyword::Const},
-    {"static", libj::Keyword::Static},
-    {"volatile", libj::Keyword::Volatile},
-    {"enum", libj::Keyword::Enum},
-    {"class", libj::Keyword::Class},
-    {"bundle", libj::Keyword::Bundle},
-    {"public", libj::Keyword::Public},
-    {"private", libj::Keyword::Private},
-    {"protected", libj::Keyword::Protected},
-    {"override", libj::Keyword::Override},
-    {"virtual", libj::Keyword::Virtual},
-    {"abstract", libj::Keyword::Abstract},
-    {"friend", libj::Keyword::Friend},
-    {"interface", libj::Keyword::Interface},
-    {"delete", libj::Keyword::Delete},
-    {"if", libj::Keyword::If},
-    {"else", libj::Keyword::Else},
-    {"for", libj::Keyword::For},
-    {"while", libj::Keyword::While},
-    {"do", libj::Keyword::Do},
-    {"switch", libj::Keyword::Switch},
-    {"case", libj::Keyword::Case},
-    {"default", libj::Keyword::Default},
-    {"break", libj::Keyword::Break},
-    {"continue", libj::Keyword::Continue},
-    {"return", libj::Keyword::Return},
-    {"retif", libj::Keyword::Retif},
-    {"abortif", libj::Keyword::Abortif},
-    {"retz", libj::Keyword::Retz},
-    {"void", libj::Keyword::Void},
-    {"null", libj::Keyword::Null},
-    {"true", libj::Keyword::True},
-    {"false", libj::Keyword::False}};
+#define FLOATING_POINT_LITERAL_ROUND_DIGITS 32
 
-std::map<libj::Keyword, std::string> keyword_map_inverse = {
-    {libj::Keyword::Subsystem, "subsystem"},
-    {libj::Keyword::Import, "import"},
-    {libj::Keyword::Export, "export"},
-    {libj::Keyword::Let, "let"},
-    {libj::Keyword::Var, "var"},
-    {libj::Keyword::Struct, "struct"},
-    {libj::Keyword::Region, "region"},
-    {libj::Keyword::Union, "union"},
-    {libj::Keyword::Packet, "packet"},
-    {libj::Keyword::Fn, "fn"},
-    {libj::Keyword::Typedef, "typedef"},
-    {libj::Keyword::Const, "const"},
-    {libj::Keyword::Static, "static"},
-    {libj::Keyword::Volatile, "volatile"},
-    {libj::Keyword::Enum, "enum"},
-    {libj::Keyword::Class, "class"},
-    {libj::Keyword::Bundle, "bundle"},
-    {libj::Keyword::Public, "public"},
-    {libj::Keyword::Private, "private"},
-    {libj::Keyword::Protected, "protected"},
-    {libj::Keyword::Override, "override"},
-    {libj::Keyword::Virtual, "virtual"},
-    {libj::Keyword::Abstract, "abstract"},
-    {libj::Keyword::Friend, "friend"},
-    {libj::Keyword::Interface, "interface"},
-    {libj::Keyword::Delete, "delete"},
-    {libj::Keyword::If, "if"},
-    {libj::Keyword::Else, "else"},
-    {libj::Keyword::For, "for"},
-    {libj::Keyword::While, "while"},
-    {libj::Keyword::Do, "do"},
-    {libj::Keyword::Switch, "switch"},
-    {libj::Keyword::Case, "case"},
-    {libj::Keyword::Default, "default"},
-    {libj::Keyword::Break, "break"},
-    {libj::Keyword::Continue, "continue"},
-    {libj::Keyword::Return, "return"},
-    {libj::Keyword::Retif, "retif"},
-    {libj::Keyword::Abortif, "abortif"},
-    {libj::Keyword::Retz, "retz"},
-    {libj::Keyword::Void, "void"},
-    {libj::Keyword::Null, "null"},
-    {libj::Keyword::True, "true"},
-    {libj::Keyword::False, "false"}};
+namespace libj
+{
+    std::map<std::string, libj::Keyword> keyword_map = {
+        {"subsystem", libj::Keyword::Subsystem},
+        {"import", libj::Keyword::Import},
+        {"export", libj::Keyword::Export},
+        {"let", libj::Keyword::Let},
+        {"var", libj::Keyword::Var},
+        {"struct", libj::Keyword::Struct},
+        {"region", libj::Keyword::Region},
+        {"union", libj::Keyword::Union},
+        {"packet", libj::Keyword::Packet},
+        {"fn", libj::Keyword::Fn},
+        {"typedef", libj::Keyword::Typedef},
+        {"const", libj::Keyword::Const},
+        {"static", libj::Keyword::Static},
+        {"volatile", libj::Keyword::Volatile},
+        {"enum", libj::Keyword::Enum},
+        {"class", libj::Keyword::Class},
+        {"bundle", libj::Keyword::Bundle},
+        {"public", libj::Keyword::Public},
+        {"private", libj::Keyword::Private},
+        {"protected", libj::Keyword::Protected},
+        {"override", libj::Keyword::Override},
+        {"virtual", libj::Keyword::Virtual},
+        {"abstract", libj::Keyword::Abstract},
+        {"friend", libj::Keyword::Friend},
+        {"interface", libj::Keyword::Interface},
+        {"delete", libj::Keyword::Delete},
+        {"if", libj::Keyword::If},
+        {"else", libj::Keyword::Else},
+        {"for", libj::Keyword::For},
+        {"while", libj::Keyword::While},
+        {"do", libj::Keyword::Do},
+        {"switch", libj::Keyword::Switch},
+        {"case", libj::Keyword::Case},
+        {"default", libj::Keyword::Default},
+        {"break", libj::Keyword::Break},
+        {"continue", libj::Keyword::Continue},
+        {"return", libj::Keyword::Return},
+        {"retif", libj::Keyword::Retif},
+        {"abortif", libj::Keyword::Abortif},
+        {"retz", libj::Keyword::Retz},
+        {"void", libj::Keyword::Void},
+        {"null", libj::Keyword::Null},
+        {"true", libj::Keyword::True},
+        {"false", libj::Keyword::False}};
 
-static std::map<std::string, libj::Punctor> punctor_map = {
-    {"(", libj::Punctor::OpenParen},
-    {")", libj::Punctor::CloseBrace},
-    {"{", libj::Punctor::OpenBrace},
-    {"}", libj::Punctor::CloseBrace},
-    {"[", libj::Punctor::OpenBracket},
-    {"]", libj::Punctor::CloseBracket},
-    {".", libj::Punctor::Dot},
-    {",", libj::Punctor::Comma},
-    {":", libj::Punctor::Colon},
-    {";", libj::Punctor::Semicolon}};
+    std::map<libj::Keyword, std::string> keyword_map_inverse = {
+        {libj::Keyword::Subsystem, "subsystem"},
+        {libj::Keyword::Import, "import"},
+        {libj::Keyword::Export, "export"},
+        {libj::Keyword::Let, "let"},
+        {libj::Keyword::Var, "var"},
+        {libj::Keyword::Struct, "struct"},
+        {libj::Keyword::Region, "region"},
+        {libj::Keyword::Union, "union"},
+        {libj::Keyword::Packet, "packet"},
+        {libj::Keyword::Fn, "fn"},
+        {libj::Keyword::Typedef, "typedef"},
+        {libj::Keyword::Const, "const"},
+        {libj::Keyword::Static, "static"},
+        {libj::Keyword::Volatile, "volatile"},
+        {libj::Keyword::Enum, "enum"},
+        {libj::Keyword::Class, "class"},
+        {libj::Keyword::Bundle, "bundle"},
+        {libj::Keyword::Public, "public"},
+        {libj::Keyword::Private, "private"},
+        {libj::Keyword::Protected, "protected"},
+        {libj::Keyword::Override, "override"},
+        {libj::Keyword::Virtual, "virtual"},
+        {libj::Keyword::Abstract, "abstract"},
+        {libj::Keyword::Friend, "friend"},
+        {libj::Keyword::Interface, "interface"},
+        {libj::Keyword::Delete, "delete"},
+        {libj::Keyword::If, "if"},
+        {libj::Keyword::Else, "else"},
+        {libj::Keyword::For, "for"},
+        {libj::Keyword::While, "while"},
+        {libj::Keyword::Do, "do"},
+        {libj::Keyword::Switch, "switch"},
+        {libj::Keyword::Case, "case"},
+        {libj::Keyword::Default, "default"},
+        {libj::Keyword::Break, "break"},
+        {libj::Keyword::Continue, "continue"},
+        {libj::Keyword::Return, "return"},
+        {libj::Keyword::Retif, "retif"},
+        {libj::Keyword::Abortif, "abortif"},
+        {libj::Keyword::Retz, "retz"},
+        {libj::Keyword::Void, "void"},
+        {libj::Keyword::Null, "null"},
+        {libj::Keyword::True, "true"},
+        {libj::Keyword::False, "false"}};
 
-std::map<libj::Punctor, std::string> punctor_map_inverse = {
-    {libj::Punctor::OpenParen, "("},
-    {libj::Punctor::CloseBrace, ")"},
-    {libj::Punctor::OpenBrace, "{"},
-    {libj::Punctor::CloseBrace, "}"},
-    {libj::Punctor::OpenBracket, "["},
-    {libj::Punctor::CloseBracket, "]"},
-    {libj::Punctor::Dot, "."},
-    {libj::Punctor::Comma, ","},
-    {libj::Punctor::Colon, ":"},
-    {libj::Punctor::Semicolon, ";"}};
+    std::map<std::string, libj::Punctor> punctor_map = {
+        {"(", libj::Punctor::OpenParen},
+        {")", libj::Punctor::CloseParen},
+        {"{", libj::Punctor::OpenBrace},
+        {"}", libj::Punctor::CloseBrace},
+        {"[", libj::Punctor::OpenBracket},
+        {"]", libj::Punctor::CloseBracket},
+        {".", libj::Punctor::Dot},
+        {",", libj::Punctor::Comma},
+        {":", libj::Punctor::Colon},
+        {";", libj::Punctor::Semicolon}};
 
-static std::map<std::string, libj::Operator> operator_map = {
-    {"<", libj::Operator::LessThan},
-    {">", libj::Operator::GreaterThan},
-    {"=", libj::Operator::Assign},
-    {"@", libj::Operator::At},
-    {"-", libj::Operator::Minus},
-    {"+", libj::Operator::Plus},
-    {"*", libj::Operator::Multiply},
-    {"/", libj::Operator::Divide},
-    {"%", libj::Operator::Modulo},
-    {"&", libj::Operator::BitAnd},
-    {"|", libj::Operator::BitOr},
-    {"^", libj::Operator::BitXor},
-    {"~", libj::Operator::BitNot},
-    {"!", libj::Operator::Not},
-    {"?", libj::Operator::Question},
-    {"+=", libj::Operator::PlusAssign},
-    {"-=", libj::Operator::MinusAssign},
-    {"*=", libj::Operator::MultiplyAssign},
-    {"/=", libj::Operator::DivideAssign},
-    {"%=", libj::Operator::ModuloAssign},
-    {"|=", libj::Operator::BitOrAssign},
-    {"&=", libj::Operator::BitAndAssign},
-    {"^=", libj::Operator::BitXorAssign},
-    {"<<", libj::Operator::LeftShift},
-    {">>", libj::Operator::RightShift},
-    {"==", libj::Operator::Equal},
-    {"!=", libj::Operator::NotEqual},
-    {"&&", libj::Operator::And},
-    {"||", libj::Operator::Or},
-    {"^^", libj::Operator::Xor},
-    {"<=", libj::Operator::LessThanEqual},
-    {">=", libj::Operator::GreaterThanEqual},
-    {"++", libj::Operator::Increment},
-    {"--", libj::Operator::Decrement},
-    {"^^=", libj::Operator::XorAssign},
-    {"||=", libj::Operator::OrAssign},
-    {"&&=", libj::Operator::AndAssign},
-    {"<<=", libj::Operator::LeftShiftAssign},
-    {">>=", libj::Operator::RightShiftAssign}};
+    std::map<libj::Punctor, std::string> punctor_map_inverse = {
+        {libj::Punctor::OpenParen, "("},
+        {libj::Punctor::CloseParen, ")"},
+        {libj::Punctor::OpenBrace, "{"},
+        {libj::Punctor::CloseBrace, "}"},
+        {libj::Punctor::OpenBracket, "["},
+        {libj::Punctor::CloseBracket, "]"},
+        {libj::Punctor::Dot, "."},
+        {libj::Punctor::Comma, ","},
+        {libj::Punctor::Colon, ":"},
+        {libj::Punctor::Semicolon, ";"}};
 
-std::map<libj::Operator, std::string> operator_map_inverse = {
-    {libj::Operator::LessThan, "<"},
-    {libj::Operator::GreaterThan, ">"},
-    {libj::Operator::Assign, "="},
-    {libj::Operator::At, "@"},
-    {libj::Operator::Minus, "-"},
-    {libj::Operator::Plus, "+"},
-    {libj::Operator::Multiply, "*"},
-    {libj::Operator::Divide, "/"},
-    {libj::Operator::Modulo, "%"},
-    {libj::Operator::BitAnd, "&"},
-    {libj::Operator::BitOr, "|"},
-    {libj::Operator::BitXor, "^"},
-    {libj::Operator::BitNot, "~"},
-    {libj::Operator::Not, "!"},
-    {libj::Operator::Question, "?"},
-    {libj::Operator::PlusAssign, "+="},
-    {libj::Operator::MinusAssign, "-="},
-    {libj::Operator::MultiplyAssign, "*="},
-    {libj::Operator::DivideAssign, "/="},
-    {libj::Operator::ModuloAssign, "%="},
-    {libj::Operator::BitOrAssign, "|="},
-    {libj::Operator::BitAndAssign, "&="},
-    {libj::Operator::BitXorAssign, "^="},
-    {libj::Operator::LeftShift, "<<"},
-    {libj::Operator::RightShift, ">>"},
-    {libj::Operator::Equal, "=="},
-    {libj::Operator::NotEqual, "!="},
-    {libj::Operator::And, "&&"},
-    {libj::Operator::Or, "||"},
-    {libj::Operator::Xor, "^^"},
-    {libj::Operator::LessThanEqual, "<="},
-    {libj::Operator::GreaterThanEqual, ">="},
-    {libj::Operator::Increment, "++"},
-    {libj::Operator::Decrement, "--"},
-    {libj::Operator::XorAssign, "^^="},
-    {libj::Operator::OrAssign, "||="},
-    {libj::Operator::AndAssign, "&&="},
-    {libj::Operator::LeftShiftAssign, "<<="},
-    {libj::Operator::RightShiftAssign, ">>="}};
+    std::map<std::string, libj::Operator> operator_map = {
+        {"<", libj::Operator::LessThan},
+        {">", libj::Operator::GreaterThan},
+        {"=", libj::Operator::Assign},
+        {"@", libj::Operator::At},
+        {"-", libj::Operator::Minus},
+        {"+", libj::Operator::Plus},
+        {"*", libj::Operator::Multiply},
+        {"/", libj::Operator::Divide},
+        {"%", libj::Operator::Modulo},
+        {"&", libj::Operator::BitAnd},
+        {"|", libj::Operator::BitOr},
+        {"^", libj::Operator::BitXor},
+        {"~", libj::Operator::BitNot},
+        {"!", libj::Operator::Not},
+        {"?", libj::Operator::Question},
+        {"+=", libj::Operator::PlusAssign},
+        {"-=", libj::Operator::MinusAssign},
+        {"*=", libj::Operator::MultiplyAssign},
+        {"/=", libj::Operator::DivideAssign},
+        {"%=", libj::Operator::ModuloAssign},
+        {"|=", libj::Operator::BitOrAssign},
+        {"&=", libj::Operator::BitAndAssign},
+        {"^=", libj::Operator::BitXorAssign},
+        {"<<", libj::Operator::LeftShift},
+        {">>", libj::Operator::RightShift},
+        {"==", libj::Operator::Equal},
+        {"!=", libj::Operator::NotEqual},
+        {"&&", libj::Operator::And},
+        {"||", libj::Operator::Or},
+        {"^^", libj::Operator::Xor},
+        {"<=", libj::Operator::LessThanEqual},
+        {">=", libj::Operator::GreaterThanEqual},
+        {"++", libj::Operator::Increment},
+        {"--", libj::Operator::Decrement},
+        {"^^=", libj::Operator::XorAssign},
+        {"||=", libj::Operator::OrAssign},
+        {"&&=", libj::Operator::AndAssign},
+        {"<<=", libj::Operator::LeftShiftAssign},
+        {">>=", libj::Operator::RightShiftAssign}};
 
+    std::map<libj::Operator, std::string> operator_map_inverse = {
+        {libj::Operator::LessThan, "<"},
+        {libj::Operator::GreaterThan, ">"},
+        {libj::Operator::Assign, "="},
+        {libj::Operator::At, "@"},
+        {libj::Operator::Minus, "-"},
+        {libj::Operator::Plus, "+"},
+        {libj::Operator::Multiply, "*"},
+        {libj::Operator::Divide, "/"},
+        {libj::Operator::Modulo, "%"},
+        {libj::Operator::BitAnd, "&"},
+        {libj::Operator::BitOr, "|"},
+        {libj::Operator::BitXor, "^"},
+        {libj::Operator::BitNot, "~"},
+        {libj::Operator::Not, "!"},
+        {libj::Operator::Question, "?"},
+        {libj::Operator::PlusAssign, "+="},
+        {libj::Operator::MinusAssign, "-="},
+        {libj::Operator::MultiplyAssign, "*="},
+        {libj::Operator::DivideAssign, "/="},
+        {libj::Operator::ModuloAssign, "%="},
+        {libj::Operator::BitOrAssign, "|="},
+        {libj::Operator::BitAndAssign, "&="},
+        {libj::Operator::BitXorAssign, "^="},
+        {libj::Operator::LeftShift, "<<"},
+        {libj::Operator::RightShift, ">>"},
+        {libj::Operator::Equal, "=="},
+        {libj::Operator::NotEqual, "!="},
+        {libj::Operator::And, "&&"},
+        {libj::Operator::Or, "||"},
+        {libj::Operator::Xor, "^^"},
+        {libj::Operator::LessThanEqual, "<="},
+        {libj::Operator::GreaterThanEqual, ">="},
+        {libj::Operator::Increment, "++"},
+        {libj::Operator::Decrement, "--"},
+        {libj::Operator::XorAssign, "^^="},
+        {libj::Operator::OrAssign, "||="},
+        {libj::Operator::AndAssign, "&&="},
+        {libj::Operator::LeftShiftAssign, "<<="},
+        {libj::Operator::RightShiftAssign, ">>="}};
+}
 ///=============================================================================
 
 libj::Lexer::Lexer()
@@ -309,6 +317,184 @@ static bool validate_identifier(const std::string &id)
     return state == 0;
 }
 
+enum class NumberLiteralType
+{
+    Invalid,
+    Decimal,
+    DecimalExplicit,
+    Hexadecimal,
+    Binary,
+    Octal,
+    Floating,
+};
+
+static NumberLiteralType check_number_literal_type(std::string input)
+{
+    if (input[0] == '-')
+    {
+        input = input.substr(1);
+    }
+
+    if (input.length() < 3)
+    {
+        if (std::isdigit(input[0]))
+            return NumberLiteralType::Decimal;
+        else
+            return NumberLiteralType::Invalid;
+    }
+
+    std::string prefix = input.substr(0, 2);
+
+    if (prefix == "0x")
+    {
+        for (size_t i = 2; i < input.length(); i++)
+        {
+            if (!((input[i] >= '0' && input[i] <= '9') || (input[i] >= 'a' && input[i] <= 'f')))
+            {
+                return NumberLiteralType::Invalid;
+            }
+        }
+        return NumberLiteralType::Hexadecimal;
+    }
+    else if (prefix == "0b")
+    {
+        for (size_t i = 2; i < input.length(); i++)
+        {
+            if (!(input[i] == '0' || input[i] == '1'))
+            {
+                return NumberLiteralType::Invalid;
+            }
+        }
+        return NumberLiteralType::Binary;
+    }
+    else if (prefix == "0o")
+    {
+        for (size_t i = 2; i < input.length(); i++)
+        {
+            if (!(input[i] >= '0' && input[i] <= '7'))
+            {
+                return NumberLiteralType::Invalid;
+            }
+        }
+        return NumberLiteralType::Octal;
+    }
+    else if (prefix == "0d")
+    {
+        for (size_t i = 2; i < input.length(); i++)
+        {
+            if (!(input[i] >= '0' && input[i] <= '9'))
+            {
+                return NumberLiteralType::Invalid;
+            }
+        }
+        return NumberLiteralType::DecimalExplicit;
+    }
+    else
+    {
+        for (size_t i = 0; i < input.length(); i++)
+        {
+            if (!(input[i] >= '0' && input[i] <= '9'))
+            {
+                goto test_float;
+            }
+        }
+        return NumberLiteralType::Decimal;
+    }
+
+test_float:
+    auto regexpFloat = std::regex("^([0-9]+(\\.[0-9]+)?)?(e[+-]?([0-9]+(\\.?[0-9]+)?)+)*$");
+
+    // slow operation
+    if (std::regex_match(input, regexpFloat))
+    {
+        return NumberLiteralType::Floating;
+    }
+
+    return NumberLiteralType::Invalid;
+}
+
+static std::string normalize_float(const std::string &input)
+{
+    double mantissa = 0;
+    double exponent = 0;
+    double x = 0;
+
+    size_t e_pos = input.find('e');
+
+    if (e_pos == std::string::npos)
+    {
+        return input;
+    }
+
+    mantissa = std::stod(input.substr(0, e_pos));
+    exponent = std::stod(input.substr(e_pos + 1));
+
+    x = mantissa * std::pow(10.0, exponent);
+    std::stringstream ss;
+    ss << std::setprecision(FLOATING_POINT_LITERAL_ROUND_DIGITS) << x;
+    return ss.str();
+}
+
+bool normalize_number_literal(std::string &number, std::string &norm, NumberLiteralType type)
+{
+    uint64_t x = 0;
+
+    for (size_t i = 0; i < number.length(); i++)
+    {
+        number[i] = std::tolower(number[i]);
+    }
+
+    switch (type)
+    {
+    case NumberLiteralType::Hexadecimal:
+        for (size_t i = 2; i < number.length(); ++i)
+        {
+            // check for overflow
+            if (x & 0xF000000000000000)
+                return false;
+
+            if (number[i] >= '0' && number[i] <= '9')
+                x = (x << 4) + (number[i] - '0');
+            else if (number[i] >= 'a' && number[i] <= 'f')
+                x = (x << 4) + (number[i] - 'a' + 10);
+            else
+                return false;
+        }
+        break;
+    case NumberLiteralType::Binary:
+        for (size_t i = 2; i < number.length(); ++i)
+        {
+            // check for overflow
+            if (x & 0x8000000000000000)
+                return false;
+
+            x = (x << 1) + (number[i] - '0');
+        }
+        break;
+    case NumberLiteralType::Octal:
+        for (size_t i = 2; i < number.length(); ++i)
+        {
+            // check for overflow
+            if (x & 0xE000000000000000)
+                return false;
+
+            x = (x << 3) + (number[i] - '0');
+        }
+        break;
+    case NumberLiteralType::DecimalExplicit:
+        x = std::stoull(number.substr(2));
+        break;
+    case NumberLiteralType::Decimal:
+        x = std::stoull(number);
+        break;
+    default:
+        break;
+    }
+
+    norm = std::to_string(x);
+    return true;
+}
+
 libj::Token libj::Lexer::read_token()
 {
     if (m_tok.has_value())
@@ -319,7 +505,7 @@ libj::Token libj::Lexer::read_token()
         Start,
         Identifier,
         StringLiteral,
-        NumberLiteral,
+        IntegerLiteral,
         CommentStart,
         CommentSingleLine,
         CommentMultiLine,
@@ -372,7 +558,7 @@ libj::Token libj::Lexer::read_token()
             {
                 // Number literal
                 buffer += c;
-                state = LexState::NumberLiteral;
+                state = LexState::IntegerLiteral;
                 continue;
             }
             else if (c == '"' || c == '\'')
@@ -421,24 +607,32 @@ libj::Token libj::Lexer::read_token()
             m_tok = Token(TokenType::Identifier, buffer, m_loc - buffer.size());
             return m_tok.value();
         }
-        case LexState::NumberLiteral:
+        case LexState::IntegerLiteral:
         {
             // match [0-9.]
-            if (std::isdigit(c) || c == '.')
+            if (std::isdigit(c) || c == '.' || c == 'x' || c == 'b' || c == 'd' || c == 'o' || c == 'e' )
             {
                 buffer += c;
                 continue;
             }
 
-            try
+            auto type = check_number_literal_type(buffer);
+
+            if (type == NumberLiteralType::Floating)
             {
-                // Parse the number
-                m_tok = Token(TokenType::NumberLiteral, std::stoull(buffer), m_loc - buffer.size());
+                m_tok = Token(TokenType::FloatingLiteral, normalize_float(buffer), m_loc - buffer.size());
             }
-            catch (std::invalid_argument &)
+            else if (type != NumberLiteralType::Invalid)
             {
-                // Invalid number
-                m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
+                std::string norm;
+                if (!normalize_number_literal(buffer, norm, type))
+                {
+                    m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
+                }
+
+                std::cout << "norm: " << norm << std::endl;
+
+                m_tok = Token(TokenType::IntegerLiteral, norm, m_loc - buffer.size());
             }
 
             m_last = c;

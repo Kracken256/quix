@@ -125,7 +125,8 @@ namespace libj
         Keyword,
         Operator,
 
-        NumberLiteral,
+        IntegerLiteral,
+        FloatingLiteral,
         StringLiteral,
         CharLiteral,
 
@@ -134,7 +135,7 @@ namespace libj
         Comment
     };
 
-    typedef std::variant<std::string, uint64_t, Punctor, Keyword, Operator> TokVal;
+    typedef std::variant<std::string, Punctor, Keyword, Operator> TokVal;
 
     struct Loc
     {

@@ -273,10 +273,7 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     libj::Parser parser;
     libj::message(*job, libj::Err::DEBUG, "Building AST 1");
     if (!parser.parse(*job, lexer, ast))
-    {
-        libj::message(*job, libj::Err::ERROR, "failed to parse source");
         goto error;
-    }
     libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
     libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (base64 JSON): %s",
                   base64_encode(ast.to_json()).c_str());

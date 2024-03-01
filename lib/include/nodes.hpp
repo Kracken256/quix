@@ -9,8 +9,8 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/IR/Value.h>
 #include <llvm-ctx.hpp>
+#include <lex.hpp>
 
 namespace libj
 {
@@ -37,6 +37,8 @@ namespace libj
     public:
         ConstExprNode() = default;
         virtual ~ConstExprNode() = default;
+
+        virtual llvm::Constant *codegen(LLVMContext &ctx) const = 0;
     };
 
     class StmtNode : public ParseNode
@@ -193,6 +195,72 @@ namespace libj
         std::shared_ptr<ParseNode> clone() const override;
     };
 
+    class F32TypeNode : public BasicTypeNode
+    {
+    public:
+        F32TypeNode() = default;
+        virtual ~F32TypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
+    class F64TypeNode : public BasicTypeNode
+    {
+    public:
+        F64TypeNode() = default;
+        virtual ~F64TypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
+    class BoolTypeNode : public BasicTypeNode
+    {
+    public:
+        BoolTypeNode() = default;
+        virtual ~BoolTypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
+    class CharTypeNode : public BasicTypeNode
+    {
+    public:
+        CharTypeNode() = default;
+        virtual ~CharTypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
+    class StringTypeNode : public BasicTypeNode
+    {
+    public:
+        StringTypeNode() = default;
+        virtual ~StringTypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
+    class VoidTypeNode : public BasicTypeNode
+    {
+    public:
+        VoidTypeNode() = default;
+        virtual ~VoidTypeNode() = default;
+
+        std::string to_json() const override;
+        llvm::Type *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+    };
+
     ///=========================================================================
 
     class VarDeclNode : public DeclNode
@@ -229,6 +297,119 @@ namespace libj
         std::shared_ptr<ExprNode> m_init;
     };
 
-};
+    /// =========================================================================
+
+    class LiteralNode : public ConstExprNode
+    {
+    public:
+        LiteralNode() = default;
+        virtual ~LiteralNode() = default;
+    };
+
+    class IntegerLiteralNode : public LiteralNode
+    {
+    public:
+        IntegerLiteralNode() = default;
+        IntegerLiteralNode(const std::string &val) : m_val(val) {}
+        virtual ~IntegerLiteralNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_val;
+    };
+
+    class FloatLiteralNode : public LiteralNode
+    {
+    public:
+        FloatLiteralNode() = default;
+        FloatLiteralNode(const std::string &val) : m_val(val) {}
+        virtual ~FloatLiteralNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_val;
+    };
+
+    class StringLiteralNode : public LiteralNode
+    {
+    public:
+        StringLiteralNode() = default;
+        StringLiteralNode(const std::string &val) : m_val(val) {}
+        virtual ~StringLiteralNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_val;
+    };
+
+    class CharLiteralNode : public LiteralNode
+    {
+    public:
+        CharLiteralNode() = default;
+        CharLiteralNode(const std::string &val) : m_val(val) {}
+        virtual ~CharLiteralNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_val;
+    };
+
+    class IdentifierNode : public ExprNode
+    {
+    public:
+        IdentifierNode() = default;
+        IdentifierNode(const std::string &name) : m_name(name) {}
+        virtual ~IdentifierNode() = default;
+
+        std::string to_json() const override;
+        llvm::Value *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_name;
+    };
+
+    /// =========================================================================
+
+    class ConstUnaryExprNode : public ConstExprNode
+    {
+    public:
+        ConstUnaryExprNode() = default;
+        ConstUnaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &expr) : m_op(op), m_expr(expr) {}
+        virtual ~ConstUnaryExprNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        Operator m_op;
+        std::shared_ptr<ConstExprNode> m_expr;
+    };
+
+    class ConstBinaryExprNode : public ConstExprNode
+    {
+    public:
+        ConstBinaryExprNode() = default;
+        ConstBinaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &lhs, const std::shared_ptr<ConstExprNode> &rhs)
+            : m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+        virtual ~ConstBinaryExprNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        Operator m_op;
+        std::shared_ptr<ConstExprNode> m_lhs;
+        std::shared_ptr<ConstExprNode> m_rhs;
+    };
+
+} // namespace libj
 
 #endif // __J_CC_PARSE_TREE_H__

@@ -119,3 +119,93 @@ std::shared_ptr<libj::ParseNode> libj::I64TypeNode::clone() const
 {
     return std::make_shared<I64TypeNode>(*this);
 }
+
+std::string libj::F32TypeNode::to_json() const
+{
+    return "{\"type\":\"F32TypeNode\"}";
+}
+
+llvm::Type *libj::F32TypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getFloatTy(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::F32TypeNode::clone() const
+{
+    return std::make_shared<F32TypeNode>(*this);
+}
+
+std::string libj::F64TypeNode::to_json() const
+{
+    return "{\"type\":\"F64TypeNode\"}";
+}
+
+llvm::Type *libj::F64TypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getDoubleTy(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::F64TypeNode::clone() const
+{
+    return std::make_shared<F64TypeNode>(*this);
+}
+
+std::string libj::BoolTypeNode::to_json() const
+{
+    return "{\"type\":\"BoolTypeNode\"}";
+}
+
+llvm::Type *libj::BoolTypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getInt1Ty(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::BoolTypeNode::clone() const
+{
+    return std::make_shared<BoolTypeNode>(*this);
+}
+
+std::string libj::CharTypeNode::to_json() const
+{
+    return "{\"type\":\"CharTypeNode\"}";
+}
+
+llvm::Type *libj::CharTypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getInt8Ty(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::CharTypeNode::clone() const
+{
+    return std::make_shared<CharTypeNode>(*this);
+}
+
+std::string libj::StringTypeNode::to_json() const
+{
+    return "{\"type\":\"StringTypeNode\"}";
+}
+
+llvm::Type *libj::StringTypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getInt8PtrTy(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::StringTypeNode::clone() const
+{
+    return std::make_shared<StringTypeNode>(*this);
+}
+
+std::string libj::VoidTypeNode::to_json() const
+{
+    return "{\"type\":\"VoidTypeNode\"}";
+}
+
+llvm::Type *libj::VoidTypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::Type::getVoidTy(*ctx.m_ctx);
+}
+
+std::shared_ptr<libj::ParseNode> libj::VoidTypeNode::clone() const
+{
+    return std::make_shared<VoidTypeNode>(*this);
+}

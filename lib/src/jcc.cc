@@ -65,8 +65,6 @@ LIB_EXPORT jcc_job_t *jcc_new()
 
     job->m_id = jcc_uuid();
 
-    job->m_inner = new libj::LLVMContext();
-
     return job;
 }
 
@@ -242,8 +240,10 @@ static std::string base64_encode(const std::string &in)
 
 LIB_EXPORT bool jcc_run(jcc_job_t *job)
 {
-    if (!job->m_in || !job->m_out)
+    if (!job->m_in || !job->m_out || !job->m_filename || job->m_inner != nullptr)
         return false;
+
+    job->m_inner = new libj::LLVMContext(job->m_filename);
 
     // Allocate memory for the result
     job->m_result = (jcc_result_t *)safe_malloc(sizeof(jcc_result_t));

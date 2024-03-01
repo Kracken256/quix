@@ -1,5 +1,20 @@
 #include <parse.hpp>
 
+/*
+    * U8
+    * U16
+    * U32
+    * U64
+    * I8
+    * I16
+    * I32
+    * I64
+    * F32 = C float
+    * F64 = C double
+    * Bool = C bool
+    * Char = C char
+*/
+
 std::string libj::U8TypeNode::to_json() const
 {
     return "{\"type\":\"u8\"}";
@@ -178,21 +193,6 @@ llvm::Type *libj::CharTypeNode::codegen(libj::LLVMContext &ctx) const
 std::shared_ptr<libj::ParseNode> libj::CharTypeNode::clone() const
 {
     return std::make_shared<CharTypeNode>(*this);
-}
-
-std::string libj::StringTypeNode::to_json() const
-{
-    return "{\"type\":\"StringTypeNode\"}";
-}
-
-llvm::Type *libj::StringTypeNode::codegen(libj::LLVMContext &ctx) const
-{
-    return llvm::Type::getInt8PtrTy(*ctx.m_ctx);
-}
-
-std::shared_ptr<libj::ParseNode> libj::StringTypeNode::clone() const
-{
-    return std::make_shared<StringTypeNode>(*this);
 }
 
 std::string libj::VoidTypeNode::to_json() const

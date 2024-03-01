@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <regex>
 #include <cmath>
-#include <iostream>
 
 ///=============================================================================
 
@@ -629,8 +628,6 @@ libj::Token libj::Lexer::read_token()
                 {
                     m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
                 }
-
-                std::cout << "norm: " << norm << std::endl;
 
                 m_tok = Token(TokenType::IntegerLiteral, norm, m_loc - buffer.size());
             }

@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 file(GLOB_RECURSE JCC_CXX_SOURCES "src/*.cc")
 
 add_executable(jcc ${JCC_CXX_SOURCES})
-target_include_directories(jcc PRIVATE "src" ${CMAKE_CURRENT_SOURCE_DIR}/../lib/public)
+target_include_directories(jcc PRIVATE "src" ${CMAKE_CURRENT_SOURCE_DIR}/../lib/include)
 target_compile_options(jcc PRIVATE -g -Wall -Wextra -Wpedantic -Werror -O3 -flto)
 target_link_options(jcc PRIVATE -flto)
 target_link_directories(jcc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../lib)

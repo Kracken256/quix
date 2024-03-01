@@ -28,10 +28,10 @@ namespace libj
         std::shared_ptr<llvm::IRBuilder<>> m_builder;
         std::map<std::string, llvm::Value *> m_named_values;
 
-        LLVMContext()
+        LLVMContext(const std::string &filename)
         {
             m_ctx = std::make_shared<llvm::LLVMContext>();
-            m_module = std::make_shared<llvm::Module>(generate_module_name().c_str(), *m_ctx);
+            m_module = std::make_shared<llvm::Module>(filename, *m_ctx);
             m_builder = std::make_shared<llvm::IRBuilder<>>(*m_ctx);
         }
     };

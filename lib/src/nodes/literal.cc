@@ -53,7 +53,6 @@ std::string libj::FloatLiteralNode::to_json() const
 
 llvm::Constant *libj::FloatLiteralNode::codegen(libj::LLVMContext &ctx) const
 {
-    // determine if the value is can fit in a 32-bit float
     if (get_numbits(m_val) > 32)
         return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(std::stod(m_val)));
 

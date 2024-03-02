@@ -1,4 +1,4 @@
-#include <parse/parser.hpp>
+#include <parse/nodes/literal.hpp>
 
 static uint8_t get_numbits(const std::string &s)
 {
@@ -7,11 +7,10 @@ static uint8_t get_numbits(const std::string &s)
         float f0 = std::stof(s);
         float f1 = std::stod(s);
         const double delta = 0.0001;
-        
+
         if (std::abs(f0 - f1) < delta)
             return 32;
         return 64;
-
     }
 
     uint64_t val = std::stoull(s);
@@ -92,19 +91,4 @@ llvm::Constant *libj::CharLiteralNode::codegen(libj::LLVMContext &ctx) const
 std::shared_ptr<libj::ParseNode> libj::CharLiteralNode::clone() const
 {
     return std::make_shared<CharLiteralNode>(*this);
-}
-
-std::string libj::IdentifierNode::to_json() const
-{
-    return "{\"type\":\"identifier\",\"name\":\"" + m_name + "\"}";
-}
-
-llvm::Value *libj::IdentifierNode::codegen(libj::LLVMContext &ctx) const
-{
-    return ctx.m_named_values.at(m_name);
-}
-
-std::shared_ptr<libj::ParseNode> libj::IdentifierNode::clone() const
-{
-    return std::make_shared<IdentifierNode>(*this);
 }

@@ -6,7 +6,7 @@
 #endif
 
 #include <lexer/lex.hpp>
-#include <parse/nodes.hpp>
+#include <parse/nodes/nodes.hpp>
 #include <jcc.h>
 
 namespace libj

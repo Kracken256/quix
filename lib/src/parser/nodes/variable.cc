@@ -1,4 +1,4 @@
-#include <parse/parser.hpp>
+#include <parse/nodes/variable.hpp>
 
 std::string libj::VarDeclNode::to_json() const
 {

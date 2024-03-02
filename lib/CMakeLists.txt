@@ -8,16 +8,29 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Find C++20 source files
 file(GLOB_RECURSE LIBJ_CXX_SOURCES "src/*.cc")
 
-add_library(libj-static STATIC ${LIBJ_CXX_SOURCES})
-target_include_directories(libj-static PUBLIC include)
-target_compile_options(libj-static PRIVATE -O3 -Wall -Wextra -Werror -Wpedantic -flto -fvisibility=hidden -fvisibility-inlines-hidden -fno-rtti)
-target_link_options(libj-static PRIVATE -flto)
-target_link_libraries(libj-static PRIVATE -lstdc++ -lm -lpthread -lstdc++fs)
-set_target_properties(libj-static PROPERTIES OUTPUT_NAME libj)
+# Get LLVM flags from llvm-config --cxxflags
+execute_process(COMMAND llvm-config --cxxflags
+                OUTPUT_VARIABLE LLVM_CXX_FLAGS
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-add_library(libj-shared SHARED ${LIBJ_CXX_SOURCES})
-target_include_directories(libj-shared PUBLIC include)
-target_compile_options(libj-shared PRIVATE -O3 -Wall -Wextra -Werror -Wpedantic -flto -fvisibility=hidden -fvisibility-inlines-hidden -fno-rtti)
-target_link_options(libj-shared PRIVATE -flto)
-target_link_libraries(libj-shared PRIVATE -lstdc++ -lm -lpthread -lstdc++fs)
-set_target_properties(libj-shared PROPERTIES OUTPUT_NAME libj)
+# Get LLVM flags from llvm-config --ldflags 
+execute_process(COMMAND llvm-config --ldflags
+OUTPUT_VARIABLE LLVM_LD_FLAGS
+OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Get LLVM flags from llvm-config  --libs
+execute_process(COMMAND llvm-config --libs --system-libs
+OUTPUT_VARIABLE LLVM_LIBS
+OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Get random number
+execute_process(COMMAND echo -n 0x | openssl rand -hex 4
+OUTPUT_VARIABLE RANDOM_NUMBER
+OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+add_library(j-shared SHARED ${LIBJ_CXX_SOURCES})
+target_include_directories(j-shared PUBLIC "internal" include)
+target_compile_options(j-shared PRIVATE -g -O3 -flto -Wall -Wextra -Wpedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable)
+target_link_options(j-shared PRIVATE ${LLVM_LD_FLAGS})
+target_link_libraries(j-shared PRIVATE -lstdc++ -lm -lpthread -lstdc++fs -lcrypto ${LLVM_LIBS})
+set_target_properties(j-shared PROPERTIES OUTPUT_NAME j)

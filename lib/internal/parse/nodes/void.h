@@ -9,15 +9,15 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <parse/nodes/basic.hpp>
+#include <llvm/llvm-ctx.h>
+#include <parse/nodes/basic.h>
 
 namespace libj
 {
     class VoidTypeNode : public BasicTypeNode
     {
     public:
-        VoidTypeNode() = default;
+        VoidTypeNode() { ntype = NodeType::VoidTypeNode; }
         virtual ~VoidTypeNode() = default;
 
         std::string to_json() const override;

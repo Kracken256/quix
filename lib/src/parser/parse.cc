@@ -1,5 +1,5 @@
-#include <parse/parser.hpp>
-#include <error/message.hpp>
+#include <parse/parser.h>
+#include <error/message.h>
 #include <iostream>
 #include <macro.h>
 

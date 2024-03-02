@@ -1,4 +1,4 @@
-#include <parse/nodes/identifier.hpp>
+#include <parse/nodes/identifier.h>
 
 std::string libj::IdentifierNode::to_json() const
 {

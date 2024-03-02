@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <lexer/lex.hpp>
+#include <lexer/lex.h>
 #include <map>
 #include <string>
 #include <cstdio>

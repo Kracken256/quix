@@ -1,4 +1,4 @@
-#include <parse/nodes/integer.hpp>
+#include <parse/nodes/integer.h>
 
 /*
     * U8

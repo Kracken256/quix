@@ -9,15 +9,15 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <parse/nodes/basic.hpp>
+#include <llvm/llvm-ctx.h>
+#include <parse/nodes/basic.h>
 
 namespace libj
 {
     class U8TypeNode : public BasicTypeNode
     {
     public:
-        U8TypeNode() = default;
+        U8TypeNode() { ntype = NodeType::U8TypeNode; }
         virtual ~U8TypeNode() = default;
 
         std::string to_json() const override;
@@ -28,7 +28,7 @@ namespace libj
     class U16TypeNode : public BasicTypeNode
     {
     public:
-        U16TypeNode() = default;
+        U16TypeNode() { ntype = NodeType::U16TypeNode; }
         virtual ~U16TypeNode() = default;
 
         std::string to_json() const override;
@@ -39,7 +39,7 @@ namespace libj
     class U32TypeNode : public BasicTypeNode
     {
     public:
-        U32TypeNode() = default;
+        U32TypeNode() { ntype = NodeType::U32TypeNode; }
         virtual ~U32TypeNode() = default;
 
         std::string to_json() const override;
@@ -50,7 +50,7 @@ namespace libj
     class U64TypeNode : public BasicTypeNode
     {
     public:
-        U64TypeNode() = default;
+        U64TypeNode() { ntype = NodeType::U64TypeNode; }
         virtual ~U64TypeNode() = default;
 
         std::string to_json() const override;
@@ -61,7 +61,7 @@ namespace libj
     class I8TypeNode : public BasicTypeNode
     {
     public:
-        I8TypeNode() = default;
+        I8TypeNode() { ntype = NodeType::I8TypeNode; }
         virtual ~I8TypeNode() = default;
 
         std::string to_json() const override;
@@ -72,7 +72,7 @@ namespace libj
     class I16TypeNode : public BasicTypeNode
     {
     public:
-        I16TypeNode() = default;
+        I16TypeNode() { ntype = NodeType::I16TypeNode; }
         virtual ~I16TypeNode() = default;
 
         std::string to_json() const override;
@@ -83,7 +83,7 @@ namespace libj
     class I32TypeNode : public BasicTypeNode
     {
     public:
-        I32TypeNode() = default;
+        I32TypeNode() { ntype = NodeType::I32TypeNode; }
         virtual ~I32TypeNode() = default;
 
         std::string to_json() const override;
@@ -94,7 +94,7 @@ namespace libj
     class I64TypeNode : public BasicTypeNode
     {
     public:
-        I64TypeNode() = default;
+        I64TypeNode() { ntype = NodeType::I64TypeNode; }
         virtual ~I64TypeNode() = default;
 
         std::string to_json() const override;
@@ -105,7 +105,7 @@ namespace libj
     class F32TypeNode : public BasicTypeNode
     {
     public:
-        F32TypeNode() = default;
+        F32TypeNode() { ntype = NodeType::F32TypeNode; }
         virtual ~F32TypeNode() = default;
 
         std::string to_json() const override;
@@ -116,7 +116,7 @@ namespace libj
     class F64TypeNode : public BasicTypeNode
     {
     public:
-        F64TypeNode() = default;
+        F64TypeNode() { ntype = NodeType::F64TypeNode; }
         virtual ~F64TypeNode() = default;
 
         std::string to_json() const override;
@@ -127,7 +127,7 @@ namespace libj
     class BoolTypeNode : public BasicTypeNode
     {
     public:
-        BoolTypeNode() = default;
+        BoolTypeNode() { ntype = NodeType::BoolTypeNode; }
         virtual ~BoolTypeNode() = default;
 
         std::string to_json() const override;
@@ -138,7 +138,7 @@ namespace libj
     class CharTypeNode : public BasicTypeNode
     {
     public:
-        CharTypeNode() = default;
+        CharTypeNode() { ntype = NodeType::CharTypeNode; }
         virtual ~CharTypeNode() = default;
 
         std::string to_json() const override;

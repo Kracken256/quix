@@ -9,17 +9,17 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <parse/nodes/basic.hpp>
+#include <llvm/llvm-ctx.h>
+#include <parse/nodes/basic.h>
 
 namespace libj
 {
     class VarDeclNode : public DeclNode
     {
     public:
-        VarDeclNode() = default;
+        VarDeclNode() { ntype = NodeType::VarDeclNode; }
         VarDeclNode(const std::string &name, const std::shared_ptr<TypeNode> &type, const std::shared_ptr<ConstExprNode> &init)
-            : m_name(name), m_type(type), m_init(init) {}
+            : m_name(name), m_type(type), m_init(init) { ntype = NodeType::VarDeclNode; }
         virtual ~VarDeclNode() = default;
 
         std::string to_json() const override;
@@ -34,9 +34,9 @@ namespace libj
     class LetDeclNode : public DeclNode
     {
     public:
-        LetDeclNode() = default;
+        LetDeclNode() { ntype = NodeType::LetDeclNode; }
         LetDeclNode(const std::string &name, const std::shared_ptr<TypeNode> &type, const std::shared_ptr<ConstExprNode> &init)
-            : m_name(name), m_type(type), m_init(init) {}
+            : m_name(name), m_type(type), m_init(init) { ntype = NodeType::LetDeclNode; }
         virtual ~LetDeclNode() = default;
 
         std::string to_json() const override;

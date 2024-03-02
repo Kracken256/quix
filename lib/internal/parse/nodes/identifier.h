@@ -9,16 +9,16 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <parse/nodes/basic.hpp>
+#include <llvm/llvm-ctx.h>
+#include <parse/nodes/basic.h>
 
 namespace libj
 {
     class IdentifierNode : public ExprNode
     {
     public:
-        IdentifierNode() = default;
-        IdentifierNode(const std::string &name) : m_name(name) {}
+        IdentifierNode() { ntype = NodeType::IdentifierNode; }
+        IdentifierNode(const std::string &name) : m_name(name) { ntype = NodeType::IdentifierNode; }
         virtual ~IdentifierNode() = default;
 
         std::string to_json() const override;

@@ -6,11 +6,11 @@
 #include <iostream>
 #include <openssl/rand.h>
 
-#include <llvm/llvm-ctx.hpp>
-#include <generate/generate.hpp>
-#include <lexer/lex.hpp>
-#include <error/message.hpp>
-#include <parse/parser.hpp>
+#include <llvm/llvm-ctx.h>
+#include <generate/generate.h>
+#include <lexer/lex.h>
+#include <error/message.h>
+#include <parse/parser.h>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
 

@@ -1,4 +1,4 @@
-#include <parse/nodes/void.hpp>
+#include <parse/nodes/void.h>
 
 std::string libj::VoidTypeNode::to_json() const
 {

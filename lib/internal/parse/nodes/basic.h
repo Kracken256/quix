@@ -9,10 +9,53 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
+#include <llvm/llvm-ctx.h>
 
 namespace libj
 {
+    enum class NodeType
+    {
+        ParseNode,
+        ExprNode,
+        ConstExprNode,
+        StmtNode,
+        TypeNode,
+        RootNode,
+        DeclNode,
+        DefNode,
+        BlockNode,
+        BasicTypeNode,
+
+        ConstUnaryExprNode,
+        ConstBinaryExprNode,
+
+        IdentifierNode,
+
+        U8TypeNode,
+        U16TypeNode,
+        U32TypeNode,
+        U64TypeNode,
+        I8TypeNode,
+        I16TypeNode,
+        I32TypeNode,
+        I64TypeNode,
+        F32TypeNode,
+        F64TypeNode,
+        BoolTypeNode,
+        CharTypeNode,
+        VoidTypeNode,
+        StringTypeNode,
+
+        LiteralNode,
+        IntegerLiteralNode,
+        FloatLiteralNode,
+        StringLiteralNode,
+        CharLiteralNode,
+
+        VarDeclNode,
+        LetDeclNode,
+    };
+
     class ParseNode
     {
     public:
@@ -20,6 +63,8 @@ namespace libj
         virtual ~ParseNode() = default;
         virtual std::string to_json() const = 0;
         virtual std::shared_ptr<ParseNode> clone() const = 0;
+
+        NodeType ntype = NodeType::ParseNode;
     };
 
     class ExprNode : public ParseNode
@@ -34,7 +79,7 @@ namespace libj
     class ConstExprNode : public ExprNode
     {
     public:
-        ConstExprNode() = default;
+        ConstExprNode() { ntype = NodeType::ConstExprNode; }
         virtual ~ConstExprNode() = default;
 
         virtual llvm::Constant *codegen(LLVMContext &ctx) const = 0;
@@ -43,7 +88,7 @@ namespace libj
     class StmtNode : public ParseNode
     {
     public:
-        StmtNode() = default;
+        StmtNode() { ntype = NodeType::StmtNode; }
         virtual ~StmtNode() = default;
 
         virtual llvm::Value *codegen(LLVMContext &ctx) const = 0;
@@ -52,7 +97,7 @@ namespace libj
     class TypeNode : public ParseNode
     {
     public:
-        TypeNode() = default;
+        TypeNode() { ntype = NodeType::TypeNode; }
         virtual ~TypeNode() = default;
 
         virtual llvm::Type *codegen(LLVMContext &ctx) const = 0;
@@ -61,7 +106,7 @@ namespace libj
     class RootNode : public ParseNode
     {
     public:
-        RootNode() = default;
+        RootNode() { ntype = NodeType::RootNode; }
         virtual ~RootNode() = default;
 
         virtual std::string to_json() const override;
@@ -73,21 +118,21 @@ namespace libj
     class DeclNode : public StmtNode
     {
     public:
-        DeclNode() = default;
+        DeclNode() { ntype = NodeType::DeclNode; }
         virtual ~DeclNode() = default;
     };
 
     class DefNode : public StmtNode
     {
     public:
-        DefNode() = default;
+        DefNode() { ntype = NodeType::DefNode; }
         virtual ~DefNode() = default;
     };
 
     class BlockNode : public StmtNode
     {
     public:
-        BlockNode() = default;
+        BlockNode() { ntype = NodeType::BlockNode; }
         virtual ~BlockNode() = default;
 
         std::vector<std::shared_ptr<StmtNode>> m_stmts;
@@ -98,7 +143,7 @@ namespace libj
     class BasicTypeNode : public TypeNode
     {
     public:
-        BasicTypeNode() = default;
+        BasicTypeNode() { ntype = NodeType::BasicTypeNode; }
         virtual ~BasicTypeNode() = default;
     };
 }

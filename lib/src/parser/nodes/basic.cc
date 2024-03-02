@@ -1,4 +1,4 @@
-#include <parse/nodes/basic.hpp>
+#include <parse/nodes/basic.h>
 
 std::string libj::RootNode::to_json() const
 {

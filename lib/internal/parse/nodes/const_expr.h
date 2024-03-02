@@ -9,18 +9,18 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <lexer/token.hpp>
-#include <parse/nodes/basic.hpp>
-#include <parse/nodes/literal.hpp>
+#include <llvm/llvm-ctx.h>
+#include <lexer/token.h>
+#include <parse/nodes/basic.h>
+#include <parse/nodes/literal.h>
 
 namespace libj
 {
     class ConstUnaryExprNode : public ConstExprNode
     {
     public:
-        ConstUnaryExprNode() = default;
-        ConstUnaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &expr) : m_op(op), m_expr(expr) {}
+        ConstUnaryExprNode() { ntype = NodeType::ConstUnaryExprNode; }
+        ConstUnaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &expr) : m_op(op), m_expr(expr) { ntype = NodeType::ConstUnaryExprNode; }
         virtual ~ConstUnaryExprNode() = default;
 
         std::string to_json() const override;
@@ -34,9 +34,9 @@ namespace libj
     class ConstBinaryExprNode : public ConstExprNode
     {
     public:
-        ConstBinaryExprNode() = default;
+        ConstBinaryExprNode() { ntype = NodeType::ConstBinaryExprNode; }
         ConstBinaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &lhs, const std::shared_ptr<ConstExprNode> &rhs)
-            : m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+            : m_op(op), m_lhs(lhs), m_rhs(rhs) { ntype = NodeType::ConstBinaryExprNode; }
         virtual ~ConstBinaryExprNode() = default;
 
         std::string to_json() const override;

@@ -9,23 +9,23 @@
 #include <vector>
 #include <memory>
 
-#include <llvm/llvm-ctx.hpp>
-#include <parse/nodes/basic.hpp>
+#include <llvm/llvm-ctx.h>
+#include <parse/nodes/basic.h>
 
 namespace libj
 {
     class LiteralNode : public ConstExprNode
     {
     public:
-        LiteralNode() = default;
+        LiteralNode() { ntype = NodeType::LiteralNode; }
         virtual ~LiteralNode() = default;
     };
 
     class IntegerLiteralNode : public LiteralNode
     {
     public:
-        IntegerLiteralNode() = default;
-        IntegerLiteralNode(const std::string &val) : m_val(val) {}
+        IntegerLiteralNode() { ntype = NodeType::IntegerLiteralNode; }
+        IntegerLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::IntegerLiteralNode; }
         virtual ~IntegerLiteralNode() = default;
 
         std::string to_json() const override;
@@ -38,8 +38,8 @@ namespace libj
     class FloatLiteralNode : public LiteralNode
     {
     public:
-        FloatLiteralNode() = default;
-        FloatLiteralNode(const std::string &val) : m_val(val) {}
+        FloatLiteralNode() { ntype = NodeType::FloatLiteralNode; }
+        FloatLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::FloatLiteralNode; }
         virtual ~FloatLiteralNode() = default;
 
         std::string to_json() const override;
@@ -52,8 +52,8 @@ namespace libj
     class StringLiteralNode : public LiteralNode
     {
     public:
-        StringLiteralNode() = default;
-        StringLiteralNode(const std::string &val) : m_val(val) {}
+        StringLiteralNode() { ntype = NodeType::StringLiteralNode; }
+        StringLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::StringLiteralNode; }
         virtual ~StringLiteralNode() = default;
 
         std::string to_json() const override;
@@ -66,8 +66,8 @@ namespace libj
     class CharLiteralNode : public LiteralNode
     {
     public:
-        CharLiteralNode() = default;
-        CharLiteralNode(const std::string &val) : m_val(val) {}
+        CharLiteralNode() { ntype = NodeType::CharLiteralNode; }
+        CharLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::CharLiteralNode; }
         virtual ~CharLiteralNode() = default;
 
         std::string to_json() const override;

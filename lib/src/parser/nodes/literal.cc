@@ -1,4 +1,4 @@
-#include <parse/nodes/literal.hpp>
+#include <parse/nodes/literal.h>
 
 static uint8_t get_numbits(const std::string &s)
 {

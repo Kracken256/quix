@@ -1,4 +1,4 @@
-#include <parse/nodes/string.hpp>
+#include <parse/nodes/string.h>
 
 std::string libj::StringTypeNode::to_json() const
 {

@@ -1,4 +1,5 @@
-#include <parse/nodes/variable.hpp>
+#include <parse/nodes/variable.h>
+#include <mangle/symbol.h>
 
 std::string libj::VarDeclNode::to_json() const
 {
@@ -32,7 +33,7 @@ llvm::Value *libj::VarDeclNode::codegen(libj::LLVMContext &ctx) const
         }
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, m_name);
+    return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, m_name);
 }
 
 std::shared_ptr<libj::ParseNode> libj::VarDeclNode::clone() const
@@ -72,7 +73,7 @@ llvm::Value *libj::LetDeclNode::codegen(libj::LLVMContext &ctx) const
         }
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, true, llvm::GlobalValue::ExternalLinkage, init, m_name);
+    return new llvm::GlobalVariable(*ctx.m_module, type, true, llvm::GlobalValue::PrivateLinkage, init, m_name);
 }
 
 std::shared_ptr<libj::ParseNode> libj::LetDeclNode::clone() const

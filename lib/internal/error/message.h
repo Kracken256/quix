@@ -7,8 +7,8 @@
 
 #include <string>
 #include <jcc.h>
-#include <lexer/token.hpp>
-#include <error/messages.hpp>
+#include <lexer/token.h>
+#include <error/messages.h>
 
 namespace libj
 {

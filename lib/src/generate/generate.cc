@@ -1,7 +1,7 @@
-#include <generate/generate.hpp>
+#include <generate/generate.h>
 #include <stdlib.h>
-#include "llvm/llvm-ctx.hpp"
-#include <error/message.hpp>
+#include "llvm/llvm-ctx.h"
+#include <error/message.h>
 
 #include <llvm/IR/Verifier.h>
 

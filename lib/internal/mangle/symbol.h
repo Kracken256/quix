@@ -16,7 +16,8 @@ namespace libj
         Symbol() = delete;
 
     public:
-        static std::string mangle(const std::shared_ptr<DeclNode> node);
+        static std::string mangle(const std::shared_ptr<DeclNode> node, const std::string &prefix = "");
+        static std::string mangle(const DeclNode *node, const std::string &prefix = "");
 
         static std::shared_ptr<DeclNode> demangle(const std::string &mangled);
     };

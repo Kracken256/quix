@@ -29,6 +29,11 @@ namespace libj
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
         std::shared_ptr<ExprNode> m_init;
+
+        bool m_is_mut = false;
+        bool m_is_thread_local = false;
+        bool m_is_static = false;
+        bool m_is_deprecated = false;
     };
 
     class LetDeclNode : public DeclNode

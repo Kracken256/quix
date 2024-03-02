@@ -70,7 +70,13 @@ std::string libj::StringLiteralNode::to_json() const
 
 llvm::Constant *libj::StringLiteralNode::codegen(libj::LLVMContext &ctx) const
 {
-    return ctx.m_builder->CreateGlobalStringPtr(m_val);
+    auto str = llvm::ConstantDataArray::getString(*ctx.m_ctx, m_val);
+
+    auto global = new llvm::GlobalVariable(*ctx.m_module, str->getType(), true, llvm::GlobalValue::InternalLinkage, str);
+
+    llvm::Constant *zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*ctx.m_ctx));
+    llvm::Constant *indices[] = {zero, zero};
+    return llvm::ConstantExpr::getGetElementPtr(str->getType(), global, indices, true);
 }
 
 std::shared_ptr<libj::ParseNode> libj::StringLiteralNode::clone() const

@@ -30,7 +30,11 @@ OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 add_library(j-shared SHARED ${LIBJ_CXX_SOURCES})
 target_include_directories(j-shared PUBLIC "internal" include)
-target_compile_options(j-shared PRIVATE -g -O3 -flto -Wall -Wextra -Wpedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fvisibility=hidden)
+target_compile_options(j-shared PRIVATE -g -Wall -Wextra -Wpedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC)
 target_link_options(j-shared PRIVATE ${LLVM_LD_FLAGS})
 target_link_libraries(j-shared PRIVATE -lstdc++ -lm -lpthread -lstdc++fs -lcrypto ${LLVM_LIBS})
 set_target_properties(j-shared PROPERTIES OUTPUT_NAME j)
+
+if (BUILD_TESTING)
+    add_subdirectory(test)
+endif()

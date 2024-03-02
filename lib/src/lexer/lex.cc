@@ -609,7 +609,7 @@ libj::Token libj::Lexer::read_token()
         case LexState::IntegerLiteral:
         {
             // match [0-9.]
-            if (std::isdigit(c) || c == '.' || c == 'x' || c == 'b' || c == 'd' || c == 'o' || c == 'e' )
+            if (std::isdigit(c) || c == '.' || c == 'x' || c == 'b' || c == 'd' || c == 'o' || c == 'e')
             {
                 buffer += c;
                 continue;
@@ -688,7 +688,44 @@ libj::Token libj::Lexer::read_token()
         {
             if (c != buffer[0])
             {
-                buffer += c;
+                // buffer += c;
+                // continue;
+                if (c == '\\')
+                {
+                    // escape sequence
+                    c = getc();
+                    switch (c)
+                    {
+                    case 'n':
+                        buffer += '\n';
+                        break;
+                    case 't':
+                        buffer += '\t';
+                        break;
+                    case 'r':
+                        buffer += '\r';
+                        break;
+                    case '0':
+                        buffer += '\0';
+                        break;
+                    case '\\':
+                        buffer += '\\';
+                        break;
+                    case '\'':
+                        buffer += '\'';
+                        break;
+                    case '\"':
+                        buffer += '\"';
+                        break;
+                    default:
+                        buffer += c;
+                        break;
+                    }
+                }
+                else
+                {
+                    buffer += c;
+                }
                 continue;
             }
 

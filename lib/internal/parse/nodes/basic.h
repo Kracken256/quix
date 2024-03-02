@@ -64,6 +64,8 @@ namespace libj
         virtual std::string to_json() const = 0;
         virtual std::shared_ptr<ParseNode> clone() const = 0;
 
+        virtual bool operator==(const ParseNode &other) const = default;
+
         NodeType ntype = NodeType::ParseNode;
     };
 

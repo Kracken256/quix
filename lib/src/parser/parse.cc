@@ -29,6 +29,10 @@ bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
             if (!parse_let(job, lexer, node))
                 return false;
             break;
+        case Keyword::Const:
+            if (!parse_const(job, lexer, node))
+                return false;
+            break;
         default:
             break;
         }

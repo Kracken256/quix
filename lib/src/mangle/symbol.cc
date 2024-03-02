@@ -1,8 +1,35 @@
 #include <mangle/symbol.h>
-
 #include <parse/nodes/nodes.h>
 
 const std::string abiprefix = "_ZJ0";
+
+static std::string wrap_tag(const std::string &tag)
+{
+    return std::to_string(tag.size()) + tag;
+}
+
+static bool unwrap_tags(const std::string &input, std::vector<std::string> &out)
+{
+    size_t i = 0;
+    while (i < input.size())
+    {
+        std::string len;
+        while (std::isdigit(input[i]))
+        {
+            len += input[i];
+            i++;
+        }
+
+        if (len.empty())
+            return false;
+
+        size_t l = std::stoi(len);
+        out.push_back(input.substr(i, l));
+        i += l;
+    }
+
+    return true;
+}
 
 static std::string serialize_ns(const std::string &ns)
 {
@@ -80,10 +107,20 @@ static std::string serialize_type(const libj::TypeNode *type)
     if (basic_typesmap.contains(type->ntype))
         return basic_typesmap[type->ntype];
 
+    if (type->ntype == NodeType::StructTypeNode)
+    {
+        auto st = static_cast<const StructTypeNode *>(type);
+        std::string s;
+        for (auto &field : st->m_fields)
+            s += wrap_tag(serialize_type(field.get()));
+
+        return "t" + s;
+    }
+
     return "";
 }
 
-static bool deserialize_type(const std::string &type, std::shared_ptr<libj::TypeNode> out)
+static std::shared_ptr<libj::TypeNode> deserialize_type(const std::string &type)
 {
     using namespace libj;
 
@@ -105,40 +142,27 @@ static bool deserialize_type(const std::string &type, std::shared_ptr<libj::Type
     };
 
     if (basic_typesmap.contains(type))
+        return basic_typesmap[type];
+
+    if (type[0] == 't')
     {
-        out = basic_typesmap[type];
-        return true;
-    }
+        std::vector<std::string> fields;
+        if (!unwrap_tags(type.substr(1), fields))
+            return nullptr;
 
-    return false;
-}
-
-static std::string wrap_tag(const std::string &tag)
-{
-    return std::to_string(tag.size()) + tag;
-}
-
-static bool unwrap_tags(const std::string &input, std::vector<std::string> &out)
-{
-    size_t i = 0;
-    while (i < input.size())
-    {
-        std::string len;
-        while (std::isdigit(input[i]))
+        auto st = std::make_shared<StructTypeNode>();
+        for (auto &field : fields)
         {
-            len += input[i];
-            i++;
+            std::shared_ptr<TypeNode> t;
+            if ((t = deserialize_type(field)) == nullptr)
+                return nullptr;
+            st->m_fields.push_back(t);
         }
 
-        if (len.empty())
-            return false;
-
-        size_t l = std::stoi(len);
-        out.push_back(input.substr(i, l));
-        i += l;
+        return st;
     }
 
-    return true;
+    return nullptr;
 }
 
 std::string libj::Symbol::mangle(std::shared_ptr<libj::DeclNode> node, const std::string &prefix)
@@ -168,7 +192,40 @@ std::string libj::Symbol::mangle(const libj::DeclNode *node, const std::string &
             flags += "s";
         if (var->m_is_deprecated)
             flags += "d";
+        res += wrap_tag(flags);
 
+        return res;
+    }
+    case libj::NodeType::LetDeclNode:
+    {
+        res += "l";
+        auto var = static_cast<const libj::LetDeclNode *>(node);
+        res += wrap_tag(serialize_ns(prefix + var->m_name));
+        res += wrap_tag(serialize_type(var->m_type.get()));
+
+        std::string flags;
+        if (var->m_is_mut)
+            flags += "m";
+        if (var->m_is_thread_local)
+            flags += "t";
+        if (var->m_is_static)
+            flags += "s";
+        if (var->m_is_deprecated)
+            flags += "d";
+        res += wrap_tag(flags);
+
+        return res;
+    }
+    case libj::NodeType::ConstDeclNode:
+    {
+        res += "c";
+        auto var = static_cast<const libj::ConstDeclNode *>(node);
+        res += wrap_tag(serialize_ns(prefix + var->m_name));
+        res += wrap_tag(serialize_type(var->m_type.get()));
+
+        std::string flags;
+        if (var->m_is_deprecated)
+            flags += "d";
         res += wrap_tag(flags);
 
         return res;
@@ -183,7 +240,6 @@ std::string libj::Symbol::mangle(const libj::DeclNode *node, const std::string &
 
 std::shared_ptr<libj::DeclNode> libj::Symbol::demangle(const std::string &mangled)
 {
-    std::shared_ptr<libj::DeclNode> res;
     std::string input;
 
     if (!mangled.starts_with(abiprefix))
@@ -204,7 +260,7 @@ std::shared_ptr<libj::DeclNode> libj::Symbol::demangle(const std::string &mangle
 
             auto var = std::make_shared<libj::VarDeclNode>();
             var->m_name = deserialize_ns(parts[0]);
-            if (!deserialize_type(parts[1], var->m_type))
+            if ((var->m_type = deserialize_type(parts[1])) == nullptr)
                 return nullptr;
 
             std::string flags = parts[2];
@@ -231,7 +287,65 @@ std::shared_ptr<libj::DeclNode> libj::Symbol::demangle(const std::string &mangle
 
             return var;
         }
-        break;
+        case 'l':
+        {
+            if (!unwrap_tags(input.substr(1), parts))
+                return nullptr;
+
+            auto let = std::make_shared<libj::LetDeclNode>();
+            let->m_name = deserialize_ns(parts[0]);
+            if ((let->m_type = deserialize_type(parts[1])) == nullptr)
+                return nullptr;
+
+            std::string flags = parts[2];
+            for (size_t i = 0; i < flags.size(); i++)
+            {
+                switch (flags[i])
+                {
+                case 'm':
+                    let->m_is_mut = true;
+                    break;
+                case 't':
+                    let->m_is_thread_local = true;
+                    break;
+                case 's':
+                    let->m_is_static = true;
+                    break;
+                case 'd':
+                    let->m_is_deprecated = true;
+                    break;
+                default:
+                    return nullptr;
+                }
+            }
+
+            return let;
+        }
+        case 'c':
+        {
+            if (!unwrap_tags(input.substr(1), parts))
+                return nullptr;
+
+            auto con = std::make_shared<libj::ConstDeclNode>();
+            con->m_name = deserialize_ns(parts[0]);
+            if ((con->m_type = deserialize_type(parts[1])) == nullptr)
+                return nullptr;
+
+            std::string flags = parts[2];
+            for (size_t i = 0; i < flags.size(); i++)
+            {
+                switch (flags[i])
+                {
+                case 'd':
+                    con->m_is_deprecated = true;
+                    break;
+                default:
+                    return nullptr;
+                }
+            }
+
+            return con;
+        }
 
         default:
             break;

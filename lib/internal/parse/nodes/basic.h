@@ -46,6 +46,8 @@ namespace libj
         VoidTypeNode,
         StringTypeNode,
 
+        StructTypeNode,
+
         LiteralNode,
         IntegerLiteralNode,
         FloatLiteralNode,
@@ -54,6 +56,7 @@ namespace libj
 
         VarDeclNode,
         LetDeclNode,
+        ConstDeclNode,
     };
 
     class ParseNode

@@ -275,8 +275,8 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     if (!parser.parse(*job, lexer, ast))
         goto error;
     libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
-    libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (base64 JSON): %s",
-                  base64_encode(ast.to_json()).c_str());
+    if (job->m_debug)
+        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): %s", base64_encode(ast.to_json()).c_str());
     ///=========================================
     /// END: PARSER
     ///=========================================

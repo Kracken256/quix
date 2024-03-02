@@ -1,16 +1,15 @@
 #include <parse/nodes/literal.h>
 
+#include <iostream>
 static uint8_t get_numbits(const std::string &s)
 {
     if (s.find('.') != std::string::npos)
     {
         float f0 = std::stof(s);
-        float f1 = std::stod(s);
-        const double delta = 0.0001;
+        double f1 = std::stod(s);
+        const double delta = 0.0000001;
 
-        if (std::abs(f0 - f1) < delta)
-            return 32;
-        return 64;
+        return std::abs(f0 - f1) < delta ? 64 : 32;
     }
 
     uint64_t val = std::stoull(s);
@@ -53,9 +52,11 @@ std::string libj::FloatLiteralNode::to_json() const
 llvm::Constant *libj::FloatLiteralNode::codegen(libj::LLVMContext &ctx) const
 {
     if (get_numbits(m_val) > 32)
-        return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(std::stod(m_val)));
+    {
+        return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(llvm::APFloat::IEEEdouble(), m_val));
+    }
 
-    return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(std::stof(m_val)));
+    return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(llvm::APFloat::IEEEsingle(), m_val));
 }
 
 std::shared_ptr<libj::ParseNode> libj::FloatLiteralNode::clone() const

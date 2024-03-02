@@ -13,6 +13,7 @@ TEST(Mangle, Serialize) {
     EXPECT_EQ(str, "_ZJ0v5myVar2u00");
 
     auto varDecl2 = std::static_pointer_cast<VarDeclNode>(Symbol::demangle(str));
+    ASSERT_NE(varDecl2, nullptr);
 
     EXPECT_EQ(*varDecl, *varDecl2);
 }

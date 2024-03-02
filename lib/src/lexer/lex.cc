@@ -421,9 +421,7 @@ static std::string normalize_float(const std::string &input)
     size_t e_pos = input.find('e');
 
     if (e_pos == std::string::npos)
-    {
         return input;
-    }
 
     mantissa = std::stod(input.substr(0, e_pos));
     exponent = std::stod(input.substr(e_pos + 1));
@@ -609,7 +607,7 @@ libj::Token libj::Lexer::read_token()
         case LexState::IntegerLiteral:
         {
             // match [0-9.]
-            if (std::isdigit(c) || c == '.' || c == 'x' || c == 'b' || c == 'd' || c == 'o' || c == 'e')
+            if (std::isxdigit(c) || c == '.' || c == 'x' || c == 'b' || c == 'd' || c == 'o' || c == 'e')
             {
                 buffer += c;
                 continue;

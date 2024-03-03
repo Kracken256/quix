@@ -116,9 +116,14 @@ bool libj::PrepEngine::handle_import(Token &tok)
         return false;
     }
 
-    m_include_files.push_back(filepath);
-    m_stack.push({Lexer(), filepath, f});
-    m_stack.top().lexer.set_source(f, filepath);
+    if (!m_already_included.contains(filepath))
+    {
+        m_include_files.push_back(filepath);
+        m_stack.push({Lexer(), filepath, f});
+        m_stack.top().lexer.set_source(f, filepath);
+        m_already_included.insert(filepath);
+        return true;
+    }
 
     return true;
 }

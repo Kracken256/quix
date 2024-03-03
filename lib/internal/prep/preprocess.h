@@ -26,6 +26,7 @@ namespace libj
             FILE *file;
         };
         std::set<std::string> m_include_dirs;
+        std::set<std::string> m_already_included;
         std::vector<std::string> m_include_files; // for circular include detection
         std::stack<Entry> m_stack;
         jcc_job_t *m_job;

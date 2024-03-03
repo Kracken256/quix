@@ -57,6 +57,11 @@ namespace libj
         VarDeclNode,
         LetDeclNode,
         ConstDeclNode,
+
+        StructDeclNode,
+        StructDefNode,
+        ArrayTypeNode,
+        UserTypeNode,
     };
 
     class ParseNode
@@ -106,6 +111,20 @@ namespace libj
         virtual ~TypeNode() = default;
 
         virtual llvm::Type *codegen(LLVMContext &ctx) const = 0;
+    };
+
+    class UserTypeNode : public TypeNode
+    {
+    public:
+        UserTypeNode() { ntype = NodeType::UserTypeNode; }
+        UserTypeNode(const std::string &name) : m_name(name) { ntype = NodeType::UserTypeNode; }
+        virtual ~UserTypeNode() = default;
+
+        virtual std::string to_json() const override;
+        virtual std::shared_ptr<ParseNode> clone() const override;
+        virtual llvm::Type *codegen(LLVMContext &ctx) const override;
+
+        std::string m_name;
     };
 
     class RootNode : public ParseNode

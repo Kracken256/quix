@@ -14,5 +14,6 @@
 #include <parse/nodes/variable.h>
 #include <parse/nodes/void.h>
 #include <parse/nodes/struct.h>
+#include <parse/nodes/array.h>
 
 #endif // __J_CC_PARSE_NODES_NODES_H__

@@ -90,3 +90,8 @@ std::string libj::Token::serialize(bool human_readable) const
 
     return "Unknown";
 }
+
+bool libj::Token::operator==(const libj::Token &rhs) const
+{
+    return m_type == rhs.m_type && m_value == rhs.m_value;
+}

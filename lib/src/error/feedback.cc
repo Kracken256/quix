@@ -18,4 +18,16 @@ std::map<libj::Msg, const char *> libj::feedback = {
     {CONST_DECL_MISSING_COLON, "Missing colon separator in variable declaration. To fix the issue, insert a colon between the variable name and the typename. Syntax: const name: type [= expr];"},
     {CONST_DECL_TYPE_ERR, "An error occurred while parsing the type of variable '%s'. Syntax: const name: type [= expr];"},
     {CONST_DECL_INIT_ERR, "Declaration of variable '%s' requires an initializer, but an error occurred while parsing the initializer. Syntax: const name: type [= expr];"},
-    {CONST_DECL_MISSING_PUNCTOR, "Declaration of variable '%s' requires an initializer OR a semicolon punctuator, but neither was found. Make sure to terminate all statements with a semicolon. Syntax: const name: type [= expr];"}};
+    {CONST_DECL_MISSING_PUNCTOR, "Declaration of variable '%s' requires an initializer OR a semicolon punctuator, but neither was found. Make sure to terminate all statements with a semicolon. Syntax: const name: type [= expr];"},
+    {STRUCT_DECL_MISSING_IDENTIFIER, "Missing identifier in struct declaration. To fix the issue, name your struct. Syntax: struct name;"},
+    {STRUCT_DECL_EXPECTED_OPEN_BRACE, "Expected an open brace after the struct name. To fix the issue, insert an open brace after the struct name. Syntax: struct name { ... };"},
+    {STRUCT_DECL_EXPECTED_CLOSE_BRACE, "Expected a close brace after the struct fields. To fix the issue, insert a close brace after the struct fields. Syntax: struct name { ... };"},
+    {STRUCT_DECL_EXPECTED_SEMICOLON, "Expected a semicolon after the struct definition. To fix the issue, insert a semicolon after the struct definition. Syntax: struct name { ... };"},
+    {STRUCT_DECL_MISSING_COLON, "Missing colon separator in struct field declaration. To fix the issue, insert a colon between the field name and the typename. Syntax: struct name { field: type [= expr]; ... };"},
+    {STRUCT_DECL_TYPE_ERR, "An error occurred while parsing the type of field '%s'. Syntax: struct name { field: type [= expr]; ... };"},
+    {STRUCT_DECL_INIT_ERR, "Declaration of field '%s' requires an initializer, but an error occurred while parsing the initializer. Syntax: struct name { field: type [= expr]; ... };"},
+    {STRUCT_DECL_MISSING_PUNCTOR, "Declaration of field '%s' requires an initializer OR a semicolon punctuator, but neither was found. Make sure to terminate all statements with a semicolon. Syntax: struct name { field: type [= expr]; ... };"},
+    {TYPE_EXPECTED_TYPE, "Expected a type name after the open bracket. To fix the issue, insert a type name after the open bracket. Syntax: [type; size]"},
+    {TYPE_EXPECTED_SEMICOLON, "Expected a semicolon after the type name. To fix the issue, insert a semicolon after the type name. Syntax: [type; size]"},
+    {TYPE_EXPECTED_CONST_EXPR, "Expected a constant expression after the semicolon. To fix the issue, insert a constant expression after the semicolon. Syntax: [type; size]"},
+    {TYPE_EXPECTED_CLOSE_BRACKET, "Expected a close bracket after the constant expression. To fix the issue, insert a close bracket after the constant expression. Syntax: [type; size]"}};

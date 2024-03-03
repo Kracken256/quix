@@ -165,6 +165,8 @@ namespace libj
         const Loc &loc() const;
 
         std::string serialize(bool human_readable = true) const;
+
+        bool operator==(const Token &rhs) const;
     };
 };
 

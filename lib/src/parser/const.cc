@@ -22,7 +22,7 @@ bool libj::parse_const(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj:
         return false;
     }
 
-    std::shared_ptr<ParseNode> type;
+    std::shared_ptr<TypeNode> type;
 
     if (!parse_type(job, lexer, type))
     {
@@ -40,7 +40,7 @@ bool libj::parse_const(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj:
     {
         // Parse initializer
         std::shared_ptr<ConstExprNode> init;
-        if (!parse_const_expr(job, lexer, init))
+        if (!parse_const_expr(job, lexer, Token(TokenType::Punctor, Punctor::Semicolon), init))
         {
             PARMSG(tok, libj::Err::ERROR, feedback[CONST_DECL_INIT_ERR], name.c_str());
             return false;

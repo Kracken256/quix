@@ -46,7 +46,7 @@ std::shared_ptr<libj::ParseNode> libj::IntegerLiteralNode::clone() const
 
 std::string libj::FloatLiteralNode::to_json() const
 {
-    return "{\"type\":\"number\",\"value\":\"" + m_val + "\"}";
+    return "{\"type\":\"float\",\"value\":\"" + m_val + "\"}";
 }
 
 llvm::Constant *libj::FloatLiteralNode::codegen(libj::LLVMContext &ctx) const

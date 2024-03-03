@@ -25,8 +25,9 @@ namespace libj
     bool parse_let(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node);
     bool parse_var(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node);
     bool parse_const(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node);
-    bool parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::ConstExprNode> &node);
-    bool parse_type(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::ParseNode> &node);
+    bool parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node);
+    bool parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, Token terminator, std::shared_ptr<libj::ConstExprNode> &node);
+    bool parse_type(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::TypeNode> &node);
 };
 
 #endif // __J_CC_PARSE_H__

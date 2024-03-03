@@ -21,3 +21,18 @@ std::shared_ptr<libj::ParseNode> libj::RootNode::clone() const
     }
     return node;
 }
+
+std::string libj::UserTypeNode::to_json() const
+{
+    return "{\"type\":\"UserTypeNode\",\"name\":\"" + m_name + "\"}";
+}
+
+llvm::Type *libj::UserTypeNode::codegen(libj::LLVMContext &ctx) const
+{
+    return nullptr;
+}
+
+std::shared_ptr<libj::ParseNode> libj::UserTypeNode::clone() const
+{
+    return std::make_shared<UserTypeNode>(m_name);
+}

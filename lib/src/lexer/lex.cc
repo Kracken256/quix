@@ -289,7 +289,42 @@ libj::Token libj::Lexer::next()
     return tok;
 }
 
-static bool validate_identifier(const std::string &id)
+// static bool validate_identifier_type_1(const std::string &id)
+// {
+//     int state = 0;
+
+//     for (const auto &c : id)
+//     {
+//         switch (state)
+//         {
+//         case 0:
+//             if (std::isalnum(c) || c == '_')
+//                 continue;
+//             if (c == ':')
+//             {
+//                 state = 1;
+//                 continue;
+//             }
+//             return false;
+//         case 1:
+//             if (c != ':')
+//                 return false;
+//             state = 2;
+//             continue;
+//         case 2:
+//             if (std::isalnum(c) || c == '_')
+//             {
+//                 state = 0;
+//                 continue;
+//             }
+//             return false;
+//         }
+//     }
+
+//     return state == 0;
+// }
+
+static bool validate_identifier_type_2(const std::string &id)
 {
     int state = 0;
 
@@ -300,18 +335,13 @@ static bool validate_identifier(const std::string &id)
         case 0:
             if (std::isalnum(c) || c == '_')
                 continue;
-            if (c == ':')
+            if (c == '.')
             {
                 state = 1;
                 continue;
             }
             return false;
         case 1:
-            if (c != ':')
-                return false;
-            state = 2;
-            continue;
-        case 2:
             if (std::isalnum(c) || c == '_')
             {
                 state = 0;
@@ -322,6 +352,34 @@ static bool validate_identifier(const std::string &id)
     }
 
     return state == 0;
+}
+
+static bool reduce_identifier(std::string &str)
+{
+    // if (validate_identifier_type_1(str))
+    //     return true;
+
+    if (validate_identifier_type_2(str))
+    {
+        size_t index = 0;
+        while (true)
+        {
+            /* Locate the substring to replace. */
+            index = str.find(".", index);
+            if (index == std::string::npos)
+                break;
+
+            /* Make the replacement. */
+            str.replace(index, 1, "::");
+
+            /* Advance index forward so the next iteration doesn't pick it up as well. */
+            index++;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 enum class NumberLiteralType
@@ -514,11 +572,15 @@ libj::Token libj::Lexer::read_token()
         CommentStart,
         CommentSingleLine,
         CommentMultiLine,
+        MacroStart,
+        SingleLineMacro,
+        BlockMacro,
         Other,
     };
 
     LexState state = LexState::Start;
     std::string buffer;
+    size_t state_parens = 0;
 
     char c;
 
@@ -573,6 +635,12 @@ libj::Token libj::Lexer::read_token()
                 state = LexState::StringLiteral;
                 continue;
             }
+            else if (c == '@')
+            {
+                // Macro
+                state = LexState::MacroStart;
+                continue;
+            }
             else
             {
                 // Operator or punctor or comment or invalid
@@ -584,7 +652,7 @@ libj::Token libj::Lexer::read_token()
         case LexState::Identifier:
         {
             // match [a-zA-Z0-9_]
-            if (std::isalnum(c) || c == '_')
+            if (std::isalnum(c) || c == '_' || c == '.')
             {
                 buffer += c;
                 continue;
@@ -602,7 +670,7 @@ libj::Token libj::Lexer::read_token()
                 }
             }
 
-            if (!validate_identifier(buffer))
+            if (!reduce_identifier(buffer))
             {
                 m_tok = Token(TokenType::Unknown, buffer, m_loc - buffer.size());
                 return m_tok.value();
@@ -746,6 +814,59 @@ libj::Token libj::Lexer::read_token()
 
             return m_tok.value();
         }
+        case LexState::MacroStart:
+            // macros begin with '@'
+            // There are two types. One is a single line macro, the other is a block macro.
+            // single line macros end with a semicolon and a newline
+            // block macros begin with a '@(' and end with a ');'
+            if (c == '(')
+            {
+                state = LexState::BlockMacro;
+                state_parens = 1;
+                continue;
+            }
+            else
+            {
+                state = LexState::SingleLineMacro;
+                buffer += c;
+                continue;
+            }
+            break;
+        case LexState::SingleLineMacro:
+        {
+            if (c != '\n')
+            {
+                buffer += c;
+                continue;
+            }
+
+            m_tok = Token(TokenType::MacroSingleLine, buffer, m_loc - buffer.size());
+            return m_tok.value();
+        }
+        case LexState::BlockMacro:
+        {
+            // block macros can contain anything
+            // therefore, we must keep track of how many open and close parens we have
+            // and stop when we have a matching pair
+            if (c == '(')
+            {
+                state_parens++;
+            }
+            else if (c == ')')
+            {
+                state_parens--;
+            }
+
+            if (state_parens == 0)
+            {
+                m_tok = Token(TokenType::MacroBlock, buffer, m_loc - buffer.size());
+                return m_tok.value();
+            }
+
+            buffer += c;
+            continue;
+        }
+            
         case LexState::Other:
         {
             if (buffer.size() == 1)

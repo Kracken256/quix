@@ -33,7 +33,7 @@ bool libj::PrepEngine::set_source(FILE *src, const std::string &filename)
     if (!l.set_source(src, filename))
         return false;
 
-    m_stack.push({l, filename, src});
+    m_stack.push({l, filename, src, {}});
     return true;
 }
 
@@ -54,10 +54,10 @@ libj::Token libj::PrepEngine::peek()
     return m_tok.value();
 }
 
-bool libj::PrepEngine::handle_import(Token &tok)
+bool libj::PrepEngine::handle_import()
 {
     // Get Identifier
-    tok = m_stack.top().lexer.next();
+    Token tok = m_stack.top().lexer.next();
     if (tok.type() != TokenType::Identifier)
     {
         PREPMSG(tok, Err::ERROR, "Expected identifier after import");
@@ -65,10 +65,10 @@ bool libj::PrepEngine::handle_import(Token &tok)
     }
 
     std::string filename = std::get<std::string>(tok.val());
+    filename = std::regex_replace(filename, std::regex("::"), "/") + JLANG_HEADER_EXTENSION;
 
     PREPMSG(tok, Err::DEBUG, "Requested import of file: %s", filename.c_str());
 
-    // get next token
     tok = m_stack.top().lexer.next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
     {
@@ -80,7 +80,7 @@ bool libj::PrepEngine::handle_import(Token &tok)
     std::string filepath;
     for (auto &dir : m_include_dirs)
     {
-        std::string path = dir + "/" + filename + JLANG_HEADER_EXTENSION;
+        std::string path = dir + "/" + filename;
         if (!std::filesystem::exists(path))
             continue;
 
@@ -108,21 +108,27 @@ bool libj::PrepEngine::handle_import(Token &tok)
         return false;
     }
 
-    FILE *f = fopen(filepath.c_str(), "r");
-
-    if (!f)
+    // don't double include in the same file
+    if (!m_stack.top().already_included.contains(filepath))
     {
-        PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.j\" in include directories [%s]", filepath.c_str(), include_path.c_str());
-        return false;
-    }
+        FILE *f;
 
-    if (!m_already_included.contains(filepath))
-    {
+        if (!(f = fopen(filepath.c_str(), "r")))
+        {
+            PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.j\" in include directories [%s]", filepath.c_str(), include_path.c_str());
+            return false;
+        }
+
+        m_stack.top().already_included.insert(filepath);
         m_include_files.push_back(filepath);
-        m_stack.push({Lexer(), filepath, f});
+        m_stack.push({Lexer(), filepath, f, {}});
         m_stack.top().lexer.set_source(f, filepath);
-        m_already_included.insert(filepath);
         return true;
+    }
+    else
+    {
+        PREPMSG(tok, Err::ERROR, feedback[PREP_DUPLICATE_IMPORT], m_stack.top().path.c_str(), filepath.c_str());
+        return false;
     }
 
     return true;
@@ -137,10 +143,15 @@ start:
 
     if (tok.type() == TokenType::Keyword && std::get<Keyword>(tok.val()) == Keyword::Import)
     {
-        if (handle_import(tok))
+        if (handle_import())
             goto start;
 
+        PREPMSG(tok, Err::ERROR, "Failed to handle import");
         tok = Token(TokenType::Eof, "");
+    }
+    else if (tok.type() == TokenType::MacroSingleLine || tok.type() == TokenType::MacroBlock)
+    {
+        goto start;
     }
     else if (tok.type() == TokenType::Eof)
     {

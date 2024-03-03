@@ -24,9 +24,9 @@ namespace libj
             Lexer lexer;
             std::string path;
             FILE *file;
+            std::set<std::string> already_included;
         };
         std::set<std::string> m_include_dirs;
-        std::set<std::string> m_already_included;
         std::vector<std::string> m_include_files; // for circular include detection
         std::stack<Entry> m_stack;
         jcc_job_t *m_job;
@@ -35,7 +35,8 @@ namespace libj
 
         Token read_token();
 
-        bool handle_import(Token &tok);
+        bool handle_import();
+        bool handle_macro(Token &tok);
 
     public:
         PrepEngine(jcc_job_t &job) : m_job(&job) {}

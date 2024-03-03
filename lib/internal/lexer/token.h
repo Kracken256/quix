@@ -129,6 +129,8 @@ namespace libj
         FloatingLiteral,
         StringLiteral,
         CharLiteral,
+        MacroBlock,
+        MacroSingleLine,
 
         Punctor,
 

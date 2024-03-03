@@ -84,6 +84,10 @@ std::string libj::Token::serialize(bool human_readable) const
         return "Float(" + std::get<std::string>(m_value) + ")";
     case TokenType::Comment:
         return "/* " + std::get<std::string>(m_value) + " */";
+    case TokenType::MacroBlock:
+        return "MacroBlock(" + std::get<std::string>(m_value) + ")";
+    case TokenType::MacroSingleLine:
+        return "MacroSingleLine(" + std::get<std::string>(m_value) + ")";
     default:
         return "Unknown";
     }

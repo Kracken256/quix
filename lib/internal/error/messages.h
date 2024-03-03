@@ -46,6 +46,8 @@ namespace libj
         TYPE_EXPECTED_CONST_EXPR,
         TYPE_EXPECTED_CLOSE_BRACKET,
 
+        PREP_DUPLICATE_IMPORT,
+
     };
 
     extern std::map<Msg, const char *> feedback;

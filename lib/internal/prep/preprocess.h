@@ -10,10 +10,12 @@
 #include <string>
 #include <optional>
 #include <lexer/lex.h>
+#include <prep/macros.h>
 #include <jcc.h>
 #include <memory>
 #include <set>
 #include <stack>
+#include <queue>
 
 namespace libj
 {
@@ -25,10 +27,10 @@ namespace libj
             Lexer lexer;
             std::string path;
             std::set<std::string> already_included;
-            std::string *buffer;
             FILE *file;
+            std::string *buffer;
 
-            Entry(Lexer l, const std::string &p, FILE *f) : lexer(l), path(p), file(f) {}
+            Entry(Lexer l, const std::string &p, FILE *f = nullptr, std::string *buf = nullptr) : lexer(l), path(p), file(f), buffer(buf) {}
             Entry() : lexer(), path(), file(nullptr) {}
         };
         std::set<std::string> m_include_dirs;
@@ -38,6 +40,8 @@ namespace libj
         std::string include_path;
         std::optional<Token> m_tok;
         std::map<std::string, std::string> m_statics;
+        std::queue<Token> m_buffer;
+        MacroParser m_macro_parser;
 
         Token read_token();
 
@@ -47,7 +51,10 @@ namespace libj
         Entry build_statics_decl();
 
     public:
-        PrepEngine(jcc_job_t &job) : m_job(&job) {}
+        PrepEngine(jcc_job_t &job) : m_job(&job), m_macro_parser(job) {}
+
+        // Install macro routines
+        void setup();
 
         void addpath(const std::string &path);
 

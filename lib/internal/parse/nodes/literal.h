@@ -76,6 +76,20 @@ namespace libj
 
         std::string m_val;
     };
+
+    class BoolLiteralNode : public LiteralNode
+    {
+    public:
+        BoolLiteralNode() { ntype = NodeType::BoolLiteralNode; }
+        BoolLiteralNode(bool val) : m_val(val) { ntype = NodeType::BoolLiteralNode; }
+        virtual ~BoolLiteralNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        bool m_val;
+    };
 }
 
 #endif // __J_CC_PARSE_NODES_LITERAL_H__

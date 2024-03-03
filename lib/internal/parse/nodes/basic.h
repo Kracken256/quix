@@ -53,6 +53,7 @@ namespace libj
         FloatLiteralNode,
         StringLiteralNode,
         CharLiteralNode,
+        BoolLiteralNode,
 
         VarDeclNode,
         LetDeclNode,

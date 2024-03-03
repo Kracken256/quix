@@ -43,6 +43,20 @@ bool libj::parse_const_expr(jcc_job_t &job, std::shared_ptr<libj::Scanner> scann
         case TokenType::CharLiteral:
             stack.push(std::make_shared<libj::CharLiteralNode>(std::get<std::string>(tok.val())));
             continue;
+        case TokenType::Keyword:
+            switch (std::get<Keyword>(tok.val()))
+            {
+            case Keyword::True:
+                stack.push(std::make_shared<libj::BoolLiteralNode>(true));
+                continue;
+            case Keyword::False:
+                stack.push(std::make_shared<libj::BoolLiteralNode>(false));
+                continue;
+            default:
+                PARMSG(tok, libj::Err::ERROR, "Unexpected token %s 1",  tok.serialize().c_str());
+                return false;
+            }
+            break;
         case TokenType::Punctor:
             switch (std::get<Punctor>(tok.val()))
             {

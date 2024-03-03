@@ -98,3 +98,18 @@ std::shared_ptr<libj::ParseNode> libj::CharLiteralNode::clone() const
 {
     return std::make_shared<CharLiteralNode>(*this);
 }
+
+std::string libj::BoolLiteralNode::to_json() const
+{
+    return std::string("{\"type\":\"bool\",\"value\":") + (m_val ? "true" : "false") + "}";
+}
+
+llvm::Constant *libj::BoolLiteralNode::codegen(libj::LLVMContext &ctx) const
+{
+    return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(1, m_val));
+}
+
+std::shared_ptr<libj::ParseNode> libj::BoolLiteralNode::clone() const
+{
+    return std::make_shared<BoolLiteralNode>(*this);
+}

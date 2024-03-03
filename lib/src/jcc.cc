@@ -289,6 +289,81 @@ static bool get_include_directories(jcc_job_t *job, std::set<std::string> &dirs)
     return true;
 }
 
+static bool verify_user_constant_string(const std::string &s)
+{
+    int state = 0;
+
+    for (size_t i = 1; i < s.size() - 1; i++)
+    {
+        char c = s[i];
+
+        switch (state)
+        {
+        case 0:
+            if (c == '\\')
+                state = 1;
+            if (c == '"')
+                return false;
+            if (!std::isprint(c))
+                return false;
+            break;
+        case 1:
+            if (c == '"')
+                state = 0;
+            else if (c == '\\')
+                state = 0;
+            else if (c == 'n' || c == 'r' || c == 't' || c == '0' || c == 'x')
+                state = 0;
+            else
+                return false;
+            break;
+        }
+    }
+
+    return state == 0;
+}
+
+static bool verify_user_constant(const std::string &key, const std::string &value)
+{
+    if (key.empty())
+        return false;
+
+    bool key_valid = std::isalpha(key[0]) || key[0] == '_';
+
+    for (char c : key)
+    {
+        if (!std::isalnum(c) && c != '_')
+        {
+            key_valid = false;
+            break;
+        }
+    }
+
+    if (!key_valid)
+        return false;
+
+    if (value.empty())
+        return true;
+
+    if (value == "true" || value == "false")
+        return true;
+
+    bool is_int = true;
+    for (char c : value)
+    {
+        if (!std::isdigit(c))
+        {
+            is_int = false;
+            break;
+        }
+    }
+
+    if (is_int)
+        return true;
+
+    return verify_user_constant_string(value);
+}
+
 static bool get_compile_time_user_constants(jcc_job_t *job, std::map<std::string, std::string> &constants)
 {
     for (uint32_t i = 0; i < job->m_options.m_count; i++)
@@ -305,11 +380,18 @@ static bool get_compile_time_user_constants(jcc_job_t *job, std::map<std::string
             {
                 std::string key = def.substr(0, pos);
                 std::string value = def.substr(pos + 1);
+
+                if (!verify_user_constant(key, value))
+                {
+                    libj::message(*job, libj::Err::ERROR, "invalid user constant: " + key);
+                    return false;
+                }
+
                 constants[key] = value;
             }
             else
             {
-                constants[def] = "1";
+                constants[def] = "true";
             }
 
             continue;
@@ -358,6 +440,7 @@ static bool compile(jcc_job_t *job)
     ///=========================================
     std::shared_ptr<libj::PrepEngine> prep = std::make_shared<libj::PrepEngine>(*job);
     libj::message(*job, libj::Err::DEBUG, "Preprocessing source");
+    prep->setup();
     if (!preprocess_phase(job, prep))
         return false;
     libj::message(*job, libj::Err::DEBUG, "Finished preprocessing source");
@@ -443,9 +526,9 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     {
         libj::message(*job, libj::Err::ERROR, "Compilation failed because of a parse error");
     }
-    catch (...)
+    catch (std::exception &e)
     {
-        libj::message(*job, libj::Err::FATAL, "Compilation failed: Unknown error");
+        libj::message(*job, libj::Err::FATAL, "Compilation failed: %s", e.what());
     }
 
     libj::message(*job, libj::Err::DEBUG, "Finished jcc run @ %s", get_datetime().c_str());

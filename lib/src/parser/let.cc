@@ -4,9 +4,9 @@
 
 using namespace libj;
 
-bool libj::parse_let(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node)
+bool libj::parse_let(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node)
 {
-    Token tok = lexer.next();
+    Token tok = scanner->next();
     if (tok.type() != TokenType::Identifier)
     {
         PARMSG(tok, libj::Err::ERROR, feedback[LET_DECL_MISSING_IDENTIFIER]);
@@ -15,7 +15,7 @@ bool libj::parse_let(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::S
 
     std::string name = std::get<std::string>(tok.val());
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Colon)
     {
         PARMSG(tok, libj::Err::ERROR, feedback[LET_DECL_MISSING_COLON]);
@@ -24,13 +24,13 @@ bool libj::parse_let(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::S
 
     std::shared_ptr<TypeNode> type;
 
-    if (!parse_type(job, lexer, type))
+    if (!parse_type(job, scanner, type))
     {
         PARMSG(tok, libj::Err::ERROR, feedback[LET_DECL_TYPE_ERR], name.c_str());
         return false;
     }
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
     {
         // No initializer
@@ -40,13 +40,13 @@ bool libj::parse_let(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::S
     {
         // Parse initializer
         std::shared_ptr<ConstExprNode> init;
-        if (!parse_const_expr(job, lexer, Token(TokenType::Punctor, Punctor::Semicolon), init))
+        if (!parse_const_expr(job, scanner, Token(TokenType::Punctor, Punctor::Semicolon), init))
         {
             PARMSG(tok, libj::Err::ERROR, feedback[LET_DECL_INIT_ERR], name.c_str());
             return false;
         }
 
-        tok = lexer.next();
+        tok = scanner->next();
         if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
         {
             PARMSG(tok, libj::Err::ERROR, feedback[LET_DECL_MISSING_PUNCTOR], name.c_str());

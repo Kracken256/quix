@@ -6,13 +6,13 @@
 
 using namespace libj;
 
-bool libj::parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, Token terminator, std::shared_ptr<libj::ConstExprNode> &node)
+bool libj::parse_const_expr(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, Token terminator, std::shared_ptr<libj::ConstExprNode> &node)
 {
     std::stack<std::shared_ptr<libj::ConstExprNode>> stack;
 
     while (true)
     {
-        auto tok = lexer.peek();
+        auto tok = scanner->peek();
         if (tok.type() == TokenType::Eof)
             return false;
 
@@ -28,7 +28,7 @@ bool libj::parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, Token terminator
             return true;
         }
 
-        lexer.next();
+        scanner->next();
 
         switch (tok.type())
         {
@@ -50,7 +50,7 @@ bool libj::parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, Token terminator
             case Punctor::OpenParen:
             {
                 std::shared_ptr<libj::ConstExprNode> expr;
-                if (!parse_const_expr(job, lexer, terminator, expr))
+                if (!parse_const_expr(job, scanner, terminator, expr))
                     return false;
                 stack.push(expr);
                 continue;
@@ -76,7 +76,7 @@ bool libj::parse_const_expr(jcc_job_t &job, libj::Lexer &lexer, Token terminator
         {
             auto op = std::get<Operator>(tok.val());
             std::shared_ptr<libj::ConstExprNode> expr;
-            if (!parse_const_expr(job, lexer, terminator, expr))
+            if (!parse_const_expr(job, scanner, terminator, expr))
                 return false;
 
             if (stack.empty())

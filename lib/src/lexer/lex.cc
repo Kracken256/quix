@@ -223,15 +223,19 @@ libj::Lexer::Lexer()
     added_newline = false;
 }
 
+#include <iostream>
+
 char libj::Lexer::getc()
 {
+    char c = EOF;
+
     if (m_buf_pos >= m_buffer.size())
     {
         size_t read;
         if ((read = fread(m_buffer.data(), 1, m_buffer.size(), m_src)) == 0)
         {
             if (added_newline)
-                return EOF;
+                goto end;
 
             m_buffer[0] = '\n';
             read = 1;
@@ -244,7 +248,7 @@ char libj::Lexer::getc()
         m_buf_pos = 0;
     }
 
-    char c = m_buffer[m_buf_pos++];
+    c = m_buffer[m_buf_pos++];
 
     m_loc = m_loc_curr;
 
@@ -258,6 +262,7 @@ char libj::Lexer::getc()
         m_loc_curr.col++;
     }
 
+end:
     return c;
 }
 
@@ -274,9 +279,9 @@ bool libj::Lexer::set_source(FILE *src)
     return true;
 }
 
-libj::Token libj::Lexer::next(bool include_comments)
+libj::Token libj::Lexer::next()
 {
-    Token tok = peek(include_comments);
+    Token tok = peek();
     m_tok = std::nullopt;
     return tok;
 }
@@ -506,7 +511,7 @@ libj::Token libj::Lexer::read_token()
         CommentStart,
         CommentSingleLine,
         CommentMultiLine,
-        Operator,
+        Other,
     };
 
     LexState state = LexState::Start;
@@ -567,9 +572,9 @@ libj::Token libj::Lexer::read_token()
             }
             else
             {
-                // Operator or punctor or invalid
+                // Operator or punctor or comment or invalid
                 buffer += c;
-                state = LexState::Operator;
+                state = LexState::Other;
                 continue;
             }
         }
@@ -738,7 +743,7 @@ libj::Token libj::Lexer::read_token()
 
             return m_tok.value();
         }
-        case LexState::Operator:
+        case LexState::Other:
         {
             if (buffer.size() == 1)
             {
@@ -750,6 +755,18 @@ libj::Token libj::Lexer::read_token()
                         m_tok = Token(TokenType::Punctor, punctor_map.at(buffer), m_loc - buffer.size());
                         return m_tok.value();
                     }
+                }
+
+                if ((buffer[0] == '~' && c == '>'))
+                {
+                    state = LexState::CommentSingleLine;
+                    continue;
+                }
+
+                if (buffer[0] == '#' && std::isspace(c))
+                {
+                    state = LexState::CommentSingleLine;
+                    continue;
                 }
             }
             try
@@ -777,13 +794,10 @@ libj::Token libj::Lexer::read_token()
     return m_tok.value();
 }
 
-libj::Token libj::Lexer::peek(bool include_comments)
+libj::Token libj::Lexer::peek()
 {
     try
     {
-        if (include_comments)
-            return read_token();
-
         Token tok;
         while (true)
         {

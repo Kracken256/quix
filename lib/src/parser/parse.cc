@@ -5,11 +5,11 @@
 
 using namespace libj;
 
-bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
+bool libj::Parser::parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, AST &ast)
 {
     Token tok;
 
-    while ((tok = lexer.next()).type() != TokenType::Eof)
+    while ((tok = scanner->next()).type() != TokenType::Eof)
     {
         if (tok.type() != TokenType::Keyword)
         {
@@ -22,19 +22,19 @@ bool libj::Parser::parse(jcc_job_t &job, libj::Lexer &lexer, AST &ast)
         switch (std::get<Keyword>(tok.val()))
         {
         case Keyword::Var:
-            if (!parse_var(job, lexer, node))
+            if (!parse_var(job, scanner, node))
                 return false;
             break;
         case Keyword::Let:
-            if (!parse_let(job, lexer, node))
+            if (!parse_let(job, scanner, node))
                 return false;
             break;
         case Keyword::Const:
-            if (!parse_const(job, lexer, node))
+            if (!parse_const(job, scanner, node))
                 return false;
             break;
         case Keyword::Struct:
-            if (!parse_struct(job, lexer, node))
+            if (!parse_struct(job, scanner, node))
                 return false;
             break;
         default:

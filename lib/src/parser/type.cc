@@ -20,9 +20,9 @@ static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
     {"string", std::make_shared<StringTypeNode>()},
     {"void", std::make_shared<VoidTypeNode>()}};
 
-bool libj::parse_type(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::TypeNode> &node)
+bool libj::parse_type(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::TypeNode> &node)
 {
-    Token tok = lexer.next();
+    Token tok = scanner->next();
     if (tok.type() == TokenType::Identifier)
     {
         if (primitive_types.contains(std::get<std::string>(tok.val())))
@@ -41,13 +41,13 @@ bool libj::parse_type(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::
         // Array type
         // syntax [type; size]
         std::shared_ptr<TypeNode> type;
-        if (!parse_type(job, lexer, type))
+        if (!parse_type(job, scanner, type))
         {
             PARMSG(tok, libj::Err::ERROR, feedback[TYPE_EXPECTED_TYPE]);
             return false;
         }
 
-        tok = lexer.next();
+        tok = scanner->next();
         if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
         {
             PARMSG(tok, libj::Err::ERROR, feedback[TYPE_EXPECTED_SEMICOLON]);
@@ -55,13 +55,13 @@ bool libj::parse_type(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::
         }
 
         std::shared_ptr<ConstExprNode> size;
-        if (!parse_const_expr(job, lexer, Token(TokenType::Punctor, Punctor::CloseBracket), size))
+        if (!parse_const_expr(job, scanner, Token(TokenType::Punctor, Punctor::CloseBracket), size))
         {
             PARMSG(tok, libj::Err::ERROR, feedback[TYPE_EXPECTED_CONST_EXPR]);
             return false;
         }
 
-        tok = lexer.next();
+        tok = scanner->next();
         if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::CloseBracket)
         {
             PARMSG(tok, libj::Err::ERROR, feedback[TYPE_EXPECTED_CLOSE_BRACKET]);

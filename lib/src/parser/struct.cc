@@ -4,62 +4,62 @@
 
 using namespace libj;
 
-static bool parse_struct_field(jcc_job_t &job, libj::Lexer &lexer, StructDefNode::Field &node)
+static bool parse_struct_field(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, StructDefNode::Field &node)
 {
-    Token tok = lexer.next();
+    Token tok = scanner->next();
     if (tok.type() != TokenType::Identifier)
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_MISSING_IDENTIFIER]);
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_MISSING_IDENTIFIER]);
         return false;
     }
 
     node.name = std::get<std::string>(tok.val());
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Colon)
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_MISSING_COLON]);
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_MISSING_COLON]);
         return false;
     }
 
-    if (!parse_type(job, lexer, node.type))
+    if (!parse_type(job, scanner, node.type))
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_TYPE_ERR], node.name.c_str());
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_TYPE_ERR], node.name.c_str());
         return false;
     }
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
     {
         return true;
     }
     else if (tok.type() == TokenType::Operator && std::get<Operator>(tok.val()) == Operator::Assign)
     {
-        if (!parse_const_expr(job, lexer, Token(TokenType::Punctor, Punctor::Semicolon), node.value))
+        if (!parse_const_expr(job, scanner, Token(TokenType::Punctor, Punctor::Semicolon), node.value))
         {
-            PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_INIT_ERR], node.name.c_str());
+            PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_INIT_ERR], node.name.c_str());
             return false;
         }
     }
     else
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_MISSING_PUNCTOR], node.name.c_str());
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_MISSING_PUNCTOR], node.name.c_str());
         return false;
     }
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_MISSING_PUNCTOR], node.name.c_str());
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_FIELD_MISSING_PUNCTOR], node.name.c_str());
         return false;
     }
 
     return true;
 }
 
-bool libj::parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj::StmtNode> &node)
+bool libj::parse_struct(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node)
 {
-    Token tok = lexer.next();
+    Token tok = scanner->next();
     if (tok.type() != TokenType::Identifier)
     {
         PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_MISSING_IDENTIFIER]);
@@ -68,7 +68,7 @@ bool libj::parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj
 
     std::string name = std::get<std::string>(tok.val());
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
     {
         node = std::make_shared<StructDeclNode>();
@@ -77,7 +77,7 @@ bool libj::parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj
     }
     else if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::OpenBrace)
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_EXPECTED_OPEN_BRACE]);
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DEF_EXPECTED_OPEN_BRACE]);
         return false;
     }
 
@@ -85,23 +85,23 @@ bool libj::parse_struct(jcc_job_t &job, libj::Lexer &lexer, std::shared_ptr<libj
 
     while (true)
     {
-        tok = lexer.peek();
+        tok = scanner->peek();
         if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::CloseBrace)
         {
-            lexer.next();
+            scanner->next();
             break;
         }
 
         StructDefNode::Field field;
-        if (!parse_struct_field(job, lexer, field))
+        if (!parse_struct_field(job, scanner, field))
             return false;
         fields.push_back(field);
     }
 
-    tok = lexer.next();
+    tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
     {
-        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DECL_EXPECTED_SEMICOLON]);
+        PARMSG(tok, libj::Err::ERROR, feedback[STRUCT_DEF_EXPECTED_SEMICOLON]);
         return false;
     }
 

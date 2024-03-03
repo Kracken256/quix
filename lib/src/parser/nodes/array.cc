@@ -12,12 +12,7 @@ std::string libj::ArrayTypeNode::to_json() const
 
 llvm::Type *libj::ArrayTypeNode::codegen(libj::LLVMContext &ctx) const
 {
-    llvm::Type *type = m_type->codegen(ctx);
-    llvm::Constant *size = m_size->codegen(ctx);
-    // from constant expression
-
-    return llvm::ArrayType::get(type, size->getUniqueInteger().getLimitedValue());
-
+    return llvm::ArrayType::get(m_type->codegen(ctx), m_size->codegen(ctx)->getUniqueInteger().getLimitedValue());
 }
 
 std::shared_ptr<libj::ParseNode> libj::ArrayTypeNode::clone() const

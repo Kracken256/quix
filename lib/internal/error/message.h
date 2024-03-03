@@ -23,6 +23,7 @@ namespace libj
 
     void message(jcc_job_t &job, Err type, const std::string &format, ...);
     void parmsg(jcc_job_t &job, const Token &tok, Err type, const std::string &format, ...);
+    void prepmsg(jcc_job_t &job, const Token &tok, Err type, const std::string &format, ...);
 };
 
 #endif // __J_CC_ERROR_H__

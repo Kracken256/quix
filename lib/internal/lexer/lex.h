@@ -76,8 +76,29 @@ namespace libj
     extern std::map<std::string, libj::Operator> operator_map;
     extern std::map<libj::Operator, std::string> operator_map_inverse;
 
-    class Lexer
+    class Scanner
     {
+    public:
+        Scanner() = default;
+        ~Scanner() = default;
+
+        /// @brief Set the source file
+        /// @param src C FILE pointer
+        /// @return true if the source file is set successfully
+        virtual bool set_source(FILE *src) = 0;
+
+        /// @brief Get the next token
+        /// @return The next token
+        virtual Token next() = 0;
+
+        /// @brief Peek the next token
+        /// @return The next token
+        virtual Token peek() = 0;
+    };
+
+    class Lexer : public Scanner
+    {
+    protected:
         /// @brief C FILE* source. Object is owned by the caller.
         /// @note The caller is responsible for closing the file.
         FILE *m_src;
@@ -90,7 +111,7 @@ namespace libj
         bool added_newline;
 
         char getc();
-        libj::Token read_token();
+        virtual libj::Token read_token();
 
     public:
         Lexer();
@@ -98,15 +119,15 @@ namespace libj
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        bool set_source(FILE *src);
+        virtual bool set_source(FILE *src) override;
 
         /// @brief Get the next token
         /// @return The next token
-        Token next(bool include_comments = false);
+        Token next() override;
 
         /// @brief Peek the next token
         /// @return The next token
-        Token peek(bool include_comments = false);
+        Token peek() override;
     };
 };
 

@@ -9,6 +9,7 @@
 #include <llvm/llvm-ctx.h>
 #include <generate/generate.h>
 #include <lexer/lex.h>
+#include <prep/preprocess.h>
 #include <error/message.h>
 #include <parse/parser.h>
 
@@ -238,14 +239,61 @@ static std::string base64_encode(const std::string &in)
     return out;
 }
 
+static bool jcc_mutate_ast(jcc_job_t *job, libj::AST &ast)
+{
+    (void)job;
+    (void)ast;
+
+    /// TODO: Name resolution. Update all identifiers to use the fully qualified name
+    /// TODO: Replace UserTypeNode with the defined type
+    /// TODO: Type Coercion/Conversion
+    /// TODO: Type Inference
+    /// TODO: Evalulate constant expressions
+    /// TODO:
+
+    return true;
+}
+
+static bool jcc_verify_semantics(jcc_job_t *job, libj::AST &ast)
+{
+    (void)job;
+    (void)ast;
+    return true;
+}
+
+static bool jcc_optimize_ast(jcc_job_t *job, libj::AST &ast)
+{
+    (void)job;
+    (void)ast;
+    return true;
+}
+
+static bool get_include_directories(jcc_job_t *job, std::set<std::string> &dirs)
+{
+    for (uint32_t i = 0; i < job->m_options.m_count; i++)
+    {
+        jcc_option_t *option = job->m_options.m_options[i];
+        if (!option)
+            continue;
+
+        if (strcmp(option->m_u, "I") == 0)
+        {
+            dirs.insert(option->m_v);
+            continue;
+        }
+
+        libj::message(*job, libj::Err::ERROR, "Unknown option: %s", option->m_u);
+    }
+
+    return true;
+}
+
 LIB_EXPORT bool jcc_run(jcc_job_t *job)
 {
     if (!job->m_in || !job->m_out || !job->m_filename || job->m_inner != nullptr)
         return false;
 
     job->m_inner = new libj::LLVMContext(job->m_filename);
-
-    // Allocate memory for the result
     job->m_result = (jcc_result_t *)safe_malloc(sizeof(jcc_result_t));
     memset(job->m_result, 0, sizeof(jcc_result_t));
 
@@ -253,18 +301,26 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
 
     // Create an AST before goto statements
     libj::AST ast;
+    std::set<std::string> dirs;
 
     ///=========================================
-    /// BEGIN: LEXER
+    /// BEGIN: PREPROCESSOR/LEXER
     ///=========================================
-    libj::Lexer lexer;
-    if (!lexer.set_source(job->m_in))
+    std::shared_ptr<libj::PrepEngine> prep = std::make_shared<libj::PrepEngine>(*job);
+    if (!prep->set_source(job->m_in))
     {
         libj::message(*job, libj::Err::ERROR, "failed to set source");
         goto error;
     }
+    if (!get_include_directories(job, dirs))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to get include directories");
+        goto error;
+    }
+    for (auto &dir : dirs)
+        prep->addpath(dir);
     ///=========================================
-    /// END: LEXER
+    /// END: PREPROCESSOR/LEXER
     ///=========================================
 
     ///=========================================
@@ -272,13 +328,28 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     ///=========================================
     libj::Parser parser;
     libj::message(*job, libj::Err::DEBUG, "Building AST 1");
-    if (!parser.parse(*job, lexer, ast))
+    if (!parser.parse(*job, prep, ast))
         goto error;
     libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
     if (job->m_debug)
-        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): %s", base64_encode(ast.to_json()).c_str());
+        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast.to_json()));
     ///=========================================
     /// END: PARSER
+    ///=========================================
+
+    ///=========================================
+    /// BEGIN: INTERMEDIATE PROCESSING
+    ///=========================================
+    if (!jcc_mutate_ast(job, ast))
+        goto error;
+
+    if (!jcc_verify_semantics(job, ast))
+        goto error;
+
+    if (!jcc_optimize_ast(job, ast))
+        goto error;
+    ///=========================================
+    /// END: INTERMEDIATE PROCESSING
     ///=========================================
 
     ///=========================================

@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     std::string file_in;
     std::string file_out;
     bool debug = false;
+    std::vector<std::pair<std::string, std::string>> switches;
 
     for (size_t i = 1; i < args.size(); i++)
     {
@@ -30,6 +31,23 @@ int main(int argc, char *argv[])
                 std::cerr << "error: missing output file" << std::endl;
                 return 1;
             }
+        }
+        else if (args[i].starts_with("-"))
+        {
+            std::string tag;
+            std::string value;
+            // format -tag[=value]
+            if (args[i].find('=') != std::string::npos)
+            {
+                tag = args[i].substr(1, args[i].find('=') - 1);
+                value = args[i].substr(args[i].find('=') + 1);
+            }
+            else
+            {
+                tag = args[i].substr(1);
+                value = "";
+            }
+            switches.push_back({tag, value});
         }
         else
         {
@@ -87,11 +105,14 @@ int main(int argc, char *argv[])
         fclose(out);
         return 1;
     }
-    
+
     job->m_debug = debug;
 
     jcc_set_input(job, in, file_in.c_str());
     jcc_set_output(job, out);
+
+    for (const auto &sw : switches)
+        jcc_add_option(job, sw.first.c_str(), sw.second.c_str(), true);
 
     bool success = jcc_run(job);
 

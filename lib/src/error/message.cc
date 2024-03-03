@@ -5,6 +5,8 @@
 
 using namespace libj;
 
+#define STRING_BUFFER_SIZE 4096
+
 static bool __G_is_color_enabled = getenv("JCC_COLOR") == nullptr;
 
 static void push_message_to_job(jcc_job_t &job, Err type, const std::string &message)
@@ -55,7 +57,7 @@ static std::string make_message_colored(Err type, const std::string &format, va_
     size_t len = msg.size();
 
     std::string tmp;
-    tmp.resize(1024 + len);
+    tmp.resize(STRING_BUFFER_SIZE + len);
     len += vsnprintf(&tmp[0], tmp.size() - 1, msg.c_str(), args);
     msg = tmp.substr(0, len);
 
@@ -88,7 +90,7 @@ static std::string make_message_nocolor(Err type, const std::string &format, va_
     size_t len = msg.size();
 
     std::string tmp;
-    tmp.resize(1024 + len);
+    tmp.resize(STRING_BUFFER_SIZE + len);
     len += vsnprintf(&tmp[0], tmp.size() - 1, msg.c_str(), args);
     msg = tmp.substr(0, len);
 
@@ -123,7 +125,7 @@ static std::string make_parser_message_colored(const std::string &file, const li
     size_t len = msg.size();
 
     std::string tmp;
-    tmp.resize(1024 + len);
+    tmp.resize(STRING_BUFFER_SIZE + len);
     len += vsnprintf(&tmp[0], tmp.size() - 1, msg.c_str(), args);
     msg = tmp.substr(0, len);
 
@@ -158,7 +160,7 @@ static std::string make_parser_message_nocolor(const std::string &file, const li
     size_t len = msg.size();
 
     std::string tmp;
-    tmp.resize(1024 + len);
+    tmp.resize(STRING_BUFFER_SIZE + len);
     len += vsnprintf(&tmp[0], tmp.size() - 1, msg.c_str(), args);
     msg = tmp.substr(0, len);
 
@@ -182,6 +184,22 @@ void libj::message(jcc_job_t &job, Err type, const std::string &format, ...)
 }
 
 void libj::parmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const std::string &format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    std::string msg;
+
+    if (is_color_enabled())
+        msg = make_parser_message_colored(job.m_filename, tok, type, format, args);
+    else
+        msg = make_parser_message_nocolor(job.m_filename, tok, type, format, args);
+
+    va_end(args);
+
+    push_message_to_job(job, type, msg);
+}
+
+void libj::prepmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const std::string &format, ...)
 {
     va_list args;
     va_start(args, format);

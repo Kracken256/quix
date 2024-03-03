@@ -223,8 +223,6 @@ libj::Lexer::Lexer()
     added_newline = false;
 }
 
-#include <iostream>
-
 char libj::Lexer::getc()
 {
     char c = EOF;
@@ -866,7 +864,7 @@ libj::Token libj::Lexer::read_token()
             buffer += c;
             continue;
         }
-            
+
         case LexState::Other:
         {
             if (buffer.size() == 1)
@@ -920,20 +918,13 @@ libj::Token libj::Lexer::read_token()
 
 libj::Token libj::Lexer::peek()
 {
-    try
+    Token tok;
+    while (true)
     {
-        Token tok;
-        while (true)
-        {
-            tok = read_token();
-            if (tok.type() == TokenType::Comment)
-                m_tok = std::nullopt;
-            else
-                return tok;
-        }
-    }
-    catch (...)
-    {
-        throw std::runtime_error("INTERNAL COMPILER ERROR: The Lexer throw an unexpected exception");
+        tok = read_token();
+        if (tok.type() == TokenType::Comment)
+            m_tok = std::nullopt;
+        else
+            return tok;
     }
 }

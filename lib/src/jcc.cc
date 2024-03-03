@@ -11,6 +11,7 @@
 #include <lexer/lex.h>
 #include <prep/preprocess.h>
 #include <error/message.h>
+#include <error/exceptions.h>
 #include <parse/parser.h>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
@@ -51,11 +52,13 @@ static char *safe_strdup(const char *str)
 static jcc_uuid_t jcc_uuid()
 {
     jcc_uuid_t uuid;
-    if (RAND_bytes((unsigned char *)&uuid, sizeof(jcc_uuid_t)) != 1)
-    {
-        uuid.m_high = (uint64_t)rand() << 32 | rand();
-        uuid.m_low = (uint64_t)rand() << 32 | rand();
-    }
+    // if (RAND_bytes((unsigned char *)&uuid, sizeof(jcc_uuid_t)) != 1)
+    // {
+    //     uuid.m_high = (uint64_t)rand() << 32 | rand();
+    //     uuid.m_low = (uint64_t)rand() << 32 | rand();
+    // }
+    /// TODO: Fix this
+    uuid.m_high = uuid.m_low = 0;
     return uuid;
 }
 
@@ -281,9 +284,129 @@ static bool get_include_directories(jcc_job_t *job, std::set<std::string> &dirs)
             dirs.insert(option->m_v);
             continue;
         }
-
-        libj::message(*job, libj::Err::ERROR, "Unknown option: %s", option->m_u);
     }
+
+    return true;
+}
+
+static bool get_compile_time_user_constants(jcc_job_t *job, std::map<std::string, std::string> &constants)
+{
+    for (uint32_t i = 0; i < job->m_options.m_count; i++)
+    {
+        jcc_option_t *option = job->m_options.m_options[i];
+        if (!option)
+            continue;
+
+        if (strcmp(option->m_u, "D") == 0)
+        {
+            std::string def = option->m_v;
+            size_t pos = def.find('=');
+            if (pos != std::string::npos)
+            {
+                std::string key = def.substr(0, pos);
+                std::string value = def.substr(pos + 1);
+                constants[key] = value;
+            }
+            else
+            {
+                constants[def] = "1";
+            }
+
+            continue;
+        }
+    }
+
+    return true;
+}
+
+static bool preprocess_phase(jcc_job_t *job, std::shared_ptr<libj::PrepEngine> prep)
+{
+    std::set<std::string> dirs;
+    std::map<std::string, std::string> constants;
+
+    if (!get_include_directories(job, dirs))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to get include directories");
+        return false;
+    }
+    for (auto &dir : dirs)
+        prep->addpath(dir);
+    if (!get_compile_time_user_constants(job, constants))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to get compile time user constants");
+        return false;
+    }
+    for (auto &constant : constants)
+        prep->set_static(constant.first, constant.second);
+
+    if (!prep->set_source(job->m_in, job->m_filename))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to set source");
+        return false;
+    }
+
+    return true;
+}
+
+static bool compile(jcc_job_t *job)
+{
+    // Create an AST before goto statements
+    libj::AST ast;
+
+    ///=========================================
+    /// BEGIN: PREPROCESSOR/LEXER
+    ///=========================================
+    std::shared_ptr<libj::PrepEngine> prep = std::make_shared<libj::PrepEngine>(*job);
+    libj::message(*job, libj::Err::DEBUG, "Preprocessing source");
+    if (!preprocess_phase(job, prep))
+        return false;
+    libj::message(*job, libj::Err::DEBUG, "Finished preprocessing source");
+    ///=========================================
+    /// END: PREPROCESSOR/LEXER
+    ///=========================================
+
+    ///=========================================
+    /// BEGIN: PARSER
+    ///=========================================
+    libj::Parser parser;
+    libj::message(*job, libj::Err::DEBUG, "Building AST 1");
+    if (!parser.parse(*job, prep, ast))
+        return false;
+    libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
+    if (job->m_debug)
+        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast.to_json()));
+    ///=========================================
+    /// END: PARSER
+    ///=========================================
+
+    ///=========================================
+    /// BEGIN: INTERMEDIATE PROCESSING
+    ///=========================================
+    if (!jcc_mutate_ast(job, ast))
+        return false;
+
+    if (!jcc_verify_semantics(job, ast))
+        return false;
+
+    if (!jcc_optimize_ast(job, ast))
+        return false;
+    ///=========================================
+    /// END: INTERMEDIATE PROCESSING
+    ///=========================================
+
+    ///=========================================
+    /// BEGIN: GENERATOR
+    ///=========================================
+    libj::Generator gen;
+    libj::message(*job, libj::Err::DEBUG, "Generating output");
+    if (!gen.synthesize_LLVM_IR(*job, ast))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to generate output");
+        return false;
+    }
+    ///=========================================
+    /// END: GENERATOR
+    ///=========================================
 
     return true;
 }
@@ -298,82 +421,36 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     memset(job->m_result, 0, sizeof(jcc_result_t));
 
     libj::message(*job, libj::Err::DEBUG, "Starting jcc run @ %s", get_datetime().c_str());
+    bool success = false;
 
-    // Create an AST before goto statements
-    libj::AST ast;
-    std::set<std::string> dirs;
-
-    ///=========================================
-    /// BEGIN: PREPROCESSOR/LEXER
-    ///=========================================
-    std::shared_ptr<libj::PrepEngine> prep = std::make_shared<libj::PrepEngine>(*job);
-    if (!prep->set_source(job->m_in, job->m_filename))
+    try
     {
-        libj::message(*job, libj::Err::ERROR, "failed to set source");
-        goto error;
+        if (compile(job))
+        {
+            libj::message(*job, libj::Err::DEBUG, "Compilation successful");
+            success = true;
+        }
+        else
+        {
+            libj::message(*job, libj::Err::ERROR, "Compilation failed");
+        }
     }
-    if (!get_include_directories(job, dirs))
+    catch (libj::PreprocessorException &)
     {
-        libj::message(*job, libj::Err::ERROR, "failed to get include directories");
-        goto error;
+        libj::message(*job, libj::Err::ERROR, "Compilation failed because of a preprocessor error");
     }
-    for (auto &dir : dirs)
-        prep->addpath(dir);
-    ///=========================================
-    /// END: PREPROCESSOR/LEXER
-    ///=========================================
-
-    ///=========================================
-    /// BEGIN: PARSER
-    ///=========================================
-    libj::Parser parser;
-    libj::message(*job, libj::Err::DEBUG, "Building AST 1");
-    if (!parser.parse(*job, prep, ast))
-        goto error;
-    libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
-    if (job->m_debug)
-        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast.to_json()));
-    ///=========================================
-    /// END: PARSER
-    ///=========================================
-
-    ///=========================================
-    /// BEGIN: INTERMEDIATE PROCESSING
-    ///=========================================
-    if (!jcc_mutate_ast(job, ast))
-        goto error;
-
-    if (!jcc_verify_semantics(job, ast))
-        goto error;
-
-    if (!jcc_optimize_ast(job, ast))
-        goto error;
-    ///=========================================
-    /// END: INTERMEDIATE PROCESSING
-    ///=========================================
-
-    ///=========================================
-    /// BEGIN: GENERATOR
-    ///=========================================
-    libj::Generator gen;
-    libj::message(*job, libj::Err::DEBUG, "Generating output");
-    if (!gen.synthesize_LLVM_IR(*job, ast))
+    catch (libj::ParseException &)
     {
-        libj::message(*job, libj::Err::ERROR, "failed to generate output");
-        goto error;
+        libj::message(*job, libj::Err::ERROR, "Compilation failed because of a parse error");
     }
-    ///=========================================
-    /// END: GENERATOR
-    ///=========================================
+    catch (...)
+    {
+        libj::message(*job, libj::Err::FATAL, "Compilation failed: Unknown error");
+    }
 
     libj::message(*job, libj::Err::DEBUG, "Finished jcc run @ %s", get_datetime().c_str());
 
-    return true;
-
-error:
-    libj::message(*job, libj::Err::ERROR, "Compilation failed");
-    libj::message(*job, libj::Err::DEBUG, "Finished jcc run @ %s", get_datetime().c_str());
-    return false;
+    return success;
 }
 
 LIB_EXPORT const jcc_result_t *jcc_result(jcc_job_t *job)

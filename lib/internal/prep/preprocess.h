@@ -11,6 +11,7 @@
 #include <optional>
 #include <lexer/lex.h>
 #include <jcc.h>
+#include <memory>
 #include <set>
 #include <stack>
 
@@ -23,8 +24,12 @@ namespace libj
         {
             Lexer lexer;
             std::string path;
-            FILE *file;
             std::set<std::string> already_included;
+            std::string *buffer;
+            FILE *file;
+
+            Entry(Lexer l, const std::string &p, FILE *f) : lexer(l), path(p), file(f) {}
+            Entry() : lexer(), path(), file(nullptr) {}
         };
         std::set<std::string> m_include_dirs;
         std::vector<std::string> m_include_files; // for circular include detection
@@ -32,11 +37,14 @@ namespace libj
         jcc_job_t *m_job;
         std::string include_path;
         std::optional<Token> m_tok;
+        std::map<std::string, std::string> m_statics;
 
         Token read_token();
 
         bool handle_import();
-        bool handle_macro(Token &tok);
+        bool handle_macro(const Token &tok);
+
+        Entry build_statics_decl();
 
     public:
         PrepEngine(jcc_job_t &job) : m_job(&job) {}
@@ -55,6 +63,9 @@ namespace libj
         /// @brief Peek the next token
         /// @return The next token
         Token peek() override;
+
+        void set_static(const std::string &name, const std::string &value) { m_statics[name] = value; }
+        bool get_static(const std::string &name, std::string &value) const;
     };
 }
 

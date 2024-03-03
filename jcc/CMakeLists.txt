@@ -13,6 +13,6 @@ target_include_directories(jcc PRIVATE "src" ${CMAKE_CURRENT_SOURCE_DIR}/../lib/
 target_compile_options(jcc PRIVATE -g -Wall -Wextra -Wpedantic -Werror -O3 -flto)
 target_link_options(jcc PRIVATE -flto)
 target_link_directories(jcc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../lib)
-target_link_libraries(jcc PRIVATE j crypto)
+target_link_libraries(jcc PRIVATE j)
 add_dependencies(jcc j-shared)
 

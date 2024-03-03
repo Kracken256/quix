@@ -1,6 +1,5 @@
 #include <parse/nodes/literal.h>
 
-#include <iostream>
 static uint8_t get_numbits(const std::string &s)
 {
     if (s.find('.') != std::string::npos)

@@ -101,15 +101,15 @@ namespace libj
     protected:
         /// @brief C FILE* source. Object is owned by the caller.
         /// @note The caller is responsible for closing the file.
-        FILE *m_src;
+        FILE *m_src = nullptr;
         std::string m_filename;
         std::vector<char> m_buffer;
         std::optional<Token> m_tok;
-        size_t m_buf_pos;
-        char m_last;
+        size_t m_buf_pos = 0;
+        char m_last = 0;
         Loc m_loc_curr;
         Loc m_loc;
-        bool added_newline;
+        bool added_newline = false;
 
         char getc();
         virtual libj::Token read_token();

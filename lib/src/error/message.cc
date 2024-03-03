@@ -1,4 +1,5 @@
 #include <error/message.h>
+#include <error/exceptions.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
@@ -200,6 +201,8 @@ void libj::parmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const 
     va_end(args);
 
     push_message_to_job(job, type, msg);
+
+    throw libj::ParseException();
 }
 
 void libj::prepmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const std::string &format, ...)
@@ -219,4 +222,6 @@ void libj::prepmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const
     va_end(args);
 
     push_message_to_job(job, type, msg);
+
+    throw libj::PreprocessorException();
 }

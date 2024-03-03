@@ -7,7 +7,8 @@ std::string libj::RootNode::to_json() const
     {
         json += child->to_json() + ",";
     }
-    json.pop_back();
+    if (m_children.size() > 0)
+        json.pop_back();
     json += "]}";
     return json;
 }

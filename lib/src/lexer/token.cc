@@ -18,7 +18,7 @@ libj::Loc libj::Loc::operator-(size_t rhs) const
     }
 
     if (rhs <= (uint64_t)col)
-        return Loc(line, col - rhs);
+        return Loc(line, col - rhs, file);
 
     Loc new_loc = *this;
 

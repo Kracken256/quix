@@ -266,7 +266,7 @@ end:
     return c;
 }
 
-bool libj::Lexer::set_source(FILE *src)
+bool libj::Lexer::set_source(FILE *src, const std::string &filename)
 {
     if (src == nullptr)
         return false;
@@ -275,6 +275,9 @@ bool libj::Lexer::set_source(FILE *src)
 
     if (fseek(m_src, 0, SEEK_SET) != 0)
         return false;
+
+    m_filename = filename;
+    m_loc_curr = Loc(1, 1, filename);
 
     return true;
 }

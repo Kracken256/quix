@@ -85,7 +85,7 @@ namespace libj
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src) = 0;
+        virtual bool set_source(FILE *src, const std::string &filename) = 0;
 
         /// @brief Get the next token
         /// @return The next token
@@ -102,6 +102,7 @@ namespace libj
         /// @brief C FILE* source. Object is owned by the caller.
         /// @note The caller is responsible for closing the file.
         FILE *m_src;
+        std::string m_filename;
         std::vector<char> m_buffer;
         std::optional<Token> m_tok;
         size_t m_buf_pos;
@@ -119,7 +120,7 @@ namespace libj
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src) override;
+        virtual bool set_source(FILE *src, const std::string &filename) override;
 
         /// @brief Get the next token
         /// @return The next token

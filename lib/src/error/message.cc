@@ -188,11 +188,14 @@ void libj::parmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const 
     va_list args;
     va_start(args, format);
     std::string msg;
+    std::string filename = tok.loc().file;
+    if (filename.empty())
+        filename = job.m_filename;
 
     if (is_color_enabled())
-        msg = make_parser_message_colored(job.m_filename, tok, type, format, args);
+        msg = make_parser_message_colored(filename, tok, type, format, args);
     else
-        msg = make_parser_message_nocolor(job.m_filename, tok, type, format, args);
+        msg = make_parser_message_nocolor(filename, tok, type, format, args);
 
     va_end(args);
 
@@ -204,11 +207,14 @@ void libj::prepmsg(jcc_job_t &job, const libj::Token &tok, libj::Err type, const
     va_list args;
     va_start(args, format);
     std::string msg;
+    std::string filename = tok.loc().file;
+    if (filename.empty())
+        filename = job.m_filename;
 
     if (is_color_enabled())
-        msg = make_parser_message_colored(job.m_filename, tok, type, format, args);
+        msg = make_parser_message_colored(filename, tok, type, format, args);
     else
-        msg = make_parser_message_nocolor(job.m_filename, tok, type, format, args);
+        msg = make_parser_message_nocolor(filename, tok, type, format, args);
 
     va_end(args);
 

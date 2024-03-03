@@ -141,9 +141,10 @@ namespace libj
     {
         int64_t line;
         int64_t col;
+        std::string file;
 
         Loc() : line(1), col(1) {}
-        Loc(int64_t line, int64_t col) : line(line), col(col) {}
+        Loc(int64_t line, int64_t col, std::string file = "") : line(line), col(col), file(file) {}
 
         Loc operator-(size_t rhs) const;
 

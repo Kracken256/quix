@@ -19,13 +19,22 @@ namespace libj
     class PrepEngine : public libj::Scanner
     {
     protected:
+        struct Entry
+        {
+            Lexer lexer;
+            std::string path;
+            FILE *file;
+        };
         std::set<std::string> m_include_dirs;
-        std::stack<std::pair<Lexer, FILE*>> m_stack;
+        std::vector<std::string> m_include_files; // for circular include detection
+        std::stack<Entry> m_stack;
         jcc_job_t *m_job;
         std::string include_path;
         std::optional<Token> m_tok;
 
         Token read_token();
+
+        bool handle_import(Token &tok);
 
     public:
         PrepEngine(jcc_job_t &job) : m_job(&job) {}
@@ -35,7 +44,7 @@ namespace libj
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src) override;
+        virtual bool set_source(FILE *src, const std::string &filename) override;
 
         /// @brief Get the next token
         /// @return The next token

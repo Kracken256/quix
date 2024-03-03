@@ -11,6 +11,8 @@
 #include <macro.h>
 #include <filesystem>
 
+#define JLANG_HEADER_EXTENSION ".jh"
+
 void libj::PrepEngine::addpath(const std::string &path)
 {
     m_include_dirs.insert(path);
@@ -25,13 +27,13 @@ void libj::PrepEngine::addpath(const std::string &path)
     }
 }
 
-bool libj::PrepEngine::set_source(FILE *src)
+bool libj::PrepEngine::set_source(FILE *src, const std::string &filename)
 {
     Lexer l;
-    if (!l.set_source(src))
+    if (!l.set_source(src, filename))
         return false;
 
-    m_stack.push({l, src});
+    m_stack.push({l, filename, src});
     return true;
 }
 
@@ -52,73 +54,96 @@ libj::Token libj::PrepEngine::peek()
     return m_tok.value();
 }
 
+bool libj::PrepEngine::handle_import(Token &tok)
+{
+    // Get Identifier
+    tok = m_stack.top().lexer.next();
+    if (tok.type() != TokenType::Identifier)
+    {
+        PREPMSG(tok, Err::ERROR, "Expected identifier after import");
+        return false;
+    }
+
+    std::string filename = std::get<std::string>(tok.val());
+
+    PREPMSG(tok, Err::DEBUG, "Requested import of file: %s", filename.c_str());
+
+    // get next token
+    tok = m_stack.top().lexer.next();
+    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
+    {
+        PREPMSG(tok, Err::ERROR, "Expected semicolon after import");
+        return false;
+    }
+
+    PREPMSG(tok, Err::DEBUG, "Searching for file: %s in include directories [%s]", filename.c_str(), include_path.c_str());
+    std::string filepath;
+    for (auto &dir : m_include_dirs)
+    {
+        std::string path = dir + "/" + filename + JLANG_HEADER_EXTENSION;
+        if (!std::filesystem::exists(path))
+            continue;
+
+        filepath = path;
+        break;
+    }
+
+    if (filepath.empty())
+    {
+        PREPMSG(tok, Err::ERROR, "Could not find file: \"%s.j\" in include directories [%s]", filename.c_str(), include_path.c_str());
+        return false;
+    }
+
+    filepath = std::filesystem::absolute(filepath).string();
+
+    // circular include detection
+    if (std::find(m_include_files.begin(), m_include_files.end(), filepath) != m_include_files.end())
+    {
+        std::string msg;
+        for (auto &file : m_include_files)
+            msg += "  -> " + file + "\n";
+        msg += "  -> " + filepath + "\n";
+        PREPMSG(tok, Err::ERROR, "Circular include detected: \n%s", msg.c_str());
+        PREPMSG(tok, Err::ERROR, "Refusing to enter infinite loop. Try to split your dependencies into smaller files.");
+        return false;
+    }
+
+    FILE *f = fopen(filepath.c_str(), "r");
+
+    if (!f)
+    {
+        PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.j\" in include directories [%s]", filepath.c_str(), include_path.c_str());
+        return false;
+    }
+
+    m_include_files.push_back(filepath);
+    m_stack.push({Lexer(), filepath, f});
+    m_stack.top().lexer.set_source(f, filepath);
+
+    return true;
+}
+
 libj::Token libj::PrepEngine::read_token()
 {
     libj::Token tok;
 
 start:
-    tok = m_stack.top().first.next();
+    tok = m_stack.top().lexer.next();
 
     if (tok.type() == TokenType::Keyword && std::get<Keyword>(tok.val()) == Keyword::Import)
     {
-        // Get Identifier
-        tok = m_stack.top().first.next();
-        if (tok.type() != TokenType::Identifier)
-        {
-            PREPMSG(tok, Err::ERROR, "Expected identifier after import");
-            tok = Token(TokenType::Eof, "");
-            return tok;
-        }
+        if (handle_import(tok))
+            goto start;
 
-        std::string filename = std::get<std::string>(tok.val());
-
-        PREPMSG(tok, Err::DEBUG, "Requested import of file: %s", filename.c_str());
-
-        // get next token
-        tok = m_stack.top().first.next();
-        if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
-        {
-            PREPMSG(tok, Err::ERROR, "Expected semicolon after import");
-            return Token(TokenType::Eof, "");
-        }
-
-        PREPMSG(tok, Err::DEBUG, "Searching for file: %s in include directories [%s]", filename.c_str(), include_path.c_str());
-        FILE *f = nullptr;
-        for (auto &dir : m_include_dirs)
-        {
-            std::string path = dir + "/" + filename + ".j";
-            if (!std::filesystem::exists(path))
-                continue;
-
-            f = fopen(path.c_str(), "r");
-            if (f)
-            {
-                m_stack.push({Lexer(), f});
-                m_stack.top().first.set_source(f);
-            }
-            else
-            {
-                PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.j\" in include directories [%s]", filename.c_str(), include_path.c_str());
-                tok = Token(TokenType::Eof, "");
-                return tok;
-            }
-        }
-
-        if (!f)
-        {
-            PREPMSG(tok, Err::ERROR, "Could not find file: \"%s.j\" in include directories [%s]", filename.c_str(), include_path.c_str());
-            tok = Token(TokenType::Eof, "");
-            return tok;
-        }
-
-        goto start;
+        tok = Token(TokenType::Eof, "");
     }
     else if (tok.type() == TokenType::Eof)
     {
         if (m_stack.size() == 1)
             return tok;
 
-        fclose(m_stack.top().second);
+        fclose(m_stack.top().file);
+        m_include_files.pop_back();
         m_stack.pop();
         goto start;
     }

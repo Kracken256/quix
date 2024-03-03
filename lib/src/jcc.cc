@@ -307,7 +307,7 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     /// BEGIN: PREPROCESSOR/LEXER
     ///=========================================
     std::shared_ptr<libj::PrepEngine> prep = std::make_shared<libj::PrepEngine>(*job);
-    if (!prep->set_source(job->m_in))
+    if (!prep->set_source(job->m_in, job->m_filename))
     {
         libj::message(*job, libj::Err::ERROR, "failed to set source");
         goto error;

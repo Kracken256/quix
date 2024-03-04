@@ -1,13 +1,13 @@
 # Orbit - The JLang Standard Library
 
-This is the standard library for JLang. It contains all the built-in functions and classes that are available to JLang programs by default. It is a collection of modules that provide a wide range of functionality, including I/O, string manipulation, math, and more.
+Orbit is the standard library for JLang. It contains all the built-in functions and classes available to JLang programs by default. It is a collection of modules that provide a wide range of functionality, including I/O, string manipulation, math, and more.
 
-**Note:** Each bullet point is a package that contains multiple modules. The Orbit standard library is a bundle or `metapackage` of these packages.
+**Note:** Each bullet point is a package that contains multiple modules. The Orbit standard library is a bundle or `meta-package` of these packages.
 
 ### Packages contained in the standard library
 - **Containers**
 
-    *Note: All of these modules require a heap allocator to be implemented. Otherwise, they are fully operating system and architecture independent.*
+    *Note: These modules require a heap allocator to be implemented. Otherwise, they are fully operating system and architecture-independent.*
     | Module | Description |
     | ------ | ----------- |
     | `string` | String manipulation functions |
@@ -19,7 +19,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `deque` | Create and manipulate double-ended queues |
     | `ring` | Create and manipulate ring buffers |
     | `tensor` | Create and manipulate multi-dimensional arrays |
-    | `matrix` | Create and manipulate numberic matrices |
+    | `matrix` | Create and manipulate numeric matrices |
     | `graph` | Create and manipulate generic, (un)directed, (a)cyclic, (un)weighted graphs |
     | `tree` | Create and manipulate generic trees |
     | `binary_tree` | Create and manipulate binary trees |
@@ -27,7 +27,7 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 - **Container Algorithms**
 
-    *Note: All of these modules are fully operating system and architecture independent.*
+    *Note: All of these modules are fully operating system and architecture-independent.*
     | Module | Description |
     | ------ | ----------- |
     | `sort` | Sorting algorithms |
@@ -36,16 +36,16 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `count` | Counting algorithms |
     | `sequence` | Create a generator to return a sequence of objects |
     | `qrandom` | Generate pseudo-random object instances by filling the structure(s) with random data. Will likely break invariant properties of the structure(s) |
-    | `objhash` | Object specific perfect hash functions |
+    | `objhash` | Object-specific perfect hash functions |
     | `algorithm` | Metapackage for all container algorithm modules |
 
 - **Math**
 
-    *Note: All of these modules are operating system and architecture independent. However, many require floating-point support.*
+    *Note: All of these modules are operating system and architecture-independent. However, many require floating-point support.*
     | Module | Description |
     | ------ | ----------- |
-    | `number` | Arbitrary precision integer and floating-point mathemathics |
-    | `complex` | Complex number mathemathics and functions |
+    | `number` | Arbitrary precision integer and floating-point mathematics |
+    | `complex` | Complex number mathematics and functions |
     | `calc` | Calculus functions (multivariant differentiation, integration, etc.) |
     | `trig` | Trigonometric functions |
     | `geometry` | Geometric functions |
@@ -70,8 +70,8 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 - **Cryptography**
 
-    *Note: All of these modules are operating system and architecture independent.*
-    | Module | Description | Cryptographicly Secure | Built with |
+    *Note: All of these modules are operating system and architecture-independent.*
+    | Module | Description | Cryptographically Secure | Built with |
     | ------ | ----------- | ---------------------- | ---------- |
     | `hash` | Hash functions | Yes | OpenSSL EVP_Digest* |
     | `cipher` | Symmetric and asymmetric encryption | Yes | OpenSSL EVP_Cipher and EVP_PKEY |
@@ -82,10 +82,10 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 - **Data Transcoding and Compression**
 
-    *Note: All of these modules are operating system and architecture independent.*
+    *Note: All of these modules are operating system and architecture-independent.*
     | Module | Description |
     | ------ | ----------- |
-    | `basen` | Stream encoding and decoding. base64, base16 and generic baseN with custom alphabets |
+    | `basen` | Stream encoding and decoding. base64, base16, and generic baseN with custom alphabets |
     | `endian` | Endian conversion functions |
     | `zlib` | Zlib compression and decompression |
     | `lz4` | LZ4 compression and decompression |
@@ -112,13 +112,13 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `exception` | Exception handling |
     | `assert` | Assertion functions |
     | `debug` | Debugging functions |
-    | `dev` | Common development tools. unsafe hexdump object, stack trace, symbol lookup, etc. |
+    | `dev` | Common development tools. unsafe hex dump object, stack trace, symbol lookup, etc. |
     | `macro` | Many macro definitions |
     | `@util` | Metapackage for all util modules |
 
 - **sysio**
 
-    *Note: All of these modules are operating system and architecture dependent.*
+    *Note: All of these modules are operating system and architecture-dependent.*
     | Module | Description |
     | ------ | ----------- |
     | `osfile` | Operating system file manipulation functions |
@@ -135,7 +135,7 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 - **runtime**
 
-    *Note: All of these modules are operating system and architecture dependent.*
+    *Note: All of these modules are operating system and architecture-dependent.*
     | Module | Description |
     | ------ | ----------- |
     | `process` | Operating system process manipulation functions |
@@ -150,7 +150,7 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 - **reflection**
 
-    *Note: All of these modules are operating system and architecture independent.*
+    *Note: All of these modules are operating system and architecture-independent.*
     | Module | Description |
     | ------ | ----------- |
     | `serialize` | Serialization and deserialization functions |
@@ -166,7 +166,7 @@ This is the standard library for JLang. It contains all the built-in functions a
 - Clone the repository
 - Navigate to the root of the repository
 - Run `jcc build -O5 -g2 -o orbit.jlib .`
-- It will take a while to build. Also the output jlib file will be quite large. It contains extra debug symbols and JLang metadata sections. It will be significantly smaller when linked and stripped to a final executable.
+- It will take a while to build. Also, the output jlib file will be quite large. It contains extra debug symbols and JLang metadata sections. It will be significantly smaller when linked and stripped to a final executable.
 
 # How to install?
 - Run `jcc install orbit.jlib`
@@ -174,5 +174,5 @@ This is the standard library for JLang. It contains all the built-in functions a
 
 # How to use?
 - Add `import [module]` to the top of your JLang source file. For example, `import string` to use the string manipulation functions.
-- Compile your JLang source file with `jcc`. Linking will be done automatically, as long as the standard library is installed in the default location. If it is not, simply add the absolute path to the library to the `jcc` command. For example, `jcc /usr/lib/jlib/orbit.jlib [source file] -o [output file]`
+- Compile the JLang source file with `jcc`. Linking will be done automatically if the standard library is installed in the default location. If it is not, add the absolute path to the library to the `jcc` command. For example, `jcc /usr/lib/lib/orbit.jlib [source file] -o [output file]`
 

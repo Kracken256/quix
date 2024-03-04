@@ -1,9 +1,9 @@
-module:
+metapackage:
   name: orbit
   version: 0.0.1
   description: Orbit is the JLang standard library.
   license: Proprietary
-  submodules:
+  items:
     - ./algorithm
     - ./container
     - ./crypto

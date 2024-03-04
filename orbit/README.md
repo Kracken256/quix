@@ -1,6 +1,6 @@
 # Orbit - The JLang Standard Library
 
-Orbit is the standard library for JLang. It contains all the built-in functions and classes available to JLang programs by default. It is a collection of modules that provide a wide range of functionality, including I/O, string manipulation, math, and more.
+Orbit is the standard library for JLang. It contains all the built-in functions and classes available to JLang programs by default. It is a collection of packages that provide a wide range of functionality, including I/O, string manipulation, math, and more.
 
 **Note:** Each bullet point is a package that contains multiple modules. The Orbit standard library is a bundle or `meta-package` of these packages.
 
@@ -23,7 +23,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `graph` | Create and manipulate generic, (un)directed, (a)cyclic, (un)weighted graphs |
     | `tree` | Create and manipulate generic trees |
     | `binary_tree` | Create and manipulate binary trees |
-    | `@container` | Metapackage for all container modules |
+    | `@container` | Package for all container modules |
 
 - **Container Algorithms**
 
@@ -37,7 +37,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `sequence` | Create a generator to return a sequence of objects |
     | `qrandom` | Generate pseudo-random object instances by filling the structure(s) with random data. Will likely break invariant properties of the structure(s) |
     | `objhash` | Object-specific perfect hash functions |
-    | `algorithm` | Metapackage for all container algorithm modules |
+    | `@algorithm` | Package for all container algorithm modules |
 
 - **Math**
 
@@ -52,7 +52,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `statistics` | Statistical functions |
     | `random` | High-quality deterministic random number generators |
     | `constants` | Mathematical constants |
-    | `@math` | Metapackage for all math modules |
+    | `@math` | Package for all math modules |
 
 - **Time**
 
@@ -66,7 +66,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `timezone` | Timezone manipulation functions |
     | `timer` | Timer manipulation functions |
     | `stopwatch` | Stopwatch manipulation functions |
-    | `@time` | Metapackage for all time modules |
+    | `@time` | Package for all time modules |
 
 - **Cryptography**
 
@@ -78,7 +78,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `sign` | HMAC and asymmetric signing | Yes | OpenSSL EVP signing |
     | `keygen` | Key generation | Yes | OpenSSL EVP_PKEY and RAND |
     | `crypto` | Recommended cryptographic primitives | Yes | Abstracts above modules |
-    | `@crypt` | Metapackage for all cryptography modules |
+    | `@crypt` | Package for all cryptography modules |
 
 - **Data Transcoding and Compression**
 
@@ -97,7 +97,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `7z` | 7z file manipulation |
     | `rar` | Rar file manipulation |
     | `streamconv` | Stream conversion generics |
-    | `@data` | Metapackage for all transcoding and compression modules |
+    | `@data` | Package for all transcoding and compression modules |
 
 - **Util**
 
@@ -114,7 +114,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `debug` | Debugging functions |
     | `dev` | Common development tools. unsafe hex dump object, stack trace, symbol lookup, etc. |
     | `macro` | Many macro definitions |
-    | `@util` | Metapackage for all util modules |
+    | `@util` | Package for all util modules |
 
 - **sysio**
 
@@ -131,7 +131,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `net` | TCP, UDP, QUIC transport layer protocols |
     | `tls` | TLS client and server support (OpenSSL) |   
     | `protocol` | Higher level protocols |
-    | `@sysio` | Metapackage for all sysio modules |
+    | `@sysio` | Package for all sysio modules |
 
 - **runtime**
 
@@ -146,7 +146,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `signal` | Operating system signal manipulation functions |
     | `memory` | Operating system memory statistics and manipulation functions |
     | `plugin` | Dynamically load and unload shared libraries or modules |
-    | `@runtime` | Metapackage for all runtime modules |
+    | `@runtime` | Package for all runtime modules |
 
 - **reflection**
 
@@ -159,7 +159,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `yaml` | YAML serialization and deserialization functions |
     | `toml` | TOML serialization and deserialization functions |
     | `protobuf` | Protocol Buffers serialization and deserialization functions |
-    | `@reflect` | Metapackage for all reflection modules |
+    | `@reflect` | Package for all reflection modules |
 
 
 # How to build?

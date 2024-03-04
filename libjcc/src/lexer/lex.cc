@@ -465,7 +465,7 @@ static NumberLiteralType check_number_literal_type(std::string input)
     }
 
 test_float:
-    auto regexpFloat = std::regex("^([0-9]+(\\.[0-9]+)?)?(e[+-]?([0-9]+(\\.?[0-9]+)?)+)*$");
+    static const auto regexpFloat = std::regex("^([0-9]+(\\.[0-9]+)?)?(e[+-]?([0-9]+(\\.?[0-9]+)?)+)*$");
 
     // slow operation
     if (std::regex_match(input, regexpFloat))

@@ -40,7 +40,7 @@ target_link_directories(libjcc-tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../../l
 target_link_options(libjcc-tests PRIVATE ${LLVM_LD_FLAGS})
 target_compile_options(libjcc-tests PRIVATE -Wall -Wextra -Werror)
 target_link_libraries(libjcc-tests j GTest::gtest_main ${LLVM_LIBS})
-add_dependencies(libjcc-tests j-shared)
+add_dependencies(libjcc-tests libjcc)
 add_test(NAME libjcc-tests COMMAND libjcc-tests)
 
 include(GoogleTest)

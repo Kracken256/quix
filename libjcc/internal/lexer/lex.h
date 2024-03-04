@@ -22,7 +22,7 @@ namespace libjcc
 
     typedef std::pair<const char *, int> KWPair;
 
-    constexpr std::array<KWPair, 44> keywords = {
+    constexpr std::array<KWPair, 49> keywords = {
         KWPair("subsystem", 9),
         KWPair("import", 6),
         KWPair("export", 6),
@@ -33,6 +33,11 @@ namespace libjcc
         KWPair("union", 5),
         KWPair("packet", 6),
         KWPair("fn", 2),
+        KWPair("nothrow", 7),
+        KWPair("foreign", 7),
+        KWPair("pure", 4),
+        KWPair("impure", 6),
+        KWPair("tsafe", 5),
         KWPair("typedef", 7),
         KWPair("const", 5),
         KWPair("static", 6),
@@ -40,7 +45,7 @@ namespace libjcc
         KWPair("enum", 4),
         KWPair("class", 5),
         KWPair("bundle", 6),
-        KWPair("public", 6),
+        KWPair("pub", 3),
         KWPair("private", 7),
         KWPair("protected", 9),
         KWPair("override", 8),

@@ -48,10 +48,7 @@ bool libjcc::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, std::shared_ptr<libjc
     // Verify the module
     message(ctx, libjcc::Err::DEBUG, "Verifying LLVM module");
     if (llvm::verifyModule(*llvm_ctx.m_module, &os))
-    {
-        message(ctx, libjcc::Err::ERROR, "Failed to verify LLVM module");
-        return false;
-    }
+        throw std::runtime_error("LLVM IR generation failed. The AST must have been semantically incorrect");
 
     // Generate the IR
     message(ctx, libjcc::Err::DEBUG, "Generating LLVM IR");

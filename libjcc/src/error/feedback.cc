@@ -60,4 +60,15 @@ std::map<libjcc::Msg, const char *> libjcc::feedback = {
     {ENUM_FIELD_EXPECTED_CONST_EXPR, "Expected a constant expression after the equals sign. To fix the issue, insert a constant expression after the equals sign. Syntax: name [= expr];"},
     {ENUM_FIELD_EXPECTED_SEMICOLON, "Expected a semicolon after the enum field definition. To fix the issue, insert a semicolon after the enum field definition. Syntax: name [= expr];"},
 
+    {FN_EXPECTED_IDENTIFIER, "Expected identifier after the keyword 'fn'. To fix the issue, insert an identifier after the keyword 'fn'"},
+    {FN_EXPECTED_OPEN_PAREN, "Expected an open parenthesis after the function name. To fix the issue, insert an open parenthesis after the function name"},
+    {FN_EXPECTED_CLOSE_PAREN_OR_COMMA, "Expected a close parenthesis or a comma after the function parameter. To fix the issue, insert a close parenthesis or a comma after the function parameter"},
+    {FN_EXPECTED_OPEN_BRACE, "Expected an open brace after the function parameter list. To fix the issue, insert an open brace after the function parameter list"},
+    {FN_NO_THROW_ALREADY_SPECIFIED, "The 'nothrow' specifier was already specified for this function. To fix the issue, remove the duplicate 'nothrow' specifier"},
+    {FN_FOREIGN_ALREADY_SPECIFIED, "The 'foreign' specifier was already specified for this function. To fix the issue, remove the duplicate 'foreign' specifier"},
+    {FN_THREAD_SAFE_ALREADY_SPECIFIED, "The 'tsafe' specifier was already specified for this function. To fix the issue, remove the duplicate 'thread_safe' specifier"},
+    {FN_PURE_ALREADY_SPECIFIED, "The 'pure' specifier was already specified for this function. To fix the issue, remove the duplicate 'pure' specifier"},
+    {FN_IMPURE_ALREADY_SPECIFIED, "The 'impure' specifier was already specified for this function. To fix the issue, remove the duplicate 'impure' specifier"},
+    {FN_PURE_AND_IMPURE_SPECIFIED, "The 'pure' and 'impure' specifiers were both specified for this function. To fix the issue, remove one of the duplicate specifiers"},
+
     {PREP_DUPLICATE_IMPORT, "Source file \"%s\" contains duplicate import of \"%s\""}};

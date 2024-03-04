@@ -23,7 +23,19 @@ static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
 bool libjcc::parse_type(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::TypeNode> &node)
 {
     Token tok = scanner->next();
-    if (tok.type() == TokenType::Identifier)
+    if (tok.type() == TokenType::Keyword)
+    {
+        switch (std::get<Keyword>(tok.val()))
+        {
+        case Keyword::Void:
+            node = std::make_shared<VoidTypeNode>();
+            return true;
+
+        default:
+            return false;
+        }
+    }
+    else if (tok.type() == TokenType::Identifier)
     {
         if (primitive_types.contains(std::get<std::string>(tok.val())))
         {

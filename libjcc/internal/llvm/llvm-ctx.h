@@ -28,6 +28,7 @@ namespace libjcc
         std::shared_ptr<llvm::IRBuilder<>> m_builder;
         std::map<std::string, llvm::Value *> m_named_values;
         std::string prefix = "";
+        bool m_pub = false;
 
         LLVMContext(const std::string &filename)
         {

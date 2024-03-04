@@ -48,6 +48,8 @@ namespace libjcc
 
         StructTypeNode,
         UnionTypeNode,
+        ArrayTypeNode,
+        UserTypeNode,
 
         LiteralNode,
         IntegerLiteralNode,
@@ -63,15 +65,17 @@ namespace libjcc
         StructDeclNode,
         UnionDeclNode,
         EnumDeclNode,
+        FunctionDeclNode,
 
 
         StructDefNode,
         UnionDefNode,
         EnumDefNode,
-        ArrayTypeNode,
-        UserTypeNode,
+        FunctionDefNode,
+
 
         SubsystemNode,
+        ExportNode,
     };
 
     class ParseNode

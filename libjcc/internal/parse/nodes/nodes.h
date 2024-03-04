@@ -18,5 +18,7 @@
 #include <parse/nodes/subsystem.h>
 #include <parse/nodes/enum.h>
 #include <parse/nodes/union.h>
+#include <parse/nodes/function.h>
+#include <parse/nodes/exported.h>
 
 #endif // __J_CC_PARSE_NODES_NODES_H__

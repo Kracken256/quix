@@ -67,6 +67,14 @@ bool libjcc::parse(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std
             if (!parse_subsystem(job, scanner, node))
                 return false;
             break;
+        case Keyword::Fn:
+            if (!parse_function(job, scanner, node))
+                return false;
+            break;
+        case Keyword::Pub:
+            if (!parse_pub(job, scanner, node))
+                return false;
+            break;
         default:
             break;
         }

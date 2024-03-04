@@ -52,7 +52,7 @@ bool libjcc::parse_subsystem(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> sc
     tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
     {
-        PARMSG(tok, libjcc::Err::ERROR, feedback[PARSER_EXPECTED_SEMICOLON], tok.serialize().c_str());
+        PARMSG(tok, libjcc::Err::ERROR, feedback[SUBSYSTEM_EXPECTED_SEMICOLON], tok.serialize().c_str());
         return false;
     }
 

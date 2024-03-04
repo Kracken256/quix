@@ -213,7 +213,7 @@ namespace libjcc
 }
 ///=============================================================================
 
-libjcc::Lexer::Lexer()
+libjcc::StreamLexer::StreamLexer()
 {
     m_src = nullptr;
     m_buf_pos = 1024;
@@ -223,7 +223,7 @@ libjcc::Lexer::Lexer()
     added_newline = false;
 }
 
-char libjcc::Lexer::getc()
+char libjcc::StreamLexer::getc()
 {
     char c = EOF;
 
@@ -264,7 +264,7 @@ end:
     return c;
 }
 
-bool libjcc::Lexer::set_source(FILE *src, const std::string &filename)
+bool libjcc::StreamLexer::set_source(FILE *src, const std::string &filename)
 {
     if (src == nullptr)
         return false;
@@ -280,7 +280,7 @@ bool libjcc::Lexer::set_source(FILE *src, const std::string &filename)
     return true;
 }
 
-libjcc::Token libjcc::Lexer::next()
+libjcc::Token libjcc::StreamLexer::next()
 {
     Token tok = peek();
     m_tok = std::nullopt;
@@ -556,7 +556,7 @@ bool normalize_number_literal(std::string &number, std::string &norm, NumberLite
     return true;
 }
 
-libjcc::Token libjcc::Lexer::read_token()
+libjcc::Token libjcc::StreamLexer::read_token()
 {
     if (m_tok.has_value())
         return m_tok.value();
@@ -916,7 +916,7 @@ libjcc::Token libjcc::Lexer::read_token()
     return m_tok.value();
 }
 
-libjcc::Token libjcc::Lexer::peek()
+libjcc::Token libjcc::StreamLexer::peek()
 {
     Token tok;
     while (true)
@@ -927,4 +927,56 @@ libjcc::Token libjcc::Lexer::peek()
         else
             return tok;
     }
+}
+
+bool libjcc::StringLexer::set_source(const std::string &source_code, const std::string &filename)
+{
+    m_src = source_code;
+    m_filename = filename;
+    m_loc_curr = Loc(1, 1, filename);
+    m_buf_pos = 0;
+    return true;
+}
+
+char libjcc::StringLexer::getc()
+{
+    if (m_buf_pos >= m_src.size())
+        return EOF;
+
+    char c = m_src[m_buf_pos++];
+
+    m_loc = m_loc_curr;
+
+    if (c == '\n')
+    {
+        m_loc_curr.line++;
+        m_loc_curr.col = 1;
+    }
+    else
+    {
+        m_loc_curr.col++;
+    }
+
+    return c;
+}
+
+bool libjcc::StringLexer::QuickLex(const std::string &source_code, std::vector<libjcc::Token> &tokens)
+{
+    try
+    {
+        StringLexer lex;
+        lex.set_source(source_code, "quicklex");
+        Token tok;
+        tokens.clear();
+        while ((tok = lex.next()).type() != TokenType::Eof)
+        {
+            tokens.push_back(tok);
+        }
+    }
+    catch (std::exception &e)
+    {
+        return false;
+    }
+
+    return true;
 }

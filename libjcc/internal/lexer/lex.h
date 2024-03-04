@@ -82,11 +82,6 @@ namespace libjcc
         Scanner() = default;
         ~Scanner() = default;
 
-        /// @brief Set the source file
-        /// @param src C FILE pointer
-        /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src, const std::string &filename) = 0;
-
         /// @brief Get the next token
         /// @return The next token
         virtual Token next() = 0;
@@ -96,12 +91,14 @@ namespace libjcc
         virtual Token peek() = 0;
     };
 
-    class Lexer : public Scanner
+    class StreamLexer : public Scanner
     {
+    private:
+        FILE *m_src = nullptr;
+
     protected:
         /// @brief C FILE* source. Object is owned by the caller.
         /// @note The caller is responsible for closing the file.
-        FILE *m_src = nullptr;
         std::string m_filename;
         std::vector<char> m_buffer;
         std::optional<Token> m_tok;
@@ -111,16 +108,16 @@ namespace libjcc
         Loc m_loc;
         bool added_newline = false;
 
-        char getc();
+        virtual char getc();
         virtual libjcc::Token read_token();
 
     public:
-        Lexer();
+        StreamLexer();
 
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src, const std::string &filename) override;
+        virtual bool set_source(FILE *src, const std::string &filename);
 
         /// @brief Get the next token
         /// @return The next token
@@ -129,6 +126,30 @@ namespace libjcc
         /// @brief Peek the next token
         /// @return The next token
         Token peek() override;
+    };
+
+    class StringLexer : StreamLexer
+    {
+    private:
+        std::string m_src;
+
+    protected:
+        virtual char getc() override;
+
+    public:
+        StringLexer() = default;
+
+        /// @brief Set the source file
+        /// @param src C FILE pointer
+        /// @return true if the source file is set successfully
+        bool set_source(const std::string &source_code, const std::string &filename);
+
+        /// @brief lex the source code
+        /// @param source_code 
+        /// @param tokens 
+        /// @return Returns false if the source code is invalid
+        /// @note Does not throw exceptions
+        static bool QuickLex(const std::string &source_code, std::vector<Token> &tokens);
     };
 };
 

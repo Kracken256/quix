@@ -24,13 +24,13 @@ namespace libjcc
     protected:
         struct Entry
         {
-            Lexer lexer;
+            StreamLexer lexer;
             std::string path;
             std::set<std::string> already_included;
             FILE *file;
             std::string *buffer;
 
-            Entry(Lexer l, const std::string &p, FILE *f = nullptr, std::string *buf = nullptr) : lexer(l), path(p), file(f), buffer(buf) {}
+            Entry(StreamLexer l, const std::string &p, FILE *f = nullptr, std::string *buf = nullptr) : lexer(l), path(p), file(f), buffer(buf) {}
             Entry() : lexer(), path(), file(nullptr) {}
         };
         std::set<std::string> m_include_dirs;
@@ -61,7 +61,7 @@ namespace libjcc
         /// @brief Set the source file
         /// @param src C FILE pointer
         /// @return true if the source file is set successfully
-        virtual bool set_source(FILE *src, const std::string &filename) override;
+        virtual bool set_source(FILE *src, const std::string &filename);
 
         /// @brief Get the next token
         /// @return The next token

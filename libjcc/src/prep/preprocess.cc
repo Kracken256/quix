@@ -48,7 +48,7 @@ libjcc::PrepEngine::Entry libjcc::PrepEngine::build_statics_decl()
     FILE *f = fmemopen((void *)ptr->c_str(), ptr->size(), "r");
     if (!f)
         throw std::runtime_error("Failed to create statics declaration file");
-    Lexer l;
+    StreamLexer l;
     if (!l.set_source(f, JLANG_STATICS_FILE))
         throw std::runtime_error("Failed to set source for statics declaration");
     return Entry(l, JLANG_STATICS_FILE, f, ptr);
@@ -56,7 +56,7 @@ libjcc::PrepEngine::Entry libjcc::PrepEngine::build_statics_decl()
 
 bool libjcc::PrepEngine::set_source(FILE *src, const std::string &filename)
 {
-    Lexer l;
+    StreamLexer l;
     if (!l.set_source(src, filename))
         return false;
     m_stack.push({l, filename, src});
@@ -163,7 +163,7 @@ bool libjcc::PrepEngine::handle_import()
 
         m_stack.top().already_included.insert(filepath);
         m_include_files.push_back(filepath);
-        m_stack.push({Lexer(), filepath, f});
+        m_stack.push({StreamLexer(), filepath, f});
         m_stack.top().lexer.set_source(f, filepath);
         return true;
     }

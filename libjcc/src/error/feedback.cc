@@ -36,4 +36,5 @@ std::map<libjcc::Msg, const char *> libjcc::feedback = {
     {TYPE_EXPECTED_CLOSE_BRACKET, "Expected a close bracket after the constant expression. To fix the issue, insert a close bracket after the constant expression. Syntax: [type; size]"},
     {SUBSYSTEM_MISSING_IDENTIFIER, "Expected identifier after the keyword 'subsystem'. To fix the issue, insert an identifier after the keyword 'subsystem'"},
     {SUBSYSTEM_EXPECTED_IDENTIFIER, "Expected identifier after the colon in the subsystem declaration. To fix the issue, insert an identifier after the colon in the subsystem declaration"},
+    {SUBSYSTEM_EXPECTED_SEMICOLON, "Expected semicolon after the subsystem block. To fix the issue, insert a semicolon after the subsystem block. Syntax: subsystem name[: dep1, dep2, ...] { ... };"},
     {PREP_DUPLICATE_IMPORT, "Source file \"%s\" contains duplicate import of \"%s\""}};

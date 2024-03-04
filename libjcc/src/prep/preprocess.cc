@@ -132,7 +132,7 @@ bool libjcc::PrepEngine::handle_import()
 
     if (filepath.empty())
     {
-        PREPMSG(tok, Err::ERROR, "Could not find file: \"%s.j\" in include directories [%s]", filename.c_str(), include_path.c_str());
+        PREPMSG(tok, Err::ERROR, "Could not find file: \"%s\" in include directories [%s]", filename.c_str(), include_path.c_str());
         return false;
     }
 

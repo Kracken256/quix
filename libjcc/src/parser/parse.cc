@@ -59,6 +59,10 @@ bool libjcc::parse(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std
             if (!parse_struct(job, scanner, node))
                 return false;
             break;
+        case Keyword::Union:
+            if (!parse_union(job, scanner, node))
+                return false;
+            break;
         case Keyword::Subsystem:
             if (!parse_subsystem(job, scanner, node))
                 return false;

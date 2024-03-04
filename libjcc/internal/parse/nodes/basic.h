@@ -47,6 +47,7 @@ namespace libjcc
         StringTypeNode,
 
         StructTypeNode,
+        UnionTypeNode,
 
         LiteralNode,
         IntegerLiteralNode,
@@ -60,10 +61,12 @@ namespace libjcc
         ConstDeclNode,
 
         StructDeclNode,
+        UnionDeclNode,
         EnumDeclNode,
 
 
         StructDefNode,
+        UnionDefNode,
         EnumDefNode,
         ArrayTypeNode,
         UserTypeNode,

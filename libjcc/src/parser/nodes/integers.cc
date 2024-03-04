@@ -137,7 +137,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::I64TypeNode::clone() const
 
 std::string libjcc::F32TypeNode::to_json() const
 {
-    return "{\"type\":\"F32TypeNode\"}";
+    return "{\"type\":\"f32\"}";
 }
 
 llvm::Type *libjcc::F32TypeNode::codegen(libjcc::LLVMContext &ctx) const
@@ -152,7 +152,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::F32TypeNode::clone() const
 
 std::string libjcc::F64TypeNode::to_json() const
 {
-    return "{\"type\":\"F64TypeNode\"}";
+    return "{\"type\":\"f64\"}";
 }
 
 llvm::Type *libjcc::F64TypeNode::codegen(libjcc::LLVMContext &ctx) const
@@ -167,7 +167,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::F64TypeNode::clone() const
 
 std::string libjcc::BoolTypeNode::to_json() const
 {
-    return "{\"type\":\"BoolTypeNode\"}";
+    return "{\"type\":\"bool\"}";
 }
 
 llvm::Type *libjcc::BoolTypeNode::codegen(libjcc::LLVMContext &ctx) const
@@ -182,7 +182,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::BoolTypeNode::clone() const
 
 std::string libjcc::CharTypeNode::to_json() const
 {
-    return "{\"type\":\"CharTypeNode\"}";
+    return "{\"type\":\"char\"}";
 }
 
 llvm::Type *libjcc::CharTypeNode::codegen(libjcc::LLVMContext &ctx) const

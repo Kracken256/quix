@@ -202,7 +202,8 @@ void libjcc::parmsg(jcc_job_t &job, const libjcc::Token &tok, libjcc::Err type, 
 
     push_message_to_job(job, type, msg);
 
-    throw libjcc::ParseException();
+    if (type == Err::FATAL || type == Err::ERROR)
+        throw libjcc::ParseException();
 }
 
 void libjcc::prepmsg(jcc_job_t &job, const libjcc::Token &tok, libjcc::Err type, const std::string &format, ...)
@@ -223,5 +224,6 @@ void libjcc::prepmsg(jcc_job_t &job, const libjcc::Token &tok, libjcc::Err type,
 
     push_message_to_job(job, type, msg);
 
-    throw libjcc::PreprocessorException();
+    if (type == Err::FATAL || type == Err::ERROR)
+        throw libjcc::PreprocessorException();
 }

@@ -16,5 +16,6 @@
 #include <parse/nodes/struct.h>
 #include <parse/nodes/array.h>
 #include <parse/nodes/subsystem.h>
+#include <parse/nodes/enum.h>
 
 #endif // __J_CC_PARSE_NODES_NODES_H__

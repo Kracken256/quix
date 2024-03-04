@@ -37,4 +37,11 @@ std::map<libjcc::Msg, const char *> libjcc::feedback = {
     {SUBSYSTEM_MISSING_IDENTIFIER, "Expected identifier after the keyword 'subsystem'. To fix the issue, insert an identifier after the keyword 'subsystem'"},
     {SUBSYSTEM_EXPECTED_IDENTIFIER, "Expected identifier after the colon in the subsystem declaration. To fix the issue, insert an identifier after the colon in the subsystem declaration"},
     {SUBSYSTEM_EXPECTED_SEMICOLON, "Expected semicolon after the subsystem block. To fix the issue, insert a semicolon after the subsystem block. Syntax: subsystem name[: dep1, dep2, ...] { ... };"},
+    {ENUM_EXPECTED_IDENTIFIER, "Expected identifier after the keyword 'enum'. To fix the issue, insert an identifier after the keyword 'enum'"},
+    {ENUM_EXPECTED_COLON, "Expected colon after the identifier in the enum declaration. To fix the issue, insert a colon after the identifier in the enum declaration"},
+    {ENUM_EXPECTED_LEFT_BRACE, "Expected an open brace after the enum declaration. To fix the issue, insert an open brace after the enum declaration"},
+    {ENUM_DEF_EXPECTED_SEMICOLON, "Expected a semicolon after the enum definition. To fix the issue, insert a semicolon after the enum definition"},
+    {ENUM_FIELD_EXPECTED_IDENTIFIER, "Expected identifier in enum field declaration. To fix the issue, name your field. Syntax: name [= expr];"},
+    {ENUM_FIELD_EXPECTED_CONST_EXPR, "Expected a constant expression after the equals sign. To fix the issue, insert a constant expression after the equals sign. Syntax: name [= expr];"},
+    {ENUM_FIELD_EXPECTED_SEMICOLON, "Expected a semicolon after the enum field definition. To fix the issue, insert a semicolon after the enum field definition. Syntax: name [= expr];"},
     {PREP_DUPLICATE_IMPORT, "Source file \"%s\" contains duplicate import of \"%s\""}};

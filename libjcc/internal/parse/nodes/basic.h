@@ -60,7 +60,11 @@ namespace libjcc
         ConstDeclNode,
 
         StructDeclNode,
+        EnumDeclNode,
+
+
         StructDefNode,
+        EnumDefNode,
         ArrayTypeNode,
         UserTypeNode,
 

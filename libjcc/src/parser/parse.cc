@@ -51,6 +51,10 @@ bool libjcc::parse(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std
             if (!parse_const(job, scanner, node))
                 return false;
             break;
+        case Keyword::Enum:
+            if (!parse_enum(job, scanner, node))
+                return false;
+            break;
         case Keyword::Struct:
             if (!parse_struct(job, scanner, node))
                 return false;

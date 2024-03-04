@@ -18,6 +18,7 @@ namespace libjcc
     bool parse_let(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
     bool parse_var(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
     bool parse_const(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
+    bool parse_enum(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
     bool parse_struct(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
     bool parse_subsystem(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node);
     bool parse_const_expr(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, Token terminator, std::shared_ptr<libjcc::ConstExprNode> &node);

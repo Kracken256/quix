@@ -51,14 +51,25 @@ static char *safe_strdup(const char *str)
 
 static jcc_uuid_t jcc_uuid()
 {
+    union
+    {
+        uint8_t bytes[16];
+        struct
+        {
+            uint64_t m_low;
+            uint64_t m_high;
+        } __attribute__((packed)) m;
+    } __attribute__((packed)) raw;
+
+    if (RAND_bytes((unsigned char *)raw.bytes, sizeof(raw.bytes)) != 1)
+    {
+        raw.m.m_high = (uint64_t)rand() << 32 | rand();
+        raw.m.m_low = (uint64_t)rand() << 32 | rand();
+    }
+
     jcc_uuid_t uuid;
-    // if (RAND_bytes((unsigned char *)&uuid, sizeof(jcc_uuid_t)) != 1)
-    // {
-    //     uuid.m_high = (uint64_t)rand() << 32 | rand();
-    //     uuid.m_low = (uint64_t)rand() << 32 | rand();
-    // }
-    /// TODO: Fix this
-    uuid.m_high = uuid.m_low = 0;
+    uuid.m_high = raw.m.m_high;
+    uuid.m_low = raw.m.m_low;
     return uuid;
 }
 
@@ -252,7 +263,7 @@ static bool jcc_mutate_ast(jcc_job_t *job, libj::AST &ast)
     /// TODO: Type Coercion/Conversion
     /// TODO: Type Inference
     /// TODO: Evalulate constant expressions
-    /// TODO:
+    /// TODO: Reduce expressions
 
     return true;
 }
@@ -261,6 +272,19 @@ static bool jcc_verify_semantics(jcc_job_t *job, libj::AST &ast)
 {
     (void)job;
     (void)ast;
+    /// TODO: Verify that all identifiers are defined
+    /// TODO: Verify that all types are defined
+    /// TODO: Verify that all functions are defined
+    /// TODO: Type checking
+    /// TODO: Integer overflow/underflow checking
+    /// TODO: Array bounds checking
+    /// TODO: NULL value checking
+    /// TODO: Veirfy struct/union members are non recursive
+    /// TODO: Verify mutability of variables
+    /// TODO: Item alignment checking
+    /// TODO: verify definitions match declarations
+    /// TODO: identifiers don't conflict with reserved words
+
     return true;
 }
 
@@ -268,6 +292,22 @@ static bool jcc_optimize_ast(jcc_job_t *job, libj::AST &ast)
 {
     (void)job;
     (void)ast;
+
+    /// TODO: Argument by-value to const reference optimization
+    /// TODO: Data flow analysis
+    ///   - compile-time immutable blobs to const data
+    ///   - function folding via effect engine
+    ///   - ControlFlowGraph reduction via effect engine
+    ///   - Smart dead code elimination via effect engine
+    ///   - Standard library aware optimizations/eliminations
+    ///      - Heap allocation elimination via metastructure generation
+    ///      - String concatenation to constant string
+    ///      - String concatenation to optimized metaclass builder
+    ///   - Lookup table generation
+    /// TODO: Detect common algorithms implementation and replace with standard library optimized version
+    /// TODO: Try-catch block elimination via deep inspection of the AST
+    /// TODO:
+
     return true;
 }
 
@@ -401,6 +441,32 @@ static bool get_compile_time_user_constants(jcc_job_t *job, std::map<std::string
     return true;
 }
 
+static bool get_env_constants(jcc_job_t *job, std::map<std::string, std::string> &constants)
+{
+    for (char **env = environ; *env; env++)
+    {
+        std::string var = *env;
+        if (var.find("JCC_") == 0)
+        {
+            size_t pos = var.find('=');
+            if (pos != std::string::npos)
+            {
+                std::string key = var.substr(4, pos - 4);
+                std::string value = var.substr(pos + 1);
+
+                if (!verify_user_constant(key, value))
+                {
+                    libj::message(*job, libj::Err::ERROR, "invalid user constant: " + key);
+                    return false;
+                }
+                constants[key] = value;
+            }
+        }
+    }
+
+    return true;
+}
+
 static bool preprocess_phase(jcc_job_t *job, std::shared_ptr<libj::PrepEngine> prep)
 {
     std::set<std::string> dirs;
@@ -416,6 +482,14 @@ static bool preprocess_phase(jcc_job_t *job, std::shared_ptr<libj::PrepEngine> p
     if (!get_compile_time_user_constants(job, constants))
     {
         libj::message(*job, libj::Err::ERROR, "failed to get compile time user constants");
+        return false;
+    }
+    for (auto &constant : constants)
+        prep->set_static(constant.first, constant.second);
+
+    if (!get_env_constants(job, constants))
+    {
+        libj::message(*job, libj::Err::ERROR, "failed to get environment constants");
         return false;
     }
     for (auto &constant : constants)

@@ -45,7 +45,6 @@ bool libj::macro::ParseDefine(jcc_job_t *job, const std::string &directive, cons
     exp.push_back(Token(TokenType::Keyword, Keyword::Const));
     exp.push_back(Token(TokenType::Identifier, name));
     exp.push_back(Token(TokenType::Punctor, Punctor::Colon));
-    // exp.push_back(Token(TokenType::Identifier, type));
 
     switch (type)
     {

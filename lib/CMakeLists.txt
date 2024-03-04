@@ -37,7 +37,7 @@ else()
     target_compile_options(j-shared PRIVATE -g -Wall -Wextra -Werror -Wno-error=unused-parameter -Wpedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC)
     target_link_options(j-shared PRIVATE ${LLVM_LD_FLAGS})
 endif()
-target_link_libraries(j-shared PRIVATE -lstdc++ -lm -lpthread -lstdc++fs ${LLVM_LIBS})
+target_link_libraries(j-shared PRIVATE -lstdc++ -lm -lpthread -lstdc++fs crypto ${LLVM_LIBS})
 set_target_properties(j-shared PROPERTIES OUTPUT_NAME j)
 
 if (BUILD_TESTING)

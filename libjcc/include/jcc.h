@@ -73,9 +73,6 @@ extern "C"
 
         /// @brief Value
         const char *m_v;
-
-        /// @brief Is the option enabled?
-        bool m_enabled;
     } jcc_option_t;
 
     typedef struct jcc_options_t
@@ -93,33 +90,75 @@ extern "C"
         uint64_t m_high;
     } jcc_uuid_t;
 
-    typedef struct jcc_job_t
-    {
-        jcc_uuid_t m_id;
+#if defined(__cplusplus) && defined(JCC_INTERNAL)
+}
 
-        /// @brief Options
-        jcc_options_t m_options;
+#include <map>
+#include <string>
 
-        /// @brief Result
-        jcc_result_t *m_result;
+typedef struct jcc_job_t
+{
+    jcc_uuid_t m_id;
 
-        FILE *m_in;
-        FILE *m_out;
+    /// @brief Options
+    jcc_options_t m_options;
 
-        const char *m_filename;
+    /// @brief Result
+    jcc_result_t *m_result;
 
-        /// @brief Job priority
-        uint8_t m_priority;
+    FILE *m_in;
+    FILE *m_out;
 
-        /// @brief Internal flags
-        uint32_t m_internal_flags;
+    const char *m_filename;
 
-        /// @brief Internal data
-        void *m_inner;
+    /// @brief Job priority
+    uint8_t m_priority;
 
-        /// @brief User may set to true to enable debug messages
-        bool m_debug;
-    } jcc_job_t;
+    /// @brief Internal flags
+    uint32_t m_internal_flags;
+
+    /// @brief Internal data
+    void *m_inner;
+
+    std::map<std::string, std::string> *m_argset;
+
+    /// @brief User may set to true to enable debug messages
+    bool m_debug;
+} jcc_job_t;
+
+extern "C"
+{
+#else
+typedef struct jcc_job_t
+{
+    jcc_uuid_t m_id;
+
+    /// @brief Options
+    jcc_options_t m_options;
+
+    /// @brief Result
+    jcc_result_t *m_result;
+
+    FILE *m_in;
+    FILE *m_out;
+
+    const char *m_filename;
+
+    /// @brief Job priority
+    uint8_t m_priority;
+
+    /// @brief Internal flags
+    uint32_t m_internal_flags;
+
+    /// @brief Internal data
+    void *m_inner;
+
+    void *m_argset;
+
+    /// @brief User may set to true to enable debug messages
+    bool m_debug;
+} jcc_job_t;
+#endif
 
     /// @brief Create a new compiler job
     /// @return A new compiler job

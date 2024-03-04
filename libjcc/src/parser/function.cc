@@ -115,7 +115,6 @@ bool libjcc::parse_function(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> sca
     }
 
     Token tok = scanner->next();
-    std::cout << "tok: " << tok.serialize() << std::endl;
 
     if (tok.type() != TokenType::Identifier)
     {

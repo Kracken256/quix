@@ -34,20 +34,6 @@ int main(int argc, char *argv[])
         }
         else if (args[i].starts_with("-"))
         {
-            // std::string tag;
-            // std::string value;
-            // // format -tag[=value]
-            // if (args[i].find('=') != std::string::npos)
-            // {
-            //     tag = args[i].substr(1, args[i].find('=') - 1);
-            //     value = args[i].substr(args[i].find('=') + 1);
-            // }
-            // else
-            // {
-            //     tag = args[i].substr(1);
-            //     value = "";
-            // }
-            // switches.push_back({tag, value});
             if (args[i].size() < 2)
             {
                 std::cerr << "error: invalid switch" << std::endl;
@@ -67,8 +53,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                std::cerr << "error: missing switch value" << std::endl;
-                return 1;
+                switches.push_back({args[i].substr(1, 1), ""});
             }
         }
         else

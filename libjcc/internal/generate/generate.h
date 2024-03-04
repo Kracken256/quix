@@ -13,11 +13,11 @@ namespace libjcc
 {
     class Generator
     {
-    public:
-        Generator() = default;
-        ~Generator() = default;
+        Generator() = delete;
 
-        bool synthesize_LLVM_IR(jcc_job_t &ctx, const std::shared_ptr<libjcc::AST> ast);
+    public:
+        static bool synthesize_LLVM_IR(jcc_job_t &ctx, FILE *out, const std::shared_ptr<libjcc::AST> ast);
+        static bool generate(jcc_job_t &ctx, const std::shared_ptr<libjcc::AST> ast);
     };
 };
 

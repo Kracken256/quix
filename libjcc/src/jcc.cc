@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <jcc.h>
 #include <memory>
 #include <string>
@@ -5,6 +7,8 @@
 #include <cstring>
 #include <iostream>
 #include <openssl/rand.h>
+#include <regex>
+#include <filesystem>
 
 #include <llvm/llvm-ctx.h>
 #include <generate/generate.h>
@@ -13,6 +17,7 @@
 #include <error/message.h>
 #include <error/exceptions.h>
 #include <parse/parser.h>
+#include <libjcc.h>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
 
@@ -139,6 +144,9 @@ LIB_EXPORT bool jcc_dispose(jcc_job_t *job)
     if (job->m_inner)
         delete (libjcc::LLVMContext *)job->m_inner;
 
+    if (job->m_argset)
+        delete job->m_argset;
+
     if (job->m_filename)
     {
         free((void *)job->m_filename);
@@ -160,7 +168,6 @@ LIB_EXPORT void jcc_add_option(jcc_job_t *job, const char *name, const char *val
         return;
 
     option = (jcc_option_t *)safe_malloc(sizeof(jcc_option_t));
-    option->m_enabled = enabled;
 
     option->m_u = safe_strdup(name);
 
@@ -406,35 +413,21 @@ static bool verify_user_constant(const std::string &key, const std::string &valu
 
 static bool get_compile_time_user_constants(jcc_job_t *job, std::map<std::string, std::string> &constants)
 {
-    for (uint32_t i = 0; i < job->m_options.m_count; i++)
+    auto argmap = job->m_argset;
+
+    for (auto &arg : *argmap)
     {
-        jcc_option_t *option = job->m_options.m_options[i];
-        if (!option)
-            continue;
-
-        if (strcmp(option->m_u, "D") == 0)
+        if (arg.first.starts_with("-D"))
         {
-            std::string def = option->m_v;
-            size_t pos = def.find('=');
-            if (pos != std::string::npos)
+            std::string key = arg.first.substr(2);
+            std::string value = arg.second;
+
+            if (!verify_user_constant(key, value))
             {
-                std::string key = def.substr(0, pos);
-                std::string value = def.substr(pos + 1);
-
-                if (!verify_user_constant(key, value))
-                {
-                    libjcc::message(*job, libjcc::Err::ERROR, "invalid user constant: " + key);
-                    return false;
-                }
-
-                constants[key] = value;
+                libjcc::message(*job, libjcc::Err::ERROR, "invalid user constant: " + key);
+                return false;
             }
-            else
-            {
-                constants[def] = "true";
-            }
-
-            continue;
+            constants[key] = value;
         }
     }
 
@@ -554,13 +547,13 @@ static bool compile(jcc_job_t *job)
     ///=========================================
     /// BEGIN: GENERATOR
     ///=========================================
-    libjcc::Generator gen;
     libjcc::message(*job, libjcc::Err::DEBUG, "Generating output");
-    if (!gen.synthesize_LLVM_IR(*job, ast))
+    if (!libjcc::Generator::generate(*job, ast))
     {
         libjcc::message(*job, libjcc::Err::ERROR, "failed to generate output");
         return false;
     }
+
     ///=========================================
     /// END: GENERATOR
     ///=========================================
@@ -568,18 +561,97 @@ static bool compile(jcc_job_t *job)
     return true;
 }
 
+static bool verify_build_option(jcc_job_t *job, const std::string &option, const std::string &value)
+{
+    const static std::set<std::string> static_options = {
+        "-S", // assembly output
+        "-IR" // IR output
+    };
+    const static std::vector<std::pair<std::regex, std::regex>> static_regexes = {
+        // -D<name>[=<value>]
+        {std::regex("-D[a-zA-Z_][a-zA-Z0-9_]*"), std::regex("[a-zA-Z0-9_]*")},
+    };
+
+    if (static_options.contains(option))
+        return true;
+
+    for (auto &regex : static_regexes)
+    {
+        if (std::regex_match(option, regex.first) && std::regex_match(value, regex.second))
+            return true;
+    }
+
+    return false;
+}
+
+static bool verify_build_option_conflicts(jcc_job_t *job)
+{
+    return true;
+}
+
+static bool build_argmap(jcc_job_t *job)
+{
+    // -<p><key>[=<value>]
+    const static std::set<char> okay_prefixes = {'f', 'O', 'l', 'L', 'I', 'D', 'W', 'm', 'c', 'S'};
+
+    std::map<std::string, std::string> *argmap = job->m_argset;
+
+    for (uint32_t i = 0; i < job->m_options.m_count; i++)
+    {
+        jcc_option_t *option = job->m_options.m_options[i];
+        if (!option)
+            continue;
+
+        if (std::strlen(option->m_u) != 1 || !okay_prefixes.contains(option->m_u[0]))
+        {
+            libjcc::message(*job, libjcc::Err::ERROR, "invalid build option: " + std::string(option->m_u));
+            return false;
+        }
+
+        std::string def = option->m_v;
+        size_t pos = def.find('=');
+        std::string key = "-" + std::string(option->m_u) + def.substr(0, pos);
+        std::string value;
+
+        if (pos != std::string::npos)
+            value = def.substr(pos + 1);
+
+        if (!verify_build_option(job, key, value))
+        {
+            libjcc::message(*job, libjcc::Err::ERROR, "invalid build option: " + key);
+            return false;
+        }
+
+        argmap->insert({key, value});
+
+        if (!value.empty())
+            libjcc::message(*job, libjcc::Err::DEBUG, "Added switch entry: " + key + "=" + value);
+        else
+            libjcc::message(*job, libjcc::Err::DEBUG, "Added switch entry: " + key);
+    }
+
+    return verify_build_option_conflicts(job);
+}
+
 LIB_EXPORT bool jcc_run(jcc_job_t *job)
 {
-    if (!job->m_in || !job->m_out || !job->m_filename || job->m_inner != nullptr)
+    if (!job->m_in || !job->m_out || !job->m_filename || job->m_inner != nullptr || job->m_argset != nullptr)
         return false;
 
     job->m_inner = new libjcc::LLVMContext(job->m_filename);
+    job->m_argset = new std::map<std::string, std::string>();
     job->m_result = (jcc_result_t *)safe_malloc(sizeof(jcc_result_t));
     memset(job->m_result, 0, sizeof(jcc_result_t));
 
     libjcc::message(*job, libjcc::Err::DEBUG, "Starting jcc run @ %s", get_datetime().c_str());
-    bool success = false;
 
+    if (!build_argmap(job))
+    {
+        libjcc::message(*job, libjcc::Err::ERROR, "failed to build argmap");
+        return false;
+    }
+
+    bool success = false;
     try
     {
         if (compile(job))

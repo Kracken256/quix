@@ -33,7 +33,10 @@ llvm::Value *libjcc::VarDeclNode::codegen(libjcc::LLVMContext &ctx) const
         }
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    if (ctx.m_pub)
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    else
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
 }
 
 std::shared_ptr<libjcc::ParseNode> libjcc::VarDeclNode::clone() const
@@ -73,7 +76,10 @@ llvm::Value *libjcc::LetDeclNode::codegen(libjcc::LLVMContext &ctx) const
         }
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, true, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    if (ctx.m_pub)
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    else
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
 }
 
 std::shared_ptr<libjcc::ParseNode> libjcc::LetDeclNode::clone() const
@@ -113,7 +119,10 @@ llvm::Value *libjcc::ConstDeclNode::codegen(libjcc::LLVMContext &ctx) const
         }
     }
 
-    return new llvm::GlobalVariable(*ctx.m_module, type, true, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    if (ctx.m_pub)
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
+    else
+        return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
 }
 
 std::shared_ptr<libjcc::ParseNode> libjcc::ConstDeclNode::clone() const

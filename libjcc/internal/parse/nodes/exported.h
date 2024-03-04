@@ -18,6 +18,7 @@ namespace libjcc
     {
     public:
         ExportNode() { ntype = NodeType::ExportNode; }
+        ExportNode(std::shared_ptr<StmtNode> stmt) : m_stmt(stmt) { ntype = NodeType::ExportNode; }
         virtual ~ExportNode() = default;
 
         std::string to_json() const override;

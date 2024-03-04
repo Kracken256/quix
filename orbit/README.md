@@ -23,7 +23,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `graph` | Create and manipulate generic, (un)directed, (a)cyclic, (un)weighted graphs |
     | `tree` | Create and manipulate generic trees |
     | `binary_tree` | Create and manipulate binary trees |
-    | `@container` | Meta module for all container modules |
+    | `@container` | Metapackage for all container modules |
 
 - **Container Algorithms**
 
@@ -37,7 +37,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `sequence` | Create a generator to return a sequence of objects |
     | `qrandom` | Generate pseudo-random object instances by filling the structure(s) with random data. Will likely break invariant properties of the structure(s) |
     | `objhash` | Object specific perfect hash functions |
-    | `algorithm` | Meta module for all container algorithm modules |
+    | `algorithm` | Metapackage for all container algorithm modules |
 
 - **Math**
 
@@ -52,7 +52,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `statistics` | Statistical functions |
     | `random` | High-quality deterministic random number generators |
     | `constants` | Mathematical constants |
-    | `@math` | Meta module for all math modules |
+    | `@math` | Metapackage for all math modules |
 
 - **Time**
 
@@ -66,7 +66,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `timezone` | Timezone manipulation functions |
     | `timer` | Timer manipulation functions |
     | `stopwatch` | Stopwatch manipulation functions |
-    | `@time` | Meta module for all time modules |
+    | `@time` | Metapackage for all time modules |
 
 - **Cryptography**
 
@@ -78,7 +78,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `sign` | HMAC and asymmetric signing | Yes | OpenSSL EVP signing |
     | `keygen` | Key generation | Yes | OpenSSL EVP_PKEY and RAND |
     | `crypto` | Recommended cryptographic primitives | Yes | Abstracts above modules |
-    | `@crypt` | Meta module for all cryptography modules |
+    | `@crypt` | Metapackage for all cryptography modules |
 
 - **Data Transcoding and Compression**
 
@@ -97,7 +97,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `7z` | 7z file manipulation |
     | `rar` | Rar file manipulation |
     | `streamconv` | Stream conversion generics |
-    | `@data` | Meta module for all transcoding and compression modules |
+    | `@data` | Metapackage for all transcoding and compression modules |
 
 - **Util**
 
@@ -114,7 +114,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `debug` | Debugging functions |
     | `dev` | Common development tools. unsafe hexdump object, stack trace, symbol lookup, etc. |
     | `macro` | Many macro definitions |
-    | `@util` | Meta module for all util modules |
+    | `@util` | Metapackage for all util modules |
 
 - **sysio**
 
@@ -131,7 +131,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `net` | TCP, UDP, QUIC transport layer protocols |
     | `tls` | TLS client and server support (OpenSSL) |   
     | `protocol` | Higher level protocols |
-    | `@sysio` | Meta module for all sysio modules |
+    | `@sysio` | Metapackage for all sysio modules |
 
 - **runtime**
 
@@ -146,7 +146,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `signal` | Operating system signal manipulation functions |
     | `memory` | Operating system memory statistics and manipulation functions |
     | `plugin` | Dynamically load and unload shared libraries or modules |
-    | `@runtime` | Meta module for all runtime modules |
+    | `@runtime` | Metapackage for all runtime modules |
 
 - **reflection**
 
@@ -159,7 +159,7 @@ This is the standard library for JLang. It contains all the built-in functions a
     | `yaml` | YAML serialization and deserialization functions |
     | `toml` | TOML serialization and deserialization functions |
     | `protobuf` | Protocol Buffers serialization and deserialization functions |
-    | `@reflect` | Meta module for all reflection modules |
+    | `@reflect` | Metapackage for all reflection modules |
 
 
 # How to build?

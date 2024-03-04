@@ -1,0 +1,22 @@
+module:
+  name: orbit
+  version: 0.0.1
+  description: Orbit is the JLang standard library.
+  license: Proprietary
+  submodules:
+    - ./algorithm
+    - ./container
+    - ./crypto
+    - ./data
+    - ./math
+    - ./reflection
+    - ./runtime
+    - ./sysio
+    - ./time
+    - ./util
+  dependencies: []
+  aliases:
+    - std
+  sign:
+    keyfile: /opt/secrets/dlang/orbit-key.pem
+    password: /opt/secrets/dlang/orbit-key.pass

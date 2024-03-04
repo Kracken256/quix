@@ -166,6 +166,7 @@ This is the standard library for JLang. It contains all the built-in functions a
 - Clone the repository
 - Navigate to the root of the repository
 - Run `jcc build -O5 -g2 -o orbit.jlib .`
+- It will take a while to build. Also the output jlib file will be quite large. It contains extra debug symbols and JLang metadata sections. It will be significantly smaller when linked and stripped to a final executable.
 
 # How to install?
 - Run `jcc install orbit.jlib`

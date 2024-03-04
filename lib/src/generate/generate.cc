@@ -5,7 +5,7 @@
 
 #include <llvm/IR/Verifier.h>
 
-bool libj::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, const AST &ast)
+bool libj::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, std::shared_ptr<libj::BlockNode> ast)
 {
     int fd;
 
@@ -35,7 +35,7 @@ bool libj::Generator::synthesize_LLVM_IR(jcc_job_t &ctx, const AST &ast)
     LLVMContext &llvm_ctx = *(LLVMContext *)ctx.m_inner;
 
     // Add root nodes to the LLVMContext
-    for (auto &node : ast.m_children)
+    for (auto &node : ast->m_stmts)
     {
         llvm::Value *val = node->codegen(llvm_ctx);
         if (!val)

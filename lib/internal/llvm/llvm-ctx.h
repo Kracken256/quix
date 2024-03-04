@@ -27,7 +27,7 @@ namespace libj
         std::shared_ptr<llvm::Module> m_module;
         std::shared_ptr<llvm::IRBuilder<>> m_builder;
         std::map<std::string, llvm::Value *> m_named_values;
-        std::string prefix = "j::";
+        std::string prefix = "";
 
         LLVMContext(const std::string &filename)
         {

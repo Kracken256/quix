@@ -63,6 +63,8 @@ namespace libj
         StructDefNode,
         ArrayTypeNode,
         UserTypeNode,
+
+        SubsystemNode,
     };
 
     class ParseNode
@@ -128,18 +130,6 @@ namespace libj
         std::string m_name;
     };
 
-    class RootNode : public ParseNode
-    {
-    public:
-        RootNode() { ntype = NodeType::RootNode; }
-        virtual ~RootNode() = default;
-
-        virtual std::string to_json() const override;
-        virtual std::shared_ptr<ParseNode> clone() const override;
-
-        std::vector<std::shared_ptr<StmtNode>> m_children;
-    };
-
     class DeclNode : public StmtNode
     {
     public:
@@ -159,6 +149,10 @@ namespace libj
     public:
         BlockNode() { ntype = NodeType::BlockNode; }
         virtual ~BlockNode() = default;
+
+        virtual std::string to_json() const override;
+        virtual llvm::Value *codegen(LLVMContext &ctx) const override;
+        virtual std::shared_ptr<ParseNode> clone() const override;
 
         std::vector<std::shared_ptr<StmtNode>> m_stmts;
     };

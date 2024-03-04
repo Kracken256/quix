@@ -17,7 +17,7 @@ namespace libj
         Generator() = default;
         ~Generator() = default;
 
-        bool synthesize_LLVM_IR(jcc_job_t &ctx, const AST &ast);
+        bool synthesize_LLVM_IR(jcc_job_t &ctx, const std::shared_ptr<libj::AST> ast);
     };
 };
 

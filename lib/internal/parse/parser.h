@@ -11,21 +11,15 @@
 
 namespace libj
 {
-    typedef RootNode AST;
+    typedef BlockNode AST;
 
-    class Parser
-    {
-    public:
-        Parser() = default;
-        ~Parser() = default;
-
-        bool parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, AST &ast);
-    };
+    bool parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<BlockNode> &node, bool expect_braces = true);
 
     bool parse_let(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node);
     bool parse_var(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node);
     bool parse_const(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node);
     bool parse_struct(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node);
+    bool parse_subsystem(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::StmtNode> &node);
     bool parse_const_expr(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, Token terminator, std::shared_ptr<libj::ConstExprNode> &node);
     bool parse_type(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::TypeNode> &node);
 };

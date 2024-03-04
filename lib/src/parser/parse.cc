@@ -4,12 +4,31 @@
 
 using namespace libj;
 
-bool libj::Parser::parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, AST &ast)
+bool libj::parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner, std::shared_ptr<libj::BlockNode> &group, bool expect_braces)
 {
     Token tok;
 
+    if (expect_braces)
+    {
+        tok = scanner->next();
+        if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::OpenBrace)
+        {
+            PARMSG(tok, libj::Err::ERROR, feedback[PARSER_EXPECTED_LEFT_BRACE], tok.serialize().c_str());
+            return false;
+        }
+    }
+
+    group = std::make_shared<BlockNode>();
+
     while ((tok = scanner->next()).type() != TokenType::Eof)
     {
+
+        if (expect_braces)
+        {
+            if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::CloseBrace)
+                break;
+        }
+
         if (tok.type() != TokenType::Keyword)
         {
             PARMSG(tok, libj::Err::ERROR, feedback[PARSER_EXPECTED_KEYWORD], tok.serialize().c_str());
@@ -36,12 +55,16 @@ bool libj::Parser::parse(jcc_job_t &job, std::shared_ptr<libj::Scanner> scanner,
             if (!parse_struct(job, scanner, node))
                 return false;
             break;
+        case Keyword::Subsystem:
+            if (!parse_subsystem(job, scanner, node))
+                return false;
+            break;
         default:
             break;
         }
 
         if (node)
-            ast.m_children.push_back(node);
+            group->m_stmts.push_back(node);
     }
 
     // llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getVoidTy(llvm_ctx), false);

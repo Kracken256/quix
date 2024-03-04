@@ -253,7 +253,7 @@ static std::string base64_encode(const std::string &in)
     return out;
 }
 
-static bool jcc_mutate_ast(jcc_job_t *job, libj::AST &ast)
+static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libj::AST> &ast)
 {
     (void)job;
     (void)ast;
@@ -268,7 +268,7 @@ static bool jcc_mutate_ast(jcc_job_t *job, libj::AST &ast)
     return true;
 }
 
-static bool jcc_verify_semantics(jcc_job_t *job, libj::AST &ast)
+static bool jcc_verify_semantics(jcc_job_t *job, std::shared_ptr<libj::AST> &ast)
 {
     (void)job;
     (void)ast;
@@ -288,7 +288,7 @@ static bool jcc_verify_semantics(jcc_job_t *job, libj::AST &ast)
     return true;
 }
 
-static bool jcc_optimize_ast(jcc_job_t *job, libj::AST &ast)
+static bool jcc_optimize_ast(jcc_job_t *job, std::shared_ptr<libj::AST> &ast)
 {
     (void)job;
     (void)ast;
@@ -507,7 +507,8 @@ static bool preprocess_phase(jcc_job_t *job, std::shared_ptr<libj::PrepEngine> p
 static bool compile(jcc_job_t *job)
 {
     // Create an AST before goto statements
-    libj::AST ast;
+    // libj::AST ast;
+    std::shared_ptr<libj::AST> ast = std::make_shared<libj::AST>();
 
     ///=========================================
     /// BEGIN: PREPROCESSOR/LEXER
@@ -525,13 +526,12 @@ static bool compile(jcc_job_t *job)
     ///=========================================
     /// BEGIN: PARSER
     ///=========================================
-    libj::Parser parser;
     libj::message(*job, libj::Err::DEBUG, "Building AST 1");
-    if (!parser.parse(*job, prep, ast))
+    if (!parse(*job, prep, ast, false))
         return false;
     libj::message(*job, libj::Err::DEBUG, "Finished building AST 1");
     if (job->m_debug)
-        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast.to_json()));
+        libj::message(*job, libj::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast->to_json()));
     ///=========================================
     /// END: PARSER
     ///=========================================

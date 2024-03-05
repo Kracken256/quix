@@ -266,13 +266,14 @@ static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> ast)
     (void)job;
     (void)ast;
 
+    libjcc::PreliminaryOptimizer optimizer;
+    optimizer.add_routine(libjcc::optimize::fold_expr);
+    optimizer.run(ast);
+
     /// TODO: Name resolution. Update all identifiers to use the fully qualified name
     /// TODO: Replace UserTypeNode with the defined type
     /// TODO: Type Coercion/Conversion
     /// TODO: Type Inference
-    /// TODO: Evalulate constant expressions
-    libjcc::optimize::fold_expr(ast);
-    /// TODO: Reduce expressions
 
     return true;
 }
@@ -288,7 +289,7 @@ static bool jcc_verify_semantics(jcc_job_t *job, std::shared_ptr<libjcc::AST> as
     /// TODO: Integer overflow/underflow checking
     /// TODO: Array bounds checking
     /// TODO: NULL value checking
-    /// TODO: Veirfy struct/union members are non recursive
+    /// TODO: Veirfy struct/union members are non cyclic
     /// TODO: Verify mutability of variables
     /// TODO: Item alignment checking
     /// TODO: verify definitions match declarations

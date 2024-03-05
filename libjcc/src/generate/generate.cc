@@ -1,5 +1,7 @@
 #define JCC_INTERNAL
 
+/// TODO: make this code less horrible
+
 #include <generate/generate.h>
 #include <stdlib.h>
 #include "llvm/llvm-ctx.h"
@@ -51,8 +53,13 @@ bool libjcc::Generator::write_IR(jcc_job_t &ctx, std::shared_ptr<libjcc::BlockNo
 
     // Verify the module
     message(ctx, libjcc::Err::DEBUG, "Verifying LLVM module");
-    if (llvm::verifyModule(*llvm_ctx.m_module, &os))
-        throw std::runtime_error("LLVM IR generation failed. The AST must have been semantically incorrect");
+    std::string err;
+    llvm::raw_string_ostream err_stream(err);
+
+    if (llvm::verifyModule(*llvm_ctx.m_module, &err_stream))
+    {
+        throw std::runtime_error("LLVM IR generation failed. The AST must have been semantically incorrect: " + err_stream.str());
+    }
 
     // Generate the IR
     message(ctx, libjcc::Err::DEBUG, "Generating LLVM IR");
@@ -150,14 +157,7 @@ bool libjcc::Generator::write_bin(jcc_job_t &ctx, const std::string &obj_filenam
     message(ctx, libjcc::Err::FATAL, "Unsupported operating system");
     throw std::runtime_error("Unsupported operating system");
 #else
-    const std::string linker_file_content = R"(SECTIONS { /DISCARD/ : { *(.note*) *(.eh_frame*) }})";
-
-    std::string linker_file = std::tmpnam(nullptr);
-    std::ofstream ofs(linker_file);
-    ofs << linker_file_content;
-    ofs.close();
-
-    std::string flags = "-nostdlib -nostartfiles -nodefaultlibs -Wl,-T " + linker_file + " ";
+    std::string flags = "-nostdlib -nostartfiles -nodefaultlibs ";
     for (const auto &e : *ctx.m_argset)
     {
         if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
@@ -183,6 +183,9 @@ bool libjcc::Generator::write_bin(jcc_job_t &ctx, const std::string &obj_filenam
         else if (e.first == "-v" || ctx.m_debug)
         {
             flags += "-v ";
+        } else if (e.first == "-s")
+        {
+            flags += e.first + " ";
         }
     }
 
@@ -191,8 +194,6 @@ bool libjcc::Generator::write_bin(jcc_job_t &ctx, const std::string &obj_filenam
 
     message(ctx, libjcc::Err::DEBUG, "Running command: " + os_cmd);
     bool ok = system(os_cmd.c_str()) == 0;
-
-    std::filesystem::remove(linker_file);
 
     if (!ok)
     {

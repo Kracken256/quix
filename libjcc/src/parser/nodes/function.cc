@@ -69,12 +69,28 @@ std::string libjcc::FunctionDefNode::to_json() const
 llvm::Value *libjcc::FunctionDefNode::codegen(LLVMContext &ctx) const
 {
     llvm::Function *func = m_decl->codegen(ctx);
-    llvm::BasicBlock *bb = llvm::BasicBlock::Create(*ctx.m_ctx, "entry", func);
-    ctx.m_builder->SetInsertPoint(bb);
-    m_body->codegen(ctx);
 
+    llvm::BasicBlock *EntryBlock = llvm::BasicBlock::Create(*ctx.m_ctx, "entry", func);
+    ctx.m_builder->SetInsertPoint(EntryBlock);
+
+    // Create the loop block
+    llvm::BasicBlock *LoopBlock = llvm::BasicBlock::Create(*ctx.m_ctx, "loop", func);
+
+    // Branch to the loop block
+    ctx.m_builder->CreateBr(LoopBlock);
+
+    // Set insertion point to the loop block
+    ctx.m_builder->SetInsertPoint(LoopBlock);
+
+    // Here you would insert code for the loop body
+
+    // Create an unconditional branch back to the loop block
+    ctx.m_builder->CreateBr(LoopBlock);
+
+    // If the function returns void, insert a return void instruction at the end of the entry block
     if (func->getReturnType()->isVoidTy())
-        ctx.m_builder->CreateRetVoid();
+        ctx.m_builder->SetInsertPoint(EntryBlock);
+    // ctx.m_builder->CreateRetVoid();
 
     return func;
 }

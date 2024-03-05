@@ -577,6 +577,7 @@ static bool verify_build_option(const std::string &option, const std::string &va
         "-static", // static linking
         "-shared", // shared library
         "-v",      // verbose
+        "-s",      // strip
     };
     const static std::vector<std::pair<std::regex, std::regex>> static_regexes = {
         // -D<name>[=<value>]

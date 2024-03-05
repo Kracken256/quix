@@ -90,8 +90,6 @@ namespace libjcc
         virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
         virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
 
-        bool operator==(const ParseNode &other) const { return this == &other; }
-
         void replace_child(std::shared_ptr<ParseNode> &find, std::shared_ptr<libjcc::ParseNode> replace);
         size_t count();
         bool has_immidiate_child(const std::shared_ptr<ParseNode> node);

@@ -1,25 +1,50 @@
 #include <optimize/fold_expr.h>
 #include <stack>
+#include <queue>
 
 using namespace libjcc;
 
-static void fold_const_expr(std::shared_ptr<libjcc::ParseNode> parrent, std::shared_ptr<libjcc::ParseNode> *child)
+static void fold_const_string_expr(std::shared_ptr<libjcc::ParseNode> parent, std::shared_ptr<libjcc::ParseNode> *child)
 {
     if ((*child)->ntype != NodeType::ConstBinaryExprNode)
         return;
 
-    auto bin_expr = std::static_pointer_cast<ConstBinaryExprNode>(*child);
+    auto bin_expr = std::static_pointer_cast<libjcc::ConstBinaryExprNode>(*child);
+    std::string concat;
 
-    if (bin_expr->m_lhs->ntype != NodeType::StringLiteralNode || bin_expr->m_rhs->ntype != NodeType::StringLiteralNode)
-        return;
+    std::queue<std::shared_ptr<libjcc::ConstExprNode>> stack;
+    stack.push(bin_expr->m_lhs);
+    stack.push(bin_expr->m_rhs);
 
-    auto lhs = std::static_pointer_cast<StringLiteralNode>(bin_expr->m_lhs);
-    auto rhs = std::static_pointer_cast<StringLiteralNode>(bin_expr->m_rhs);
+    while (!stack.empty())
+    {
+        auto node = stack.front();
+        stack.pop();
 
-    parrent->replace_child(*child, std::make_shared<StringLiteralNode>(lhs->m_val + rhs->m_val));
+        if (node->ntype == NodeType::ConstBinaryExprNode)
+        {
+            auto bin_node = std::static_pointer_cast<libjcc::ConstBinaryExprNode>(node);
+            if (bin_node->m_op != Operator::Plus)
+                return;
+
+            stack.push(bin_node->m_lhs);
+            stack.push(bin_node->m_rhs);
+        }
+        else if (node->ntype == NodeType::StringLiteralNode)
+        {
+            auto str_node = std::static_pointer_cast<libjcc::StringLiteralNode>(node);
+            concat += str_node->m_val;
+        }
+        else
+        {
+            return; // Not a string literal
+        }
+    }
+
+    parent->replace_child(*child, std::make_shared<libjcc::StringLiteralNode>(concat));
 }
 
 void libjcc::optimize::fold_expr(std::shared_ptr<libjcc::AST> ast)
 {
-    ast->dfs_preorder(fold_const_expr);
+    ast->dfs_preorder(fold_const_string_expr);
 }

@@ -150,5 +150,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    try
+    {
+        std::filesystem::permissions(file_out, std::filesystem::perms::owner_all | std::filesystem::perms::group_all | std::filesystem::perms::others_read | std::filesystem::perms::others_exec);
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "error: " << e.what() << std::endl;
+        return 1;
+    }
+
     return 0;
 }

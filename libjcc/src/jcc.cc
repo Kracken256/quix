@@ -688,11 +688,11 @@ LIB_EXPORT bool jcc_run(jcc_job_t *job)
     }
     catch (libjcc::PreprocessorException &)
     {
-        libjcc::message(*job, libjcc::Err::ERROR, "Compilation failed because of a preprocessor error");
+        libjcc::message(*job, libjcc::Err::ERROR, "Compilation was aborted while preprocessing source");
     }
     catch (libjcc::ParseException &)
     {
-        libjcc::message(*job, libjcc::Err::ERROR, "Compilation failed because of a parse error");
+        libjcc::message(*job, libjcc::Err::ERROR, "Compilation was aborted while parsing source");
     }
     catch (std::exception &e)
     {

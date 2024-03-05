@@ -10,7 +10,7 @@
 
 namespace libjcc::macro
 {
-    bool ParseDefine(jcc_job_t *job, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp);
+    bool ParseDefine(jcc_job_t *job, const Token &tok, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp);
 }
 
 #endif // __J_CC_PREP_MACRO_DEFINE_H__

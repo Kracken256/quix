@@ -19,6 +19,8 @@
 void libjcc::PrepEngine::setup()
 {
     m_macro_parser.add_routine("define", libjcc::macro::ParseDefine);
+    m_macro_parser.add_routine("pragma", libjcc::macro::ParsePragma);
+    m_macro_parser.add_routine("print", libjcc::macro::ParsePrint);
 }
 
 void libjcc::PrepEngine::addpath(const std::string &path)

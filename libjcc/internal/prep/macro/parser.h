@@ -13,7 +13,7 @@
 
 namespace libjcc
 {
-    typedef bool (*MacroParserRoutine)(jcc_job_t *job, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp);
+    typedef bool (*MacroParserRoutine)(jcc_job_t *job, const Token &tok, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp);
 
     class MacroParser
     {

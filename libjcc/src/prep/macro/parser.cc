@@ -35,7 +35,7 @@ bool libjcc::MacroParser::parse(const libjcc::Token &macro, std::vector<libjcc::
         if (!m_routines.contains(directive))
             PREPMSG(macro, Err::ERROR, "Unknown macro directive: %s", directive.c_str());
 
-        if (!m_routines.at(directive)(m_job, directive, parameter, exp))
+        if (!m_routines.at(directive)(m_job, macro, directive, parameter, exp))
             PREPMSG(macro, Err::ERROR, "Failed to process macro directive: %s", directive.c_str());
 
         return true;

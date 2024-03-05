@@ -22,10 +22,14 @@ std::shared_ptr<libjcc::ParseNode> libjcc::EnumDeclNode::clone() const
     return std::make_shared<EnumDeclNode>(*this);
 }
 
-size_t libjcc::EnumDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::EnumDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_type->depth_first_traversal(callback) + 1;
+    return 0;
+}
+
+size_t libjcc::EnumDeclNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::EnumDefNode::to_json() const
@@ -61,13 +65,12 @@ std::shared_ptr<libjcc::ParseNode> libjcc::EnumDefNode::clone() const
     return std::make_shared<EnumDefNode>(*this);
 }
 
-size_t libjcc::EnumDefNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::EnumDefNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    size_t count = 1;
-    for (auto &field : m_fields)
-    {
-        count += field.value->depth_first_traversal(callback);
-    }
-    return count;
+    return 0;
+}
+
+size_t libjcc::EnumDefNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }

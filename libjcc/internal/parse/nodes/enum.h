@@ -28,7 +28,8 @@ namespace libjcc
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 
     class EnumDefNode : public DefNode
@@ -52,7 +53,8 @@ namespace libjcc
         std::shared_ptr<TypeNode> m_type;
         std::vector<Field> m_fields;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 }
 

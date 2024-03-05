@@ -57,18 +57,14 @@ std::shared_ptr<libjcc::ParseNode> libjcc::FunctionDeclNode::clone() const
     return std::make_shared<FunctionDeclNode>(*this);
 }
 
-size_t libjcc::FunctionDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::FunctionDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    size_t count = 1;
-    for (auto &param : m_params)
-    {
-        count += param.type->depth_first_traversal(callback);
-        count += param.value->depth_first_traversal(callback);
-    }
+    return 0;
+}
 
-    count += m_return_type->depth_first_traversal(callback);
-    return count;
+size_t libjcc::FunctionDeclNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::FunctionDefNode::to_json() const
@@ -114,8 +110,12 @@ std::shared_ptr<libjcc::ParseNode> libjcc::FunctionDefNode::clone() const
     return std::make_shared<FunctionDefNode>(*this);
 }
 
-size_t libjcc::FunctionDefNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::FunctionDefNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_decl->depth_first_traversal(callback) + m_body->depth_first_traversal(callback) + 1;
+    return 0;
+}
+
+size_t libjcc::FunctionDefNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }

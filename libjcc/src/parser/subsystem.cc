@@ -2,8 +2,6 @@
 #include <error/message.h>
 #include <macro.h>
 
-#include <iostream>
-
 bool libjcc::parse_subsystem(jcc_job_t &job, std::shared_ptr<libjcc::Scanner> scanner, std::shared_ptr<libjcc::StmtNode> &node)
 {
     Token tok = scanner->next();

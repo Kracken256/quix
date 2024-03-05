@@ -5,11 +5,11 @@
 
 std::string libjcc::VarDeclNode::to_json() const
 {
-    std::string json = "{\"type\":\"VarDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
+    std::string json = "{\"ntype\":\"VarDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
 
     if (m_init)
     {
-        json += ", \"init\": " + m_init->to_json();
+        json += ",\"init\":" + m_init->to_json();
     }
 
     json += "}";
@@ -46,26 +46,23 @@ std::shared_ptr<libjcc::ParseNode> libjcc::VarDeclNode::clone() const
     return std::make_shared<VarDeclNode>(*this);
 }
 
-size_t libjcc::VarDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::VarDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
 {
-    callback(this);
-    size_t ret = 1;
-    ret += m_type->depth_first_traversal(callback);
-    if (m_init)
-    {
-        ret += m_init->depth_first_traversal(callback);
-    }
+    return 0;
+}
 
-    return ret;
+size_t libjcc::VarDeclNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::LetDeclNode::to_json() const
 {
-    std::string json = "{\"type\":\"LetDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
+    std::string json = "{\"ntype\":\"LetDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
 
     if (m_init)
     {
-        json += ", \"init\": " + m_init->to_json();
+        json += ",\"init\":" + m_init->to_json();
     }
 
     json += "}";
@@ -102,26 +99,23 @@ std::shared_ptr<libjcc::ParseNode> libjcc::LetDeclNode::clone() const
     return std::make_shared<LetDeclNode>(*this);
 }
 
-size_t libjcc::LetDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::LetDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
 {
-    callback(this);
-    size_t ret = 1;
-    ret += m_type->depth_first_traversal(callback);
-    if (m_init)
-    {
-        ret += m_init->depth_first_traversal(callback);
-    }
+    return 0;
+}
 
-    return ret;
+size_t libjcc::LetDeclNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::ConstDeclNode::to_json() const
 {
-    std::string json = "{\"type\":\"ConstDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
+    std::string json = "{\"ntype\":\"ConstDeclNode\",\"name\":\"" + m_name + "\",\"dtype\":" + m_type->to_json();
 
     if (m_init)
     {
-        json += ", \"init\": " + m_init->to_json();
+        json += ",\"init\":" + m_init->to_json();
     }
 
     json += "}";
@@ -158,15 +152,34 @@ std::shared_ptr<libjcc::ParseNode> libjcc::ConstDeclNode::clone() const
     return std::make_shared<ConstDeclNode>(*this);
 }
 
-size_t libjcc::ConstDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::ConstDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
 {
-    callback(this);
+    if (ntype != NodeType::ConstDeclNode)
+        return 1;
+
     size_t ret = 1;
-    ret += m_type->depth_first_traversal(callback);
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_type));
+    ret += m_type->dfs_preorder(callback);
     if (m_init)
     {
-        ret += m_init->depth_first_traversal(callback);
+        callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_init));
+        ret += m_init->dfs_preorder(callback);
     }
+
+    return ret;
+}
+
+size_t libjcc::ConstDeclNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
+{
+    size_t ret = 1;
+    if (m_init)
+    {
+        ret += m_init->dfs_postorder(callback);
+        callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_init));
+    }
+
+    ret += m_type->dfs_postorder(callback);
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_type));
 
     return ret;
 }

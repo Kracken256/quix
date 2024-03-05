@@ -34,16 +34,14 @@ std::shared_ptr<libjcc::ParseNode> libjcc::StructTypeNode::clone() const
     return std::make_shared<StructTypeNode>(*this);
 }
 
-size_t libjcc::StructTypeNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::StructTypeNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    size_t ret = 1;
-    for (auto &field : m_fields)
-    {
-        ret += field->depth_first_traversal(callback);
-    }
+    return 0;
+}
 
-    return ret;
+size_t libjcc::StructTypeNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::StructDeclNode::to_json() const
@@ -87,14 +85,14 @@ std::shared_ptr<libjcc::ParseNode> libjcc::StructFieldNode::clone() const
     return std::make_shared<StructFieldNode>(*this);
 }
 
-size_t libjcc::StructFieldNode::depth_first_traversal(std::function<void (libjcc::ParseNode *)> callback)
+size_t libjcc::StructFieldNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    size_t ret = 1;
-    ret += m_type->depth_first_traversal(callback);
-    if (m_value)
-        ret += m_value->depth_first_traversal(callback);
-    return ret;
+    return 0;
+}
+
+size_t libjcc::StructFieldNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }
 
 std::string libjcc::StructDefNode::to_json() const
@@ -125,14 +123,12 @@ std::shared_ptr<libjcc::ParseNode> libjcc::StructDefNode::clone() const
     return std::make_shared<StructDefNode>(*this);
 }
 
-size_t libjcc::StructDefNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::StructDefNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    size_t ret = 1;
-    for (auto &field : m_fields)
-    {
-        ret += field->depth_first_traversal(callback);
-    }
+    return 0;
+}
 
-    return ret;
+size_t libjcc::StructDefNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }

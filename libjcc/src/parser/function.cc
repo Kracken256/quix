@@ -3,7 +3,6 @@
 #include <parse/parser.h>
 #include <macro.h>
 #include <error/message.h>
-#include <iostream>
 
 using namespace libjcc;
 

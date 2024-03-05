@@ -35,8 +35,12 @@ std::shared_ptr<libjcc::ParseNode> libjcc::SubsystemNode::clone() const
     return std::make_shared<SubsystemNode>(*this);
 }
 
-size_t libjcc::SubsystemNode::depth_first_traversal(std::function<void (libjcc::ParseNode *)> callback)
+size_t libjcc::SubsystemNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_block->depth_first_traversal(callback) + 1;
+    return 0;
+}
+
+size_t libjcc::SubsystemNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    return 0;
 }

@@ -27,7 +27,8 @@ namespace libjcc
 
         std::shared_ptr<libjcc::StmtNode> m_stmt;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 }
 

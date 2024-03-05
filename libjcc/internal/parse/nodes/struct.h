@@ -26,7 +26,8 @@ namespace libjcc
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 
     class StructDeclNode : public DeclNode
@@ -57,7 +58,8 @@ namespace libjcc
         std::shared_ptr<TypeNode> m_type;
         std::shared_ptr<ConstExprNode> m_value;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 
     class StructDefNode : public DefNode
@@ -73,7 +75,8 @@ namespace libjcc
         std::string m_name;
         std::vector<std::shared_ptr<StructFieldNode>> m_fields;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 }
 

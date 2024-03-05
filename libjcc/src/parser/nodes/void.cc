@@ -4,7 +4,7 @@
 
 std::string libjcc::VoidTypeNode::to_json() const
 {
-    return "{\"type\":\"VoidTypeNode\"}";
+    return "{\"ntype\":\"void\"}";
 }
 
 llvm::Type *libjcc::VoidTypeNode::codegen(libjcc::LLVMContext &ctx) const

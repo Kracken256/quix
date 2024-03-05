@@ -261,7 +261,7 @@ static std::string base64_encode(const std::string &in)
     return out;
 }
 
-static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> &ast)
+static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> ast)
 {
     (void)job;
     (void)ast;
@@ -277,7 +277,7 @@ static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> &ast)
     return true;
 }
 
-static bool jcc_verify_semantics(jcc_job_t *job, std::shared_ptr<libjcc::AST> &ast)
+static bool jcc_verify_semantics(jcc_job_t *job, std::shared_ptr<libjcc::AST> ast)
 {
     (void)job;
     (void)ast;
@@ -297,7 +297,7 @@ static bool jcc_verify_semantics(jcc_job_t *job, std::shared_ptr<libjcc::AST> &a
     return true;
 }
 
-static bool jcc_optimize_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> &ast)
+static bool jcc_optimize_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> ast)
 {
     (void)job;
     (void)ast;
@@ -542,6 +542,10 @@ static bool compile(jcc_job_t *job)
 
     if (!jcc_optimize_ast(job, ast))
         return false;
+
+    if (job->m_debug)
+        libjcc::message(*job, libjcc::Err::DEBUG, "Dumping AST 2 (JSON): " + base64_encode(ast->to_json()));
+
     ///=========================================
     /// END: INTERMEDIATE PROCESSING
     ///=========================================

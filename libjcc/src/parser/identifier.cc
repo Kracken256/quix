@@ -4,7 +4,7 @@
 
 std::string libjcc::IdentifierNode::to_json() const
 {
-    return "{\"type\":\"identifier\",\"name\":\"" + m_name + "\"}";
+    return "{\"ntype\":\"identifier\",\"name\":\"" + m_name + "\"}";
 }
 
 llvm::Value *libjcc::IdentifierNode::codegen(libjcc::LLVMContext &ctx) const

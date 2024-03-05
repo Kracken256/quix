@@ -40,7 +40,8 @@ namespace libjcc
         bool m_foreign = false;
         bool m_nothrow = false;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 
     class FunctionDefNode : public DefNode
@@ -56,7 +57,8 @@ namespace libjcc
         std::shared_ptr<FunctionDeclNode> m_decl;
         std::shared_ptr<BlockNode> m_body;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 }
 

@@ -6,9 +6,9 @@
 std::string libjcc::ConstUnaryExprNode::to_json() const
 {
     std::string json = "{";
-    json += "\"type\": \"ConstUnaryExprNode\",";
-    json += "\"operator\": \"" + operator_map_inverse.at(m_op) + "\",";
-    json += "\"expr\": " + m_expr->to_json();
+    json += "\"type\":\"ConstUnaryExprNode\",";
+    json += "\"operator\":\"" + operator_map_inverse.at(m_op) + "\",";
+    json += "\"expr\":" + m_expr->to_json();
     json += "}";
     return json;
 }
@@ -43,19 +43,29 @@ std::shared_ptr<libjcc::ParseNode> libjcc::ConstUnaryExprNode::clone() const
     return std::make_shared<ConstUnaryExprNode>(*this);
 }
 
-size_t libjcc::ConstUnaryExprNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::ConstUnaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_expr->depth_first_traversal(callback) + 1;
+
+    if (ntype != NodeType::ConstUnaryExprNode)
+        return 1;
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_expr));
+    return m_expr->dfs_preorder(callback) + 1;
+}
+
+size_t libjcc::ConstUnaryExprNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    size_t ret = 1 + m_expr->dfs_postorder(callback);
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_expr));
+    return ret + 1;
 }
 
 std::string libjcc::ConstBinaryExprNode::to_json() const
 {
     std::string json = "{";
-    json += "\"type\": \"ConstBinaryExprNode\",";
-    json += "\"operator\": \"" + operator_map_inverse.at(m_op) + "\",";
-    json += "\"lhs\": " + m_lhs->to_json() + ",";
-    json += "\"rhs\": " + m_rhs->to_json();
+    json += "\"type\":\"ConstBinaryExprNode\",";
+    json += "\"operator\":\"" + operator_map_inverse.at(m_op) + "\",";
+    json += "\"lhs\":" + m_lhs->to_json() + ",";
+    json += "\"rhs\":" + m_rhs->to_json();
     json += "}";
     return json;
 }
@@ -120,8 +130,25 @@ std::shared_ptr<libjcc::ParseNode> libjcc::ConstBinaryExprNode::clone() const
     return std::make_shared<ConstBinaryExprNode>(*this);
 }
 
-size_t libjcc::ConstBinaryExprNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::ConstBinaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_lhs->depth_first_traversal(callback) + m_rhs->depth_first_traversal(callback) + 1;
+    if (ntype != NodeType::ConstBinaryExprNode)
+        return 1;
+
+    size_t ret = 1;
+
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_lhs));
+    ret += m_lhs->dfs_preorder(callback);
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_rhs));
+    ret += m_rhs->dfs_preorder(callback);
+
+    return ret;
+}
+
+size_t libjcc::ConstBinaryExprNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    size_t ret = 1 + m_lhs->dfs_postorder(callback);
+    ret += m_rhs->dfs_postorder(callback);
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_lhs));
+    return ret + 1;
 }

@@ -1,16 +1,50 @@
 #define JCC_INTERNAL
 
 #include <parse/nodes/basic.h>
+#include <parse/nodes/nodes.h>
 
-size_t libjcc::ParseNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::ParseNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
 {
-    callback(this);
     return 1;
+}
+
+size_t libjcc::ParseNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
+{
+    return 1;
+}
+
+void libjcc::ParseNode::replace_child(std::shared_ptr<libjcc::ParseNode> &find, std::shared_ptr<libjcc::ParseNode> replace)
+{
+    find = replace;
+}
+
+void callback_nop(std::shared_ptr<libjcc::ParseNode> parrent, std::shared_ptr<libjcc::ParseNode> *child)
+{
+}
+
+size_t libjcc::ParseNode::count()
+{
+    return dfs_preorder(callback_nop);
+}
+
+bool libjcc::ParseNode::has_immidiate_child(std::shared_ptr<libjcc::ParseNode> node)
+{
+    if (node == shared_from_this())
+        return false;
+
+    bool found = false;
+    dfs_preorder([&](std::shared_ptr<libjcc::ParseNode> parrent, std::shared_ptr<libjcc::ParseNode> *child)
+                 {
+        if (*child == node)
+        {
+            found = true;
+        } });
+    return found;
 }
 
 std::string libjcc::UserTypeNode::to_json() const
 {
-    return "{\"type\":\"UserTypeNode\",\"name\":\"" + m_name + "\"}";
+    return "{\"ntype\":\"UserTypeNode\",\"name\":\"" + m_name + "\"}";
 }
 
 llvm::Type *libjcc::UserTypeNode::codegen(libjcc::LLVMContext &ctx) const
@@ -25,7 +59,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::UserTypeNode::clone() const
 
 std::string libjcc::BlockNode::to_json() const
 {
-    std::string json = "{\"type\":\"BlockNode\",\"stmts\":[";
+    std::string json = "{\"ntype\":\"BlockNode\",\"stmts\":[";
     for (auto &stmt : m_stmts)
     {
         json += stmt->to_json() + ",";
@@ -59,13 +93,29 @@ std::shared_ptr<libjcc::ParseNode> libjcc::BlockNode::clone() const
     return node;
 }
 
-size_t libjcc::BlockNode::depth_first_traversal(std::function<void (libjcc::ParseNode *)> callback)
+size_t libjcc::BlockNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
 {
     size_t count = 1;
-    callback(this);
+
+    if (ntype != NodeType::BlockNode)
+        return count;
+
     for (auto &stmt : m_stmts)
     {
-        count += stmt->depth_first_traversal(callback);
+        callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&stmt));
+        count += stmt->dfs_preorder(callback);
     }
+    return count;
+}
+
+size_t libjcc::BlockNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode> *)> callback)
+{
+    size_t count = 1;
+    for (auto &stmt : m_stmts)
+    {
+        count += stmt->dfs_postorder(callback);
+        callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&stmt));
+    }
+
     return count;
 }

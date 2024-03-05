@@ -8,7 +8,6 @@
 #include <error/message.h>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Host.h>

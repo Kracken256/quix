@@ -32,7 +32,7 @@ static uint8_t get_numbits(const std::string &s)
 
 std::string libjcc::IntegerLiteralNode::to_json() const
 {
-    return "{\"type\":\"number\",\"value\":\"" + m_val + "\"}";
+    return "{\"ntype\":\"number\",\"value\":\"" + m_val + "\"}";
 }
 
 llvm::Constant *libjcc::IntegerLiteralNode::codegen(libjcc::LLVMContext &ctx) const
@@ -47,7 +47,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::IntegerLiteralNode::clone() const
 
 std::string libjcc::FloatLiteralNode::to_json() const
 {
-    return "{\"type\":\"float\",\"value\":\"" + m_val + "\"}";
+    return "{\"ntype\":\"float\",\"value\":\"" + m_val + "\"}";
 }
 
 llvm::Constant *libjcc::FloatLiteralNode::codegen(libjcc::LLVMContext &ctx) const
@@ -67,7 +67,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::FloatLiteralNode::clone() const
 
 std::string libjcc::StringLiteralNode::to_json() const
 {
-    return "{\"type\":\"string\",\"value\":\"" + m_val + "\"}";
+    return "{\"ntype\":\"string\",\"value\":\"" + m_val + "\"}";
 }
 
 llvm::Constant *libjcc::StringLiteralNode::codegen(libjcc::LLVMContext &ctx) const
@@ -96,7 +96,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::StringLiteralNode::clone() const
 
 std::string libjcc::CharLiteralNode::to_json() const
 {
-    return "{\"type\":\"char\",\"value\":\"" + m_val + "\"}";
+    return "{\"ntype\":\"char\",\"value\":\"" + m_val + "\"}";
 }
 
 llvm::Constant *libjcc::CharLiteralNode::codegen(libjcc::LLVMContext &ctx) const
@@ -111,7 +111,7 @@ std::shared_ptr<libjcc::ParseNode> libjcc::CharLiteralNode::clone() const
 
 std::string libjcc::BoolLiteralNode::to_json() const
 {
-    return std::string("{\"type\":\"bool\",\"value\":") + (m_val ? "true" : "false") + "}";
+    return std::string("{\"ntype\":\"bool\",\"value\":") + (m_val ? "true" : "false") + "}";
 }
 
 llvm::Constant *libjcc::BoolLiteralNode::codegen(libjcc::LLVMContext &ctx) const

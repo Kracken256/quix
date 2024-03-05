@@ -4,10 +4,7 @@
 
 std::string libjcc::ExportNode::to_json() const
 {
-    return "{\n"
-           "  \"type\": \"ExportNode\",\n"
-           "  \"stmt\": " + m_stmt->to_json() + "\n"
-           "}";
+    return "{\"ntype\":\"ExportNode\",\"stmt\":" + m_stmt->to_json() + "}";
 }
 
 llvm::Value *libjcc::ExportNode::codegen(libjcc::LLVMContext &ctx) const
@@ -20,7 +17,7 @@ llvm::Value *libjcc::ExportNode::codegen(libjcc::LLVMContext &ctx) const
 
     if (!pub)
         ctx.m_pub = false;
-    
+
     return stmt;
 }
 
@@ -29,8 +26,19 @@ std::shared_ptr<libjcc::ParseNode> libjcc::ExportNode::clone() const
     return std::make_shared<ExportNode>(*this);
 }
 
-size_t libjcc::ExportNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+size_t libjcc::ExportNode::dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
 {
-    callback(this);
-    return m_stmt->depth_first_traversal(callback) + 1;
+
+    if (ntype != NodeType::ExportNode)
+        return 1;
+
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_stmt));
+    return m_stmt->dfs_preorder(callback) + 1;
+}
+
+size_t libjcc::ExportNode::dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback)
+{
+    size_t ret = m_stmt->dfs_postorder(callback) + 1;
+    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libjcc::ParseNode> *>(&m_stmt));
+    return ret;
 }

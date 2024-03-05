@@ -77,7 +77,7 @@ namespace libjcc
         ExportNode,
     };
 
-    class ParseNode
+    class ParseNode : public std::enable_shared_from_this<ParseNode>
     {
     public:
         ParseNode() = default;
@@ -85,11 +85,16 @@ namespace libjcc
         virtual std::string to_json() const = 0;
         virtual std::shared_ptr<ParseNode> clone() const = 0;
 
-        virtual bool operator==(const ParseNode &other) const = default;
-
         NodeType ntype = NodeType::ParseNode;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+
+        bool operator==(const ParseNode &other) const { return this == &other; }
+
+        void replace_child(std::shared_ptr<ParseNode> &find, std::shared_ptr<libjcc::ParseNode> replace);
+        size_t count();
+        bool has_immidiate_child(const std::shared_ptr<ParseNode> node);
     };
 
     class ExprNode : public ParseNode
@@ -168,7 +173,8 @@ namespace libjcc
 
         std::vector<std::shared_ptr<StmtNode>> m_stmts;
 
-        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
+        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libjcc::ParseNode>, std::shared_ptr<libjcc::ParseNode>*)> callback);
     };
 
     ///=========================================================================

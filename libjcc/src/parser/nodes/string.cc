@@ -4,7 +4,7 @@
 
 std::string libjcc::StringTypeNode::to_json() const
 {
-    return "{\"type\":\"StringTypeNode\"}";
+    return "{\"ntype\":\"StringTypeNode\"}";
 }
 
 llvm::Type *libjcc::StringTypeNode::codegen(libjcc::LLVMContext &ctx) const

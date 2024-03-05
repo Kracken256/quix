@@ -47,7 +47,7 @@ static std::string make_message_colored(Err type, const std::string &format, va_
         msg = "\x1b[37;49;1minfo:\x1b[0m \x1b[37;49m" + format;
         break;
     case Err::WARN:
-        msg = "\x1b[33;49;1mwarn:\x1b[0m \x1b[37;49;1m" + format;
+        msg = "\x1b[35;49;1mwarn:\x1b[0m \x1b[37;49;1m" + format;
         break;
     case Err::ERROR:
         msg = "\x1b[31;49;1merror:\x1b[0m \x1b[37;49;1m" + format;
@@ -115,7 +115,7 @@ static std::string make_parser_message_colored(const std::string &file, const li
         msg += "\x1b[37;49;1minfo:\x1b[0m \x1b[37;49m" + format;
         break;
     case Err::WARN:
-        msg += "\x1b[33;49;1mwarn:\x1b[0m \x1b[37;49;1m" + format;
+        msg += "\x1b[35;49;1mwarn:\x1b[0m \x1b[37;49;1m" + format;
         break;
     case Err::ERROR:
         msg += "\x1b[31;49;1merror:\x1b[0m \x1b[37;49;1m" + format;

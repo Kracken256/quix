@@ -14,9 +14,11 @@ namespace libjcc
     class Generator
     {
         Generator() = delete;
-
+        static bool write_IR(jcc_job_t &ctx, const std::shared_ptr<libjcc::AST> ast, const std::string &ir_filename);
+        static bool write_asm(jcc_job_t &ctx, const std::string &ir_filename, const std::string &asm_filename);
+        static bool write_obj(jcc_job_t &ctx, const std::string &asm_filename, const std::string &obj_filename);
+        static bool write_bin(jcc_job_t &ctx, const std::string &obj_filename, const std::string &bin_filename);
     public:
-        static bool synthesize_LLVM_IR(jcc_job_t &ctx, FILE *out, const std::shared_ptr<libjcc::AST> ast);
         static bool generate(jcc_job_t &ctx, const std::shared_ptr<libjcc::AST> ast);
     };
 };

@@ -164,7 +164,7 @@ LIB_EXPORT void jcc_add_option(jcc_job_t *job, const char *name, const char *val
 {
     jcc_option_t *option;
 
-    if (!job || !name)
+    if (!job || !name || !enabled)
         return;
 
     option = (jcc_option_t *)safe_malloc(sizeof(jcc_option_t));
@@ -561,11 +561,22 @@ static bool compile(jcc_job_t *job)
     return true;
 }
 
-static bool verify_build_option(jcc_job_t *job, const std::string &option, const std::string &value)
+static bool verify_build_option(const std::string &option, const std::string &value)
 {
     const static std::set<std::string> static_options = {
-        "-S", // assembly output
-        "-IR" // IR output
+        "-S",      // assembly output
+        "-IR",     // IR output
+        "-c",      // compile only
+        "-O0",     // optimization levels
+        "-O1",     // optimization levels
+        "-O2",     // optimization levels
+        "-O3",     // optimization levels
+        "-Os",     // optimization levels
+        "-g",      // debug information
+        "-flto",   // link time optimization
+        "-static", // static linking
+        "-shared", // shared library
+        "-v",      // verbose
     };
     const static std::vector<std::pair<std::regex, std::regex>> static_regexes = {
         // -D<name>[=<value>]
@@ -592,7 +603,7 @@ static bool verify_build_option_conflicts(jcc_job_t *job)
 static bool build_argmap(jcc_job_t *job)
 {
     // -<p><key>[=<value>]
-    const static std::set<char> okay_prefixes = {'f', 'O', 'l', 'L', 'I', 'D', 'W', 'm', 'c', 'S'};
+    const static std::set<char> okay_prefixes = {'f', 'O', 'l', 'L', 'I', 'D', 'W', 'm', 'c', 'S', 'g', 's', 'v'};
 
     std::map<std::string, std::string> *argmap = job->m_argset;
 
@@ -616,7 +627,7 @@ static bool build_argmap(jcc_job_t *job)
         if (pos != std::string::npos)
             value = def.substr(pos + 1);
 
-        if (!verify_build_option(job, key, value))
+        if (!verify_build_option(key, value))
         {
             libjcc::message(*job, libjcc::Err::ERROR, "invalid build option: " + key);
             return false;

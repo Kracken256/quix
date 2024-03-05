@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
     {
         std::cerr << "error: failed to get result" << std::endl;
         jcc_dispose(job);
+        std::remove(file_out.c_str());
         return 1;
     }
 
@@ -144,7 +145,10 @@ int main(int argc, char *argv[])
     jcc_dispose(job);
 
     if (!success)
+    {
+        std::remove(file_out.c_str());
         return 1;
+    }
 
     return 0;
 }

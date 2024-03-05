@@ -581,7 +581,7 @@ static bool verify_build_option(const std::string &option, const std::string &va
     };
     const static std::vector<std::pair<std::regex, std::regex>> static_regexes = {
         // -D<name>[=<value>]
-        {std::regex("-D[a-zA-Z_][a-zA-Z0-9_]*"), std::regex("[a-zA-Z0-9_]*")},
+        {std::regex("-D[a-zA-Z_][a-zA-Z0-9_]*"), std::regex("[a-zA-Z0-9_ ]*")},
     };
 
     if (static_options.contains(option))

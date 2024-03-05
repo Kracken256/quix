@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <error/message.h>
 #include <error/exceptions.h>
 #include <stdarg.h>

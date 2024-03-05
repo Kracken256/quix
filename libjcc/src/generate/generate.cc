@@ -5,7 +5,7 @@
 #include "llvm/llvm-ctx.h"
 #include <error/message.h>
 #include <filesystem>
-
+#include <fstream>
 #include <iostream>
 
 #include <llvm/IR/Verifier.h>
@@ -72,7 +72,7 @@ bool libjcc::Generator::write_asm(jcc_job_t &ctx, const std::string &ir_filename
     message(ctx, libjcc::Err::FATAL, "Unsupported operating system");
     throw std::runtime_error("Unsupported operating system");
 #else
-    std::string flags;
+    std::string flags = "-ffunction-sections -fdata-sections ";
     for (const auto &e : *ctx.m_argset)
     {
         if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
@@ -83,14 +83,14 @@ bool libjcc::Generator::write_asm(jcc_job_t &ctx, const std::string &ir_filename
         {
             flags += e.first + " ";
         }
-        else if (e.first == "-v" || ctx.m_debug)
+        else if (e.first == "-v")
         {
             flags += "-v ";
         }
     }
 
     // Its ugly, but it works
-    std::string os_cmd = "clang -Wno-override-module -S " + flags + " " + ir_filename + " -o " + asm_filename;
+    std::string os_cmd = "clang -Wno-override-module -S " + ir_filename + " -o " + asm_filename + " " + flags;
 
     message(ctx, libjcc::Err::DEBUG, "Running command: " + os_cmd);
     if (system(os_cmd.c_str()) != 0)
@@ -131,7 +131,7 @@ bool libjcc::Generator::write_obj(jcc_job_t &ctx, const std::string &asm_filenam
     }
 
     // Its ugly, but it works
-    std::string os_cmd = "clang -c " + flags + " " + asm_filename + " -o " + obj_filename;
+    std::string os_cmd = "clang -c " + asm_filename + " -o " + obj_filename + " " + flags;
 
     message(ctx, libjcc::Err::DEBUG, "Running command: " + os_cmd);
     if (system(os_cmd.c_str()) != 0)
@@ -150,7 +150,14 @@ bool libjcc::Generator::write_bin(jcc_job_t &ctx, const std::string &obj_filenam
     message(ctx, libjcc::Err::FATAL, "Unsupported operating system");
     throw std::runtime_error("Unsupported operating system");
 #else
-    std::string flags;
+    const std::string linker_file_content = R"(SECTIONS { /DISCARD/ : { *(.note*) *(.eh_frame*) }})";
+
+    std::string linker_file = std::tmpnam(nullptr);
+    std::ofstream ofs(linker_file);
+    ofs << linker_file_content;
+    ofs.close();
+
+    std::string flags = "-nostdlib -nostartfiles -nodefaultlibs -Wl,-T " + linker_file + " ";
     for (const auto &e : *ctx.m_argset)
     {
         if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
@@ -183,7 +190,11 @@ bool libjcc::Generator::write_bin(jcc_job_t &ctx, const std::string &obj_filenam
     std::string os_cmd = "clang " + flags + " " + obj_filename + " -o " + bin_filename;
 
     message(ctx, libjcc::Err::DEBUG, "Running command: " + os_cmd);
-    if (system(os_cmd.c_str()) != 0)
+    bool ok = system(os_cmd.c_str()) == 0;
+
+    std::filesystem::remove(linker_file);
+
+    if (!ok)
     {
         message(ctx, libjcc::Err::ERROR, "Failed to generate executable");
         return false;

@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/enum.h>
 
 std::string libjcc::EnumDeclNode::to_json() const

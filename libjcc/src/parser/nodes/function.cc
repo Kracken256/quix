@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/function.h>
 
 std::string libjcc::FunctionDeclNode::to_json() const

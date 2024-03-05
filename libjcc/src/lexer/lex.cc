@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <lexer/lex.h>
 #include <cstdio>
 #include <cctype>

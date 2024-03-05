@@ -129,35 +129,7 @@ typedef struct jcc_job_t
 extern "C"
 {
 #else
-typedef struct jcc_job_t
-{
-    jcc_uuid_t m_id;
-
-    /// @brief Options
-    jcc_options_t m_options;
-
-    /// @brief Result
-    jcc_result_t *m_result;
-
-    FILE *m_in;
-    FILE *m_out;
-
-    const char *m_filename;
-
-    /// @brief Job priority
-    uint8_t m_priority;
-
-    /// @brief Internal flags
-    uint32_t m_internal_flags;
-
-    /// @brief Internal data
-    void *m_inner;
-
-    void *m_argset;
-
-    /// @brief User may set to true to enable debug messages
-    bool m_debug;
-} jcc_job_t;
+typedef struct jcc_job_t jcc_job_t;
 #endif
 
     /// @brief Create a new compiler job

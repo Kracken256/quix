@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/parser.h>
 #include <macro.h>
 #include <error/message.h>

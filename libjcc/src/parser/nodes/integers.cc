@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/integer.h>
 
 /*

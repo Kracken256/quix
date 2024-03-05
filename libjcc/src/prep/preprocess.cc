@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <prep/preprocess.h>
 #include <cstdio>
 #include <cctype>

@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <error/messages.h>
 
 using namespace libjcc;

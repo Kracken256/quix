@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/union.h>
 
 std::string libjcc::UnionTypeNode::to_json() const

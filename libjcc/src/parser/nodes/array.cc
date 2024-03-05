@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/array.h>
 
 std::string libjcc::ArrayTypeNode::to_json() const

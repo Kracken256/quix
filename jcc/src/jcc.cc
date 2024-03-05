@@ -10,16 +10,11 @@ int main(int argc, char *argv[])
 
     std::string file_in;
     std::string file_out;
-    bool debug = false;
     std::vector<std::pair<std::string, std::string>> switches;
 
     for (size_t i = 1; i < args.size(); i++)
     {
-        if (args[i] == "--debug")
-        {
-            debug = true;
-        }
-        else if (args[i] == "-o")
+        if (args[i] == "-o")
         {
             if (i + 1 < args.size())
             {
@@ -112,8 +107,6 @@ int main(int argc, char *argv[])
         fclose(out);
         return 1;
     }
-
-    job->m_debug = debug;
 
     jcc_set_input(job, in, file_in.c_str());
     jcc_set_output(job, out);

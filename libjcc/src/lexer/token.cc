@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <lexer/token.h>
 #include <map>
 

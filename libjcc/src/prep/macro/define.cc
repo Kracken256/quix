@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <prep/macro/define.h>
 
 bool libjcc::macro::ParseDefine(jcc_job_t *job, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp)

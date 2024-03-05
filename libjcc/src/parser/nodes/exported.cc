@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/exported.h>
 
 std::string libjcc::ExportNode::to_json() const

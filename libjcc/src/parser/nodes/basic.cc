@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/basic.h>
 
 std::string libjcc::UserTypeNode::to_json() const

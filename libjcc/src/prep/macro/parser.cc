@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <prep/macro/parser.h>
 #include <stdexcept>
 #include <map>

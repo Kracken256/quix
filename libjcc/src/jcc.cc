@@ -633,6 +633,9 @@ static bool build_argmap(jcc_job_t *job)
             return false;
         }
 
+        if (key == "-v" && value.empty())
+            job->m_debug = true;
+
         argmap->insert({key, value});
 
         if (!value.empty())

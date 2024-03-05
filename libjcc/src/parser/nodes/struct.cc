@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/struct.h>
 
 std::string libjcc::StructTypeNode::to_json() const

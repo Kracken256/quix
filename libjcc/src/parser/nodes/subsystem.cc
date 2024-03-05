@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/subsystem.h>
 
 std::string libjcc::SubsystemNode::to_json() const

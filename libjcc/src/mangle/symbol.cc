@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <mangle/symbol.h>
 #include <parse/nodes/nodes.h>
 

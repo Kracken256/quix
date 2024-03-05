@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/identifier.h>
 
 std::string libjcc::IdentifierNode::to_json() const

@@ -1,3 +1,5 @@
+#define JCC_INTERNAL
+
 #include <parse/nodes/void.h>
 
 std::string libjcc::VoidTypeNode::to_json() const

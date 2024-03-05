@@ -26,6 +26,8 @@ namespace libjcc
         std::shared_ptr<ParseNode> clone() const override;
 
         std::shared_ptr<libjcc::StmtNode> m_stmt;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 }
 

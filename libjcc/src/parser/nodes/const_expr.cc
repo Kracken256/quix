@@ -43,6 +43,12 @@ std::shared_ptr<libjcc::ParseNode> libjcc::ConstUnaryExprNode::clone() const
     return std::make_shared<ConstUnaryExprNode>(*this);
 }
 
+size_t libjcc::ConstUnaryExprNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+{
+    callback(this);
+    return m_expr->depth_first_traversal(callback) + 1;
+}
+
 std::string libjcc::ConstBinaryExprNode::to_json() const
 {
     std::string json = "{";
@@ -112,4 +118,10 @@ llvm::Constant *libjcc::ConstBinaryExprNode::codegen(libjcc::LLVMContext &ctx) c
 std::shared_ptr<libjcc::ParseNode> libjcc::ConstBinaryExprNode::clone() const
 {
     return std::make_shared<ConstBinaryExprNode>(*this);
+}
+
+size_t libjcc::ConstBinaryExprNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+{
+    callback(this);
+    return m_lhs->depth_first_traversal(callback) + m_rhs->depth_first_traversal(callback) + 1;
 }

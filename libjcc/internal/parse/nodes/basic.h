@@ -67,12 +67,11 @@ namespace libjcc
         EnumDeclNode,
         FunctionDeclNode,
 
-
         StructDefNode,
+        StructFieldNode,
         UnionDefNode,
         EnumDefNode,
         FunctionDefNode,
-
 
         SubsystemNode,
         ExportNode,
@@ -89,6 +88,8 @@ namespace libjcc
         virtual bool operator==(const ParseNode &other) const = default;
 
         NodeType ntype = NodeType::ParseNode;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class ExprNode : public ParseNode
@@ -166,6 +167,8 @@ namespace libjcc
         virtual std::shared_ptr<ParseNode> clone() const override;
 
         std::vector<std::shared_ptr<StmtNode>> m_stmts;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     ///=========================================================================

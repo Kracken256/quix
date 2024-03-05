@@ -25,6 +25,8 @@ namespace libjcc
         std::shared_ptr<ParseNode> clone() const override;
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class StructDeclNode : public DeclNode
@@ -40,6 +42,24 @@ namespace libjcc
         std::string m_name;
     };
 
+    class StructFieldNode : public DefNode
+    {
+    public:
+        StructFieldNode() { ntype = NodeType::StructFieldNode; }
+        StructFieldNode(const std::string &name, std::shared_ptr<TypeNode> type, std::shared_ptr<ConstExprNode> value = nullptr) : m_name(name), m_type(type), m_value(value) { ntype = NodeType::StructFieldNode; }
+        virtual ~StructFieldNode() = default;
+
+        std::string to_json() const override;
+        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        std::shared_ptr<ParseNode> clone() const override;
+
+        std::string m_name;
+        std::shared_ptr<TypeNode> m_type;
+        std::shared_ptr<ConstExprNode> m_value;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
+    };
+
     class StructDefNode : public DefNode
     {
     public:
@@ -50,15 +70,10 @@ namespace libjcc
         llvm::Constant *codegen(LLVMContext &ctx) const override;
         std::shared_ptr<ParseNode> clone() const override;
 
-        struct Field
-        {
-            std::string name;
-            std::shared_ptr<TypeNode> type;
-            std::shared_ptr<ConstExprNode> value;
-        };
-
         std::string m_name;
-        std::vector<Field> m_fields;
+        std::vector<std::shared_ptr<StructFieldNode>> m_fields;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 }
 

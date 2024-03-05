@@ -57,6 +57,20 @@ std::shared_ptr<libjcc::ParseNode> libjcc::FunctionDeclNode::clone() const
     return std::make_shared<FunctionDeclNode>(*this);
 }
 
+size_t libjcc::FunctionDeclNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+{
+    callback(this);
+    size_t count = 1;
+    for (auto &param : m_params)
+    {
+        count += param.type->depth_first_traversal(callback);
+        count += param.value->depth_first_traversal(callback);
+    }
+
+    count += m_return_type->depth_first_traversal(callback);
+    return count;
+}
+
 std::string libjcc::FunctionDefNode::to_json() const
 {
     std::string ret = "{";
@@ -98,4 +112,10 @@ llvm::Value *libjcc::FunctionDefNode::codegen(LLVMContext &ctx) const
 std::shared_ptr<libjcc::ParseNode> libjcc::FunctionDefNode::clone() const
 {
     return std::make_shared<FunctionDefNode>(*this);
+}
+
+size_t libjcc::FunctionDefNode::depth_first_traversal(std::function<void(libjcc::ParseNode *)> callback)
+{
+    callback(this);
+    return m_decl->depth_first_traversal(callback) + m_body->depth_first_traversal(callback) + 1;
 }

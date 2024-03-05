@@ -27,6 +27,8 @@ namespace libjcc
 
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class EnumDefNode : public DefNode
@@ -49,6 +51,8 @@ namespace libjcc
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
         std::vector<Field> m_fields;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 }
 

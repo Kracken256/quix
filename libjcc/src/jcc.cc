@@ -18,6 +18,7 @@
 #include <error/exceptions.h>
 #include <parse/parser.h>
 #include <libjcc.h>
+#include <optimize/routines.h>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
 
@@ -270,6 +271,7 @@ static bool jcc_mutate_ast(jcc_job_t *job, std::shared_ptr<libjcc::AST> &ast)
     /// TODO: Type Coercion/Conversion
     /// TODO: Type Inference
     /// TODO: Evalulate constant expressions
+    libjcc::optimize::fold_expr(ast);
     /// TODO: Reduce expressions
 
     return true;

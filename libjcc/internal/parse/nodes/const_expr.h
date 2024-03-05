@@ -29,6 +29,8 @@ namespace libjcc
 
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_expr;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class ConstBinaryExprNode : public ConstExprNode
@@ -46,6 +48,8 @@ namespace libjcc
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_lhs;
         std::shared_ptr<ConstExprNode> m_rhs;
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 }
 

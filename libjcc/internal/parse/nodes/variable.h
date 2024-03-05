@@ -48,6 +48,8 @@ namespace libjcc
 
             return s;
         }
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class LetDeclNode : public DeclNode
@@ -84,6 +86,8 @@ namespace libjcc
 
             return s;
         }
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 
     class ConstDeclNode : public DeclNode
@@ -115,6 +119,8 @@ namespace libjcc
 
             return s;
         }
+
+        virtual size_t depth_first_traversal(std::function<void(ParseNode *)> callback);
     };
 }
 

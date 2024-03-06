@@ -12,7 +12,3 @@ pub let DEVELOPERS_NAME: string = @(readstdin 30);
 @print info "In the future, Ill be able to talk to the internet and do all sorts of cool stuff"
 @print info "How about compile time API key validation? Or even generate 50MB of test cases on demand?"
 @print good "I am the future of programming"
-
-pub fn _start() {
-    @print warn "Love me or hate me, but if it's the later, you must be assimilated!"
-}

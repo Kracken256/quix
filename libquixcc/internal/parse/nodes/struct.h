@@ -40,7 +40,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
 
@@ -56,7 +55,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Value *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_name;
     };
@@ -70,7 +68,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
@@ -88,7 +85,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_name;
         std::vector<std::shared_ptr<StructFieldNode>> m_fields;

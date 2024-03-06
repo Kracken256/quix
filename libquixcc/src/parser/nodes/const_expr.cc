@@ -56,11 +56,6 @@ llvm::Constant *libquixcc::ConstUnaryExprNode::codegen(libquixcc::LLVMContext &c
     }
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::ConstUnaryExprNode::clone() const
-{
-    return std::make_shared<ConstUnaryExprNode>(*this);
-}
-
 size_t libquixcc::ConstUnaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
 
@@ -141,11 +136,6 @@ llvm::Constant *libquixcc::ConstBinaryExprNode::codegen(libquixcc::LLVMContext &
     default:
         return nullptr;
     }
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::ConstBinaryExprNode::clone() const
-{
-    return std::make_shared<ConstBinaryExprNode>(*this);
 }
 
 size_t libquixcc::ConstBinaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)

@@ -59,11 +59,6 @@ llvm::Value *libquixcc::VarDeclNode::codegen(libquixcc::LLVMContext &ctx) const
         return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::VarDeclNode::clone() const
-{
-    return std::make_shared<VarDeclNode>(*this);
-}
-
 size_t libquixcc::VarDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode> *)> callback)
 {
     return 0;
@@ -112,11 +107,6 @@ llvm::Value *libquixcc::LetDeclNode::codegen(libquixcc::LLVMContext &ctx) const
         return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::LetDeclNode::clone() const
-{
-    return std::make_shared<LetDeclNode>(*this);
-}
-
 size_t libquixcc::LetDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode> *)> callback)
 {
     return 0;
@@ -163,11 +153,6 @@ llvm::Value *libquixcc::ConstDeclNode::codegen(libquixcc::LLVMContext &ctx) cons
         return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(this, ctx.prefix));
     else
         return new llvm::GlobalVariable(*ctx.m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(this, ctx.prefix));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::ConstDeclNode::clone() const
-{
-    return std::make_shared<ConstDeclNode>(*this);
 }
 
 size_t libquixcc::ConstDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode> *)> callback)

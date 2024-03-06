@@ -48,11 +48,6 @@ llvm::Value *libquixcc::SubsystemNode::codegen(libquixcc::LLVMContext &ctx) cons
     return block;
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::SubsystemNode::clone() const
-{
-    return std::make_shared<SubsystemNode>(*this);
-}
-
 size_t libquixcc::SubsystemNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
     return 0;

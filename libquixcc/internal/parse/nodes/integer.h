@@ -40,7 +40,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class U16TypeNode : public BasicTypeNode
@@ -51,7 +50,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class U32TypeNode : public BasicTypeNode
@@ -62,7 +60,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class U64TypeNode : public BasicTypeNode
@@ -73,7 +70,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class I8TypeNode : public BasicTypeNode
@@ -84,7 +80,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class I16TypeNode : public BasicTypeNode
@@ -95,7 +90,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class I32TypeNode : public BasicTypeNode
@@ -106,7 +100,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class I64TypeNode : public BasicTypeNode
@@ -117,7 +110,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class F32TypeNode : public BasicTypeNode
@@ -128,7 +120,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class F64TypeNode : public BasicTypeNode
@@ -139,7 +130,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class BoolTypeNode : public BasicTypeNode
@@ -150,7 +140,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 
     class CharTypeNode : public BasicTypeNode
@@ -161,7 +150,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 }
 

@@ -35,11 +35,6 @@ llvm::Value *libquixcc::EnumDeclNode::codegen(libquixcc::LLVMContext &ctx) const
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::EnumDeclNode::clone() const
-{
-    return std::make_shared<EnumDeclNode>(*this);
-}
-
 size_t libquixcc::EnumDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
     return 0;
@@ -76,11 +71,6 @@ std::string libquixcc::EnumDefNode::to_json() const
 llvm::Constant *libquixcc::EnumDefNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::EnumDefNode::clone() const
-{
-    return std::make_shared<EnumDefNode>(*this);
 }
 
 size_t libquixcc::EnumDefNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)

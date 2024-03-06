@@ -101,7 +101,6 @@ namespace libquixcc
         ParseNode() = default;
         virtual ~ParseNode() = default;
         virtual std::string to_json() const = 0;
-        virtual std::shared_ptr<ParseNode> clone() const = 0;
 
         NodeType ntype = NodeType::ParseNode;
 
@@ -157,7 +156,6 @@ namespace libquixcc
         virtual ~UserTypeNode() = default;
 
         virtual std::string to_json() const override;
-        virtual std::shared_ptr<ParseNode> clone() const override;
         virtual llvm::Type *codegen(LLVMContext &ctx) const override;
 
         std::string m_name;
@@ -185,7 +183,6 @@ namespace libquixcc
 
         virtual std::string to_json() const override;
         virtual llvm::Value *codegen(LLVMContext &ctx) const override;
-        virtual std::shared_ptr<ParseNode> clone() const override;
 
         std::vector<std::shared_ptr<StmtNode>> m_stmts;
 

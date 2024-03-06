@@ -56,11 +56,6 @@ llvm::Type *libquixcc::UnionTypeNode::codegen(libquixcc::LLVMContext &ctx) const
     return llvm::StructType::create(*ctx.m_ctx, fields);
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::UnionTypeNode::clone() const
-{
-    return std::make_shared<UnionTypeNode>(*this);
-}
-
 std::string libquixcc::UnionDeclNode::to_json() const
 {
     std::string s = "{";
@@ -73,11 +68,6 @@ std::string libquixcc::UnionDeclNode::to_json() const
 llvm::Value *libquixcc::UnionDeclNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::UnionDeclNode::clone() const
-{
-    return std::make_shared<UnionDeclNode>(*this);
 }
 
 std::string libquixcc::UnionDefNode::to_json() const
@@ -107,9 +97,4 @@ std::string libquixcc::UnionDefNode::to_json() const
 llvm::Constant *libquixcc::UnionDefNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::UnionDefNode::clone() const
-{
-    return std::make_shared<UnionDefNode>(*this);
 }

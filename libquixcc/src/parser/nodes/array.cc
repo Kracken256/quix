@@ -34,8 +34,3 @@ llvm::Type *libquixcc::ArrayTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::ArrayType::get(m_type->codegen(ctx), m_size->codegen(ctx)->getUniqueInteger().getLimitedValue());
 }
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::ArrayTypeNode::clone() const
-{
-    return std::make_shared<ArrayTypeNode>(*this);
-}

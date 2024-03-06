@@ -40,7 +40,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Function *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         struct Param
         {
@@ -70,7 +69,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Value *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::shared_ptr<FunctionDeclNode> m_decl;
         std::shared_ptr<BlockNode> m_body;

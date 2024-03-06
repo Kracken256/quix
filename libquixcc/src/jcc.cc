@@ -24,7 +24,6 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
-#include <openssl/rand.h>
 #include <regex>
 #include <filesystem>
 
@@ -85,11 +84,15 @@ static quixcc_uuid_t quixcc_uuid()
         } __attribute__((packed)) m;
     } __attribute__((packed)) raw;
 
-    if (RAND_bytes((unsigned char *)raw.bytes, sizeof(raw.bytes)) != 1)
-    {
-        raw.m.m_high = (uint64_t)rand() << 32 | rand();
-        raw.m.m_low = (uint64_t)rand() << 32 | rand();
-    }
+    // if (RAND_bytes((unsigned char *)raw.bytes, sizeof(raw.bytes)) != 1)
+    // {
+    //     raw.m.m_high = (uint64_t)rand() << 32 | rand();
+    //     raw.m.m_low = (uint64_t)rand() << 32 | rand();
+    // }
+
+    /// TODO: resolve the issue with RAND_bytes
+    raw.m.m_high = (uint64_t)rand() << 32 | rand();
+    raw.m.m_low = (uint64_t)rand() << 32 | rand();
 
     quixcc_uuid_t uuid;
     uuid.m_high = raw.m.m_high;
@@ -286,7 +289,7 @@ static bool quixcc_mutate_ast(quixcc_job_t *job, std::shared_ptr<libquixcc::AST>
 
     libquixcc::PreliminaryOptimizer optimizer;
     optimizer.add_routine(libquixcc::optimize::fold_expr);
-    optimizer.run(ast);
+    // optimizer.run(ast);
 
     /// TODO: Name resolution. Update all identifiers to use the fully qualified name
     /// TODO: Replace UserTypeNode with the defined type

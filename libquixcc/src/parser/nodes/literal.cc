@@ -58,11 +58,6 @@ llvm::Constant *libquixcc::IntegerLiteralNode::codegen(libquixcc::LLVMContext &c
     return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(get_numbits(m_val), m_val, 10));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::IntegerLiteralNode::clone() const
-{
-    return std::make_shared<IntegerLiteralNode>(*this);
-}
-
 std::string libquixcc::FloatLiteralNode::to_json() const
 {
     return "{\"ntype\":\"float\",\"value\":\"" + m_val + "\"}";
@@ -76,11 +71,6 @@ llvm::Constant *libquixcc::FloatLiteralNode::codegen(libquixcc::LLVMContext &ctx
     }
 
     return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(llvm::APFloat::IEEEsingle(), m_val));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::FloatLiteralNode::clone() const
-{
-    return std::make_shared<FloatLiteralNode>(*this);
 }
 
 std::string libquixcc::StringLiteralNode::to_json() const
@@ -99,11 +89,6 @@ llvm::Constant *libquixcc::StringLiteralNode::codegen(libquixcc::LLVMContext &ct
     return llvm::ConstantExpr::getGetElementPtr(str->getType(), global, indices, true);
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StringLiteralNode::clone() const
-{
-    return std::make_shared<StringLiteralNode>(*this);
-}
-
 std::string libquixcc::CharLiteralNode::to_json() const
 {
     return "{\"ntype\":\"char\",\"value\":\"" + m_val + "\"}";
@@ -114,11 +99,6 @@ llvm::Constant *libquixcc::CharLiteralNode::codegen(libquixcc::LLVMContext &ctx)
     return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(8, m_val[0]));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::CharLiteralNode::clone() const
-{
-    return std::make_shared<CharLiteralNode>(*this);
-}
-
 std::string libquixcc::BoolLiteralNode::to_json() const
 {
     return std::string("{\"ntype\":\"bool\",\"value\":") + (m_val ? "true" : "false") + "}";
@@ -127,9 +107,4 @@ std::string libquixcc::BoolLiteralNode::to_json() const
 llvm::Constant *libquixcc::BoolLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(1, m_val));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::BoolLiteralNode::clone() const
-{
-    return std::make_shared<BoolLiteralNode>(*this);
 }

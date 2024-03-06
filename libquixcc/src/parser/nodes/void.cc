@@ -29,8 +29,3 @@ llvm::Type *libquixcc::VoidTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Type::getVoidTy(*ctx.m_ctx);
 }
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::VoidTypeNode::clone() const
-{
-    return std::make_shared<VoidTypeNode>(*this);
-}

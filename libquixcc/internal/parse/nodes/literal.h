@@ -48,7 +48,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_val;
     };
@@ -62,7 +61,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_val;
     };
@@ -76,7 +74,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_val;
     };
@@ -90,7 +87,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         std::string m_val;
     };
@@ -104,7 +100,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         bool m_val;
     };

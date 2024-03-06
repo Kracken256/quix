@@ -39,11 +39,6 @@ llvm::Value *libquixcc::ExportNode::codegen(libquixcc::LLVMContext &ctx) const
     return stmt;
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::ExportNode::clone() const
-{
-    return std::make_shared<ExportNode>(*this);
-}
-
 size_t libquixcc::ExportNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
 

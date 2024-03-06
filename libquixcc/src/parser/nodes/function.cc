@@ -70,11 +70,6 @@ llvm::Function *libquixcc::FunctionDeclNode::codegen(LLVMContext &ctx) const
     return func;
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::FunctionDeclNode::clone() const
-{
-    return std::make_shared<FunctionDeclNode>(*this);
-}
-
 size_t libquixcc::FunctionDeclNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
     return 0;
@@ -121,11 +116,6 @@ llvm::Value *libquixcc::FunctionDefNode::codegen(LLVMContext &ctx) const
     // ctx.m_builder->CreateRetVoid();
 
     return func;
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::FunctionDefNode::clone() const
-{
-    return std::make_shared<FunctionDefNode>(*this);
 }
 
 size_t libquixcc::FunctionDefNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)

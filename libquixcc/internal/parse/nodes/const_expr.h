@@ -43,7 +43,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_expr;
@@ -62,7 +61,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Constant *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
 
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_lhs;

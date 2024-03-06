@@ -29,8 +29,3 @@ llvm::Value *libquixcc::IdentifierNode::codegen(libquixcc::LLVMContext &ctx) con
 {
     return ctx.m_named_values.at(m_name);
 }
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::IdentifierNode::clone() const
-{
-    return std::make_shared<IdentifierNode>(*this);
-}

@@ -40,7 +40,6 @@ namespace libquixcc
 
         std::string to_json() const override;
         llvm::Type *codegen(LLVMContext &ctx) const override;
-        std::shared_ptr<ParseNode> clone() const override;
     };
 }
 

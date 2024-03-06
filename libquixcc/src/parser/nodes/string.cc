@@ -29,8 +29,3 @@ llvm::Type *libquixcc::StringTypeNode::codegen(libquixcc::LLVMContext &ctx) cons
 {
     return llvm::Type::getInt8PtrTy(*ctx.m_ctx);
 }
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StringTypeNode::clone() const
-{
-    return std::make_shared<StringTypeNode>(*this);
-}

@@ -47,11 +47,6 @@ llvm::Type *libquixcc::StructTypeNode::codegen(libquixcc::LLVMContext &ctx) cons
     return llvm::StructType::create(*ctx.m_ctx, fields);
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StructTypeNode::clone() const
-{
-    return std::make_shared<StructTypeNode>(*this);
-}
-
 size_t libquixcc::StructTypeNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
 {
     return 0;
@@ -76,11 +71,6 @@ llvm::Value *libquixcc::StructDeclNode::codegen(libquixcc::LLVMContext &ctx) con
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StructDeclNode::clone() const
-{
-    return std::make_shared<StructDeclNode>(*this);
-}
-
 std::string libquixcc::StructFieldNode::to_json() const
 {
     std::string s = "{";
@@ -96,11 +86,6 @@ std::string libquixcc::StructFieldNode::to_json() const
 llvm::Constant *libquixcc::StructFieldNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StructFieldNode::clone() const
-{
-    return std::make_shared<StructFieldNode>(*this);
 }
 
 size_t libquixcc::StructFieldNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
@@ -134,11 +119,6 @@ std::string libquixcc::StructDefNode::to_json() const
 llvm::Constant *libquixcc::StructDefNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::StructDefNode::clone() const
-{
-    return std::make_shared<StructDefNode>(*this);
 }
 
 size_t libquixcc::StructDefNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)

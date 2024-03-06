@@ -70,11 +70,6 @@ llvm::Type *libquixcc::UserTypeNode::codegen(libquixcc::LLVMContext &ctx) const
     return nullptr;
 }
 
-std::shared_ptr<libquixcc::ParseNode> libquixcc::UserTypeNode::clone() const
-{
-    return std::make_shared<UserTypeNode>(m_name);
-}
-
 std::string libquixcc::BlockNode::to_json() const
 {
     std::string json = "{\"ntype\":\"BlockNode\",\"stmts\":[";
@@ -99,16 +94,6 @@ llvm::Value *libquixcc::BlockNode::codegen(libquixcc::LLVMContext &ctx) const
             return nullptr;
     }
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::shared_ptr<libquixcc::ParseNode> libquixcc::BlockNode::clone() const
-{
-    auto node = std::make_shared<BlockNode>();
-    for (auto &stmt : m_stmts)
-    {
-        node->m_stmts.push_back(std::static_pointer_cast<StmtNode>(stmt->clone()));
-    }
-    return node;
 }
 
 size_t libquixcc::BlockNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode> *)> callback)

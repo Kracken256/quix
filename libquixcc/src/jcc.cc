@@ -161,7 +161,7 @@ LIB_EXPORT bool quixcc_dispose(quixcc_job_t *job)
     }
 
     if (job->m_inner)
-        delete (libquixcc::LLVMContext *)job->m_inner;
+        delete reinterpret_cast<libquixcc::LLVMContext *>(job->m_inner);
 
     if (job->m_argset)
         delete job->m_argset;
@@ -460,7 +460,7 @@ static bool get_env_constants(quixcc_job_t *job, std::map<std::string, std::stri
     for (char **env = environ; *env; env++)
     {
         std::string var = *env;
-        if (var.find("QUIXCC_") == 0)
+        if (var.find("QUIXCC_VAR_") == 0)
         {
             size_t pos = var.find('=');
             if (pos != std::string::npos)
@@ -589,20 +589,23 @@ static bool compile(quixcc_job_t *job)
 static bool verify_build_option(const std::string &option, const std::string &value)
 {
     const static std::set<std::string> static_options = {
-        "-S",      // assembly output
-        "-IR",     // IR output
-        "-c",      // compile only
-        "-O0",     // optimization levels
-        "-O1",     // optimization levels
-        "-O2",     // optimization levels
-        "-O3",     // optimization levels
-        "-Os",     // optimization levels
-        "-g",      // debug information
-        "-flto",   // link time optimization
-        "-static", // static linking
-        "-shared", // shared library
-        "-v",      // verbose
-        "-s",      // strip
+        "-S",         // assembly output
+        "-IR",        // IR output
+        "-c",         // compile only
+        "-O0",        // optimization levels
+        "-O1",        // optimization levels
+        "-O2",        // optimization levels
+        "-O3",        // optimization levels
+        "-Os",        // optimization levels
+        "-g",         // debug information
+        "-flto",      // link time optimization
+        "-static",    // static linking
+        "-shared",    // shared library
+        "-fPIC",      // position independent code
+        "-fPIE",      // position independent executable
+        "-staticlib", // build static library
+        "-v",         // verbose
+        "-s",         // strip
     };
     const static std::vector<std::pair<std::regex, std::regex>> static_regexes = {
         // -D<name>[=<value>]

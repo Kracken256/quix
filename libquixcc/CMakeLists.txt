@@ -28,8 +28,8 @@ execute_process(COMMAND echo -n 0x | openssl rand -hex 4
 OUTPUT_VARIABLE RANDOM_NUMBER
 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-SET(PROJECT_RELEASE_FLAGS -Wall -Wextra -Wpedantic -Werror -Wno-error=unused-parameter ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC -O3 -s -fvisibility=hidden -fvisibility-inlines-hidden -Wno-error=mismatched-new-delete)
-SET(PROJECT_DEBUG_FLAGS -g -Wall -Wextra -Werror -Wno-error=unused-parameter -Wpedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC  -Wno-error=mismatched-new-delete)
+SET(PROJECT_RELEASE_FLAGS -Wall -Wextra -pedantic -Werror -Wno-error=unused-parameter ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC -O3 -s -fvisibility=hidden -fvisibility-inlines-hidden -Wno-error=mismatched-new-delete)
+SET(PROJECT_DEBUG_FLAGS -g -Wall -Wextra -Werror -Wno-unused-parameter -Wno-error=unused-parameter -pedantic ${LLVM_CXX_FLAGS} -frandom-seed=${RANDOM_NUMBER} -Wno-error=unused-variable -fPIC  -Wno-error=mismatched-new-delete)
 
 add_library(libquixcc SHARED ${LIBQUIX_CXX_SOURCES})
 target_include_directories(libquixcc PUBLIC "internal" include)

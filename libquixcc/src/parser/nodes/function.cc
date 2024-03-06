@@ -57,9 +57,9 @@ llvm::Function *libquixcc::FunctionDeclNode::codegen(LLVMContext &ctx) const
     llvm::Function *func;
 
     if (ctx.m_pub)
-        func = llvm::Function::Create(ftype, llvm::Function::ExternalLinkage, m_name, ctx.m_module.get());
+        func = llvm::Function::Create(ftype, llvm::Function::ExternalLinkage, m_name, *ctx.m_module);
     else
-        func = llvm::Function::Create(ftype, llvm::Function::PrivateLinkage, m_name, ctx.m_module.get());
+        func = llvm::Function::Create(ftype, llvm::Function::PrivateLinkage, m_name, *ctx.m_module);
 
     size_t i = 0;
     for (auto &arg : func->args())

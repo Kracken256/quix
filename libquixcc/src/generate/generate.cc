@@ -36,6 +36,40 @@
 #include "llvm/MC/TargetRegistry.h"
 #include <stdlib.h>
 
+static std::map<std::string, std::string> acceptable_asmgen_flags = {
+    {"-O0", "-O0"},
+    {"-O1", "-O1"},
+    {"-O2", "-O2"},
+    {"-O3", "-O3"},
+    {"-g", "-g"},
+    {"-v", "-v"},
+    {"-fPIC", "-fPIC"},
+    {"-fPIE", "-fPIE"}};
+
+static std::map<std::string, std::string> acceptable_objgen_flags = {
+    {"-O0", "-O0"},
+    {"-O1", "-O1"},
+    {"-O2", "-O2"},
+    {"-O3", "-O3"},
+    {"-g", "-g"},
+    {"-v", "-v"},
+    {"-flto", "-flto"},
+    {"-fPIC", "-fPIC"},
+    {"-fPIE", "-fPIE"}};
+
+static std::map<std::string, std::string> acceptable_bingen_flags = {
+    {"-O0", "-O0"},
+    {"-O1", "-O1"},
+    {"-O2", "-O2"},
+    {"-O3", "-O3"},
+    {"-g", "-g"},
+    {"-v", "-v"},
+    {"-flto", "-flto"},
+    {"-static", "-static"},
+    {"-shared", "-shared"},
+    {"-fPIC", "-fPIC"},
+    {"-fPIE", "-fPIE"}};
+
 bool libquixcc::Generator::write_IR(quixcc_job_t &ctx, std::shared_ptr<libquixcc::BlockNode> ast, const std::string &ir_filename)
 {
     // Check if the quixcc_job_t is valid
@@ -97,21 +131,10 @@ bool libquixcc::Generator::write_asm(quixcc_job_t &ctx, const std::string &ir_fi
     throw std::runtime_error("Unsupported operating system");
 #else
     std::string flags = "-ffunction-sections -fdata-sections ";
+
     for (const auto &e : *ctx.m_argset)
-    {
-        if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-g")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-v")
-        {
-            flags += "-v ";
-        }
-    }
+        if (acceptable_asmgen_flags.contains(e.first))
+            flags += acceptable_asmgen_flags[e.first] + " ";
 
     // Its ugly, but it works
     std::string os_cmd = "clang -Wno-override-module -S " + ir_filename + " -o " + asm_filename + " " + flags;
@@ -135,24 +158,8 @@ bool libquixcc::Generator::write_obj(quixcc_job_t &ctx, const std::string &asm_f
 #else
     std::string flags;
     for (const auto &e : *ctx.m_argset)
-    {
-        if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-flto")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-g")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-v" || ctx.m_debug)
-        {
-            flags += "-v ";
-        }
-    }
+        if (acceptable_objgen_flags.contains(e.first))
+            flags += acceptable_objgen_flags[e.first] + " ";
 
     // Its ugly, but it works
     std::string os_cmd = "clang -c " + asm_filename + " -o " + obj_filename + " " + flags;
@@ -174,37 +181,24 @@ bool libquixcc::Generator::write_bin(quixcc_job_t &ctx, const std::string &obj_f
     message(ctx, libquixcc::Err::FATAL, "Unsupported operating system");
     throw std::runtime_error("Unsupported operating system");
 #else
+    if (ctx.m_argset->contains("-staticlib"))
+    {
+        message(ctx, libquixcc::Err::DEBUG, "Static library output requested");
+        std::string os_cmd = "ar rcs " + bin_filename + " " + obj_filename;
+        message(ctx, libquixcc::Err::DEBUG, "Running command: " + os_cmd);
+        if (system(os_cmd.c_str()) != 0)
+        {
+            message(ctx, libquixcc::Err::ERROR, "Failed to generate static library");
+            return false;
+        }
+        return true;
+    }
+
+    // if not building a static library, do the following
     std::string flags = "-nostdlib -nostartfiles -nodefaultlibs ";
     for (const auto &e : *ctx.m_argset)
-    {
-        if (e.first == "-O3" || e.first == "-O2" || e.first == "-O1" || e.first == "-O0")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-flto")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-static")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-shared")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-g")
-        {
-            flags += e.first + " ";
-        }
-        else if (e.first == "-v" || ctx.m_debug)
-        {
-            flags += "-v ";
-        } else if (e.first == "-s")
-        {
-            flags += e.first + " ";
-        }
-    }
+        if (acceptable_bingen_flags.contains(e.first))
+            flags += acceptable_bingen_flags[e.first] + " ";
 
     // Its ugly, but it works
     std::string os_cmd = "clang " + flags + " " + obj_filename + " -o " + bin_filename;

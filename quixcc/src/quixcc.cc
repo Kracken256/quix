@@ -4,87 +4,10 @@
 #include <filesystem>
 #include <quixcc.h>
 
-int main(int argc, char *argv[])
+static int build_single_source(std::string file_in, std::string file_out, std::vector<std::pair<std::string, std::string>> switches)
 {
-    std::vector<std::string> args(argv, argv + argc);
-
-    std::string file_in;
-    std::string file_out;
-    std::vector<std::pair<std::string, std::string>> switches;
-
-    for (size_t i = 1; i < args.size(); i++)
-    {
-        if (args[i] == "-o")
-        {
-            if (i + 1 < args.size())
-            {
-                file_out = args[i + 1];
-                i++;
-            }
-            else
-            {
-                std::cerr << "error: missing output file" << std::endl;
-                return 1;
-            }
-        }
-        else if (args[i].starts_with("-"))
-        {
-            if (args[i].size() < 2)
-            {
-                std::cerr << "error: invalid switch" << std::endl;
-                return 1;
-            }
-
-            char next = args[i][1];
-            if (!std::isalpha(next))
-            {
-                std::cerr << "error: invalid switch" << std::endl;
-                return 1;
-            }
-
-            if (args[i].size() > 2)
-            {
-                switches.push_back({args[i].substr(1, 1), args[i].substr(2)});
-            }
-            else
-            {
-                switches.push_back({args[i].substr(1, 1), ""});
-            }
-        }
-        else
-        {
-            try
-            {
-                if (std::filesystem::exists(args[i]))
-                {
-                    file_in = args[i];
-                }
-                else
-                {
-                    std::cerr << "error: file not found" << std::endl;
-                    return 1;
-                }
-            }
-            catch (std::exception &e)
-            {
-                std::cerr << "error: " << e.what() << std::endl;
-                return 1;
-            }
-        }
-    }
-
-    if (file_in.empty())
-    {
-        std::cerr << "error: missing input file" << std::endl;
-        return 1;
-    }
-
-    if (file_out.empty())
-    {
-        file_out = file_in + ".out";
-    }
-
     FILE *in = fopen(file_in.c_str(), "r");
+
     if (!in)
     {
         std::cerr << "error: failed to open input file" << std::endl;
@@ -154,4 +77,213 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+static int build_many_sources(const std::vector<std::string> &files_in, std::string file_out, std::vector<std::pair<std::string, std::string>> switches)
+{
+    (void)files_in;
+    (void)file_out;
+    (void)switches;
+
+    for (const auto &file : files_in)
+    {
+        if (!file.ends_with(".q"))
+        {
+            std::cerr << "error: invalid file type. only .q files are allowed" << std::endl;
+            return 1;
+        }
+    }
+
+    // check if -c is already in the switches
+    bool c_switch = false;
+    for (const auto &sw : switches)
+    {
+        if (sw.first == "c")
+        {
+            c_switch = true;
+            break;
+        }
+    }
+
+    // check if -o is already in the switches
+    std::string o_file;
+    for (auto it = switches.begin(); it != switches.end();)
+    {
+        if (it->first == "o")
+        {
+            o_file = it->second;
+            it = switches.erase(it);
+        }
+        else
+        {
+            it++;
+        }
+    }
+
+    // push `-c` switch to compile as object files
+    if (!c_switch)
+        switches.push_back({"c", ""});
+
+    std::vector<std::string> obj_files;
+
+    // build object files
+    for (size_t i = 0; i < files_in.size(); i++)
+    {
+        std::string obj_file = files_in[i];
+        obj_file.replace(obj_file.size() - 2, 2, ".o");
+        obj_files.push_back(obj_file);
+
+        if (build_single_source(files_in[i], obj_file, switches))
+            return 1;
+    }
+
+    // now link the object files
+    // based on the mode
+    // -staticlib / -shared / executable
+    enum mode
+    {
+        EXECUTABLE,
+        STATICLIB,
+        SHARED
+    };
+
+    mode m = EXECUTABLE;
+
+    for (const auto &sw : switches)
+    {
+        if (sw.first == "-staticlib")
+        {
+            m = STATICLIB;
+            break;
+        }
+        else if (sw.first == "-shared")
+        {
+            m = SHARED;
+            break;
+        }
+    }
+
+    if (m == EXECUTABLE)
+    {
+        std::string cmd = "ld -o " + file_out;
+        for (const auto &obj : obj_files)
+            cmd += " " + obj;
+        int ret = std::system(cmd.c_str());
+        for (const auto &obj : obj_files)
+            std::remove(obj.c_str());
+        return ret;
+    }
+    else if (m == STATICLIB)
+    {
+        std::string cmd = "ar rcs " + file_out;
+        for (const auto &obj : obj_files)
+            cmd += " " + obj;
+        int ret = std::system(cmd.c_str());
+        for (const auto &obj : obj_files)
+            std::remove(obj.c_str());
+        return ret;
+    }
+    else if (m == SHARED)
+    {
+        std::string cmd = "ld -shared -o " + file_out;
+        for (const auto &obj : obj_files)
+            cmd += " " + obj;
+        int ret = std::system(cmd.c_str());
+        for (const auto &obj : obj_files)
+            std::remove(obj.c_str());
+        return ret;
+    }
+
+    return 0;
+}
+
+static int parse_args(const std::vector<std::string> &args, std::vector<std::string> &files_in, std::string &file_out, std::vector<std::pair<std::string, std::string>> &switches)
+{
+    for (size_t i = 1; i < args.size(); i++)
+    {
+        if (args[i] == "-o")
+        {
+            if (i + 1 < args.size())
+            {
+                file_out = args[i + 1];
+                i++;
+            }
+            else
+            {
+                std::cerr << "error: missing output file" << std::endl;
+                return 1;
+            }
+        }
+        else if (args[i].starts_with("-"))
+        {
+            if (args[i].size() < 2)
+            {
+                std::cerr << "error: invalid switch" << std::endl;
+                return 1;
+            }
+
+            char next = args[i][1];
+            if (!std::isalpha(next))
+            {
+                std::cerr << "error: invalid switch" << std::endl;
+                return 1;
+            }
+
+            if (args[i].size() > 2)
+            {
+                switches.push_back({args[i].substr(1, 1), args[i].substr(2)});
+            }
+            else
+            {
+                switches.push_back({args[i].substr(1, 1), ""});
+            }
+        }
+        else
+        {
+            try
+            {
+                if (std::filesystem::exists(args[i]))
+                {
+                    files_in.push_back(args[i]);
+                }
+                else
+                {
+                    std::cerr << "error: file not found" << std::endl;
+                    return 1;
+                }
+            }
+            catch (std::exception &e)
+            {
+                std::cerr << "error: " << e.what() << std::endl;
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    std::vector<std::string> args(argv, argv + argc);
+    std::vector<std::string> files_in;
+    std::string file_out;
+    std::vector<std::pair<std::string, std::string>> switches;
+
+    if (parse_args(args, files_in, file_out, switches))
+        return 1;
+
+    if (files_in.empty())
+    {
+        std::cerr << "error: missing input file" << std::endl;
+        return 1;
+    }
+
+    if (file_out.empty())
+        file_out = "a.out";
+
+    if (files_in.size() > 1)
+        return build_many_sources(files_in, file_out, switches);
+
+    return build_single_source(files_in[0], file_out, switches);
 }

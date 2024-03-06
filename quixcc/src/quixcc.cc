@@ -1,8 +1,13 @@
+// This code is horrible
+// ill come back to it later
+/// TODO: fix this code
+
 #include <string>
 #include <vector>
 #include <iostream>
 #include <filesystem>
 #include <quixcc.h>
+#include <thread>
 
 static int build_single_source(std::string file_in, std::string file_out, std::vector<std::pair<std::string, std::string>> switches)
 {
@@ -81,9 +86,36 @@ static int build_single_source(std::string file_in, std::string file_out, std::v
 
 static int build_many_sources(const std::vector<std::string> &files_in, std::string file_out, std::vector<std::pair<std::string, std::string>> switches)
 {
-    (void)files_in;
-    (void)file_out;
-    (void)switches;
+    enum mode
+    {
+        EXECUTABLE,
+        STATICLIB,
+        SHARED
+    };
+
+    mode m = EXECUTABLE;
+
+    std::vector<std::pair<std::string, std::string>> copy;
+    for (const auto &sw : switches)
+    {
+        auto tmp = sw.first + sw.second;
+        if (tmp == "staticlib")
+        {
+            m = STATICLIB;
+            break;
+        }
+        else if (tmp == "shared")
+        {
+            m = SHARED;
+            break;
+        }
+        else
+        {
+            copy.push_back(sw);
+        }
+    }
+
+    switches = copy;
 
     for (const auto &file : files_in)
     {
@@ -94,37 +126,11 @@ static int build_many_sources(const std::vector<std::string> &files_in, std::str
         }
     }
 
-    // check if -c is already in the switches
-    bool c_switch = false;
-    for (const auto &sw : switches)
-    {
-        if (sw.first == "c")
-        {
-            c_switch = true;
-            break;
-        }
-    }
-
-    // check if -o is already in the switches
-    std::string o_file;
-    for (auto it = switches.begin(); it != switches.end();)
-    {
-        if (it->first == "o")
-        {
-            o_file = it->second;
-            it = switches.erase(it);
-        }
-        else
-        {
-            it++;
-        }
-    }
-
-    // push `-c` switch to compile as object files
-    if (!c_switch)
-        switches.push_back({"c", ""});
+    switches.push_back({"c", ""});
 
     std::vector<std::string> obj_files;
+    std::vector<std::thread> jobs;
+    std::vector<int> rets;
 
     // build object files
     for (size_t i = 0; i < files_in.size(); i++)
@@ -137,31 +143,22 @@ static int build_many_sources(const std::vector<std::string> &files_in, std::str
             return 1;
     }
 
+    for (auto &job : jobs)
+        job.join();
+
+    for (const auto &ret : rets)
+    {
+        if (ret)
+        {
+            for (const auto &obj : obj_files)
+                std::remove(obj.c_str());
+            return 1;
+        }
+    }
+
     // now link the object files
     // based on the mode
     // -staticlib / -shared / executable
-    enum mode
-    {
-        EXECUTABLE,
-        STATICLIB,
-        SHARED
-    };
-
-    mode m = EXECUTABLE;
-
-    for (const auto &sw : switches)
-    {
-        if (sw.first == "-staticlib")
-        {
-            m = STATICLIB;
-            break;
-        }
-        else if (sw.first == "-shared")
-        {
-            m = SHARED;
-            break;
-        }
-    }
 
     if (m == EXECUTABLE)
     {

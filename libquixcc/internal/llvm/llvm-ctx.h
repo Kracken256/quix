@@ -37,8 +37,6 @@ namespace libquixcc
 {
     class LLVMContext
     {
-    private:
-        std::string generate_module_name();
 
     public:
         std::shared_ptr<llvm::LLVMContext> m_ctx;
@@ -51,9 +49,7 @@ namespace libquixcc
         LLVMContext(const std::string &filename)
         {
             m_ctx = std::make_shared<llvm::LLVMContext>();
-
             m_module = std::make_shared<llvm::Module>(filename, *m_ctx);
-
             m_builder = std::make_shared<llvm::IRBuilder<>>(*m_ctx);
         }
     };

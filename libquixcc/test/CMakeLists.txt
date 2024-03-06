@@ -17,18 +17,18 @@ FetchContent_MakeAvailable(googletest)
 # Add the libquixcc library unit tests
 file(GLOB_RECURSE TEST_SOURCES "unit/*.cc")
 
-# Get LLVM flags from llvm-config --cxxflags
-execute_process(COMMAND llvm-config --cxxflags
+# Get LLVM flags from llvm-config-14 --cxxflags
+execute_process(COMMAND llvm-config-14 --cxxflags
                 OUTPUT_VARIABLE LLVM_CXX_FLAGS
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Get LLVM flags from llvm-config --ldflags 
-execute_process(COMMAND llvm-config --ldflags
+# Get LLVM flags from llvm-config-14 --ldflags 
+execute_process(COMMAND llvm-config-14 --ldflags
 OUTPUT_VARIABLE LLVM_LD_FLAGS
 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Get LLVM flags from llvm-config  --libs
-execute_process(COMMAND llvm-config --libs --system-libs
+# Get LLVM flags from llvm-config-14  --libs
+execute_process(COMMAND llvm-config-14 --libs --system-libs
 OUTPUT_VARIABLE LLVM_LIBS
 OUTPUT_STRIP_TRAILING_WHITESPACE)
 

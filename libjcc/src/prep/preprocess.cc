@@ -21,6 +21,7 @@ void libjcc::PrepEngine::setup()
     m_macro_parser.add_routine("define", libjcc::macro::ParseDefine);
     m_macro_parser.add_routine("pragma", libjcc::macro::ParsePragma);
     m_macro_parser.add_routine("print", libjcc::macro::ParsePrint);
+    m_macro_parser.add_routine("readstdin", libjcc::macro::ParseReadStdin);
 }
 
 void libjcc::PrepEngine::addpath(const std::string &path)
@@ -180,6 +181,8 @@ bool libjcc::PrepEngine::handle_import()
     return true;
 }
 
+#include <iostream>
+
 bool libjcc::PrepEngine::handle_macro(const libjcc::Token &tok)
 {
     std::vector<libjcc::Token> expanded;
@@ -190,7 +193,17 @@ bool libjcc::PrepEngine::handle_macro(const libjcc::Token &tok)
     }
 
     for (auto &tok : expanded)
-        m_buffer.push(tok);
+    {
+        if (tok.type() == TokenType::MacroSingleLine || tok.type() == TokenType::MacroBlock)
+        {
+            if (!handle_macro(tok))
+                return false;
+        }
+        else
+        {
+            m_buffer.push(tok);
+        }
+    }
 
     return true;
 }
@@ -205,11 +218,14 @@ libjcc::Token libjcc::PrepEngine::read_token()
         {
             tok = m_buffer.front();
             m_buffer.pop();
-            return tok;
+            goto end;
         }
 
         if (m_stack.empty())
-            return Token(TokenType::Eof, "");
+        {
+            tok = Token(TokenType::Eof, "");
+            goto end;
+        }
 
         tok = m_stack.top().lexer.next();
 
@@ -230,7 +246,7 @@ libjcc::Token libjcc::PrepEngine::read_token()
         else if (tok.type() == TokenType::Eof)
         {
             if (m_stack.size() == 1)
-                return tok;
+                goto end;
 
             fclose(m_stack.top().file);
             m_include_files.pop_back();
@@ -243,5 +259,7 @@ libjcc::Token libjcc::PrepEngine::read_token()
         break;
     }
 
+end:
+// std::cout << "tok: " << tok.serialize() << std::endl;
     return tok;
 }

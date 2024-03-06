@@ -223,6 +223,54 @@ namespace libjcc
         {libjcc::Operator::LeftShiftAssign, "<<="},
         {libjcc::Operator::RightShiftAssign, ">>="}};
 }
+
+std::string libjcc::Scanner::escape_string(const std::string &str)
+{
+    std::ostringstream output;
+
+    for (char c : str)
+    {
+        switch (c)
+        {
+        case '"':
+            output << "\\\"";
+            break;
+        case '\\':
+            output << "\\\\";
+            break;
+        case '/':
+            output << "\\/";
+            break;
+        case '\b':
+            output << "\\b";
+            break;
+        case '\f':
+            output << "\\f";
+            break;
+        case '\n':
+            output << "\\n";
+            break;
+        case '\r':
+            output << "\\r";
+            break;
+        case '\t':
+            output << "\\t";
+            break;
+        default:
+            if (std::isprint(c))
+            {
+                output << c;
+            }
+            else
+            {
+                output << "\\x" << std::hex << std::setw(2) << std::setfill('0') << (int)c;
+            }
+        }
+    }
+
+    return output.str();
+}
+
 ///=============================================================================
 
 libjcc::StreamLexer::StreamLexer()
@@ -801,6 +849,33 @@ libjcc::Token libjcc::StreamLexer::read_token()
                     case '\"':
                         buffer += '\"';
                         break;
+                    case 'x':
+                    {
+                        std::string hex;
+                        hex += getc();
+                        hex += getc();
+                        buffer += std::stoi(hex, nullptr, 16);
+                        break;
+                    }
+                    case 'u':
+                    {
+                        std::string hex;
+                        hex += getc();
+                        hex += getc();
+                        hex += getc();
+                        hex += getc();
+                        buffer += std::stoi(hex, nullptr, 16);
+                        break;
+                    }
+                    case 'o':
+                    {
+                        std::string oct;
+                        oct += getc();
+                        oct += getc();
+                        oct += getc();
+                        buffer += std::stoi(oct, nullptr, 8);
+                        break;
+                    }
                     default:
                         buffer += c;
                         break;
@@ -972,12 +1047,12 @@ char libjcc::StringLexer::getc()
     return c;
 }
 
-bool libjcc::StringLexer::QuickLex(const std::string &source_code, std::vector<libjcc::Token> &tokens)
+bool libjcc::StringLexer::QuickLex(const std::string &source_code, std::vector<libjcc::Token> &tokens, const std::string &filename)
 {
     try
     {
         StringLexer lex;
-        lex.set_source(source_code, "quicklex");
+        lex.set_source(source_code + "\n# .", filename);
         Token tok;
         tokens.clear();
         while ((tok = lex.next()).type() != TokenType::Eof)

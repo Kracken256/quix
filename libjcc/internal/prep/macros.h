@@ -9,5 +9,6 @@
 #include <prep/macro/define.h>
 #include <prep/macro/pragma.h>
 #include <prep/macro/print.h>
+#include <prep/macro/readstdin.h>
 
 #endif // __J_CC_PREP_MACRO_H__

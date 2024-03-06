@@ -94,6 +94,8 @@ namespace libjcc
         /// @brief Peek the next token
         /// @return The next token
         virtual Token peek() = 0;
+
+        static std::string escape_string(const std::string &str);
     };
 
     class StreamLexer : public Scanner
@@ -154,7 +156,7 @@ namespace libjcc
         /// @param tokens 
         /// @return Returns false if the source code is invalid
         /// @note Does not throw exceptions
-        static bool QuickLex(const std::string &source_code, std::vector<Token> &tokens);
+        static bool QuickLex(const std::string &source_code, std::vector<Token> &tokens, const std::string &filename = "quicklex");
     };
 };
 

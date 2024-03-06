@@ -7,7 +7,7 @@
 
 bool libjcc::macro::ParsePrint(jcc_job_t *job, const Token &tok, const std::string &directive, const std::string &parameter, std::vector<libjcc::Token> &exp)
 {
-    // print <message>
+    // print [mode] <message>
 
     std::vector<libjcc::Token> tokens;
     if (!libjcc::StringLexer::QuickLex(parameter, tokens))
@@ -27,7 +27,8 @@ bool libjcc::macro::ParsePrint(jcc_job_t *job, const Token &tok, const std::stri
         DEBUG,
         INFO,
         WARNING,
-        ERROR
+        ERROR,
+        RAW,
     } level = INFO;
 
     Token t = tokens[0];
@@ -42,6 +43,8 @@ bool libjcc::macro::ParsePrint(jcc_job_t *job, const Token &tok, const std::stri
             level = WARNING;
         else if (id == "error")
             level = ERROR;
+        else if (id == "raw")
+            level = RAW;
         else
         {
             libjcc::message(*job, libjcc::Err::ERROR, "Invalid print level");
@@ -61,6 +64,9 @@ bool libjcc::macro::ParsePrint(jcc_job_t *job, const Token &tok, const std::stri
             break;
         case ERROR:
             prepmsg(*job, tok, libjcc::Err::ERROR, std::get<std::string>(tokens[1].val()));
+            break;
+        case RAW:
+            std::cout << std::get<std::string>(tokens[1].val());
             break;
         }
     }

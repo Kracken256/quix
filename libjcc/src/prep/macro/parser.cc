@@ -42,8 +42,8 @@ bool libjcc::MacroParser::parse(const libjcc::Token &macro, std::vector<libjcc::
     }
     else if (macro.type() == TokenType::MacroBlock)
     {
-        // content = content.substr(1, content.size() - 2);
-        PREPMSG(macro, Err::ERROR, "Macro block expansion not implemented");
+        /// TODO: fix this
+        return parse(Token(TokenType::MacroSingleLine, content), exp);
     }
     else
     {

@@ -42,29 +42,24 @@ bool libquixcc::macro::ParsePrint(quixcc_job_t *job, const Token &tok, const std
         return false;
     }
 
-    enum Level
-    {
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR,
-        RAW,
-    } level = INFO;
+    Err level = Err::INFO;
 
     Token t = tokens[0];
     if (t.type() == TokenType::Identifier && tokens.size() == 2)
     {
         std::string id = std::get<std::string>(t.val());
         if (id == "debug")
-            level = DEBUG;
+            level = Err::DEBUG;
+        else if (id == "ok" || id == "good" || id == "success")
+            level = Err::SUCCESS;
         else if (id == "info")
-            level = INFO;
+            level = Err::INFO;
         else if (id == "warning" || id == "warn")
-            level = WARNING;
+            level = Err::WARN;
         else if (id == "error")
-            level = ERROR;
+            level = Err::ERROR;
         else if (id == "raw")
-            level = RAW;
+            level = Err::RAW;
         else
         {
             libquixcc::message(*job, libquixcc::Err::ERROR, "Invalid print level");
@@ -73,20 +68,25 @@ bool libquixcc::macro::ParsePrint(quixcc_job_t *job, const Token &tok, const std
 
         switch (level)
         {
-        case DEBUG:
+        case Err::DEBUG:
             prepmsg(*job, tok, libquixcc::Err::DEBUG, std::get<std::string>(tokens[1].val()));
             break;
-        case INFO:
+        case Err::SUCCESS:
+            prepmsg(*job, tok, libquixcc::Err::SUCCESS, std::get<std::string>(tokens[1].val()));
+            break;
+        case Err::INFO:
             prepmsg(*job, tok, libquixcc::Err::INFO, std::get<std::string>(tokens[1].val()));
             break;
-        case WARNING:
+        case Err::WARN:
             prepmsg(*job, tok, libquixcc::Err::WARN, std::get<std::string>(tokens[1].val()));
             break;
-        case ERROR:
+        case Err::ERROR:
             prepmsg(*job, tok, libquixcc::Err::ERROR, std::get<std::string>(tokens[1].val()));
             break;
-        case RAW:
+        case Err::RAW:
             std::cout << std::get<std::string>(tokens[1].val());
+            break;
+        default:
             break;
         }
     }

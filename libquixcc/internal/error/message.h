@@ -32,7 +32,9 @@ namespace libquixcc
 {
     enum class Err
     {
+        RAW,
         DEBUG,
+        SUCCESS,
         INFO,
         WARN,
         ERROR,

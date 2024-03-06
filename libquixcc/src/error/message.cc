@@ -61,6 +61,9 @@ static std::string make_message_colored(Err type, const std::string &format, va_
     case Err::DEBUG:
         msg = "\x1b[49;1mdebug:\x1b[0m " + format;
         break;
+    case Err::SUCCESS:
+        msg = "\x1b[32;49;1msuccess:\x1b[0m " + format;
+        break;
     case Err::INFO:
         msg = "\x1b[37;49;1minfo:\x1b[0m \x1b[37;49m" + format;
         break;
@@ -72,6 +75,9 @@ static std::string make_message_colored(Err type, const std::string &format, va_
         break;
     case Err::FATAL:
         msg = "\x1b[31;49;1mINTERNAL COMPILER ERROR:\x1b[0m \x1b[37;49;1m" + format;
+        break;
+    default:
+        msg = format;
         break;
     }
 
@@ -94,6 +100,9 @@ static std::string make_message_nocolor(Err type, const std::string &format, va_
     case Err::DEBUG:
         msg = "(debug): " + format;
         break;
+    case Err::SUCCESS:
+        msg = "(success): " + format;
+        break;
     case Err::INFO:
         msg = "(info): " + format;
         break;
@@ -105,6 +114,9 @@ static std::string make_message_nocolor(Err type, const std::string &format, va_
         break;
     case Err::FATAL:
         msg = "(FATAL): " + format;
+        break;
+    default:
+        msg = format;
         break;
     }
 
@@ -129,6 +141,9 @@ static std::string make_parser_message_colored(const std::string &file, const li
     case Err::DEBUG:
         msg += "\x1b[49;1mdebug:\x1b[0m " + format;
         break;
+    case Err::SUCCESS:
+        msg += "\x1b[32;49;1msuccess:\x1b[0m " + format;
+        break;
     case Err::INFO:
         msg += "\x1b[37;49;1minfo:\x1b[0m \x1b[37;49m" + format;
         break;
@@ -140,6 +155,9 @@ static std::string make_parser_message_colored(const std::string &file, const li
         break;
     case Err::FATAL:
         msg += "\x1b[31;49;1mINTERNAL COMPILER ERROR:\x1b[0m \x1b[37;49;1m" + format;
+        break;
+    default:
+        msg += format;
         break;
     }
 
@@ -164,6 +182,9 @@ static std::string make_parser_message_nocolor(const std::string &file, const li
     case Err::DEBUG:
         msg += "(debug): " + format;
         break;
+    case Err::SUCCESS:
+        msg += "(success): " + format;
+        break;
     case Err::INFO:
         msg += "(info): " + format;
         break;
@@ -175,6 +196,9 @@ static std::string make_parser_message_nocolor(const std::string &file, const li
         break;
     case Err::FATAL:
         msg += "(FATAL): " + format;
+        break;
+    default:
+        msg += format;
         break;
     }
 

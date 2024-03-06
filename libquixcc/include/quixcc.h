@@ -37,8 +37,14 @@ extern "C"
 
     enum quixcc_msg_level_t
     {
+        /// @brief Raw message
+        QUIXCC_RAW,
+
         /// @brief Debug message
         QUIXCC_DEBUG,
+
+        /// @brief Success message
+        QUIXCC_SUCCESS,
 
         /// @brief Information message
         QUIXCC_INFO,

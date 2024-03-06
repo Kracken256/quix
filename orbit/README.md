@@ -165,14 +165,14 @@ Orbit is the standard library for QUIX. It contains all the built-in functions a
 # How to build?
 - Clone the repository
 - Navigate to the root of the repository
-- Run `quixcc build -O5 -g2 -o orbit.jlib .`
+- Run `quixcc build -O5 -g2 -o orbit.qlib .`
 - It will take a while to build. Also, the output jlib file will be quite large. It contains extra debug symbols and QUIX metadata sections. It will be significantly smaller when linked and stripped to a final executable.
 
 # How to install?
-- Run `quixcc install orbit.jlib`
+- Run `quixcc install orbit.qlib`
 - If the command fails, try running it with `sudo`
 
 # How to use?
 - Add `import [module]` to the top of your QUIX source file. For example, `import string` to use the string manipulation functions.
-- Compile the QUIX source file with `quixcc`. Linking will be done automatically if the standard library is installed in the default location. If it is not, add the absolute path to the library to the `quixcc` command. For example, `quixcc /usr/lib/lib/orbit.jlib [source file] -o [output file]`
+- Compile the QUIX source file with `quixcc`. Linking will be done automatically if the standard library is installed in the default location. If it is not, add the absolute path to the library to the `quixcc` command. For example, `quixcc /usr/lib/lib/orbit.qlib [source file] -o [output file]`
 

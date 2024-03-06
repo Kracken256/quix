@@ -31,8 +31,8 @@
 #include <filesystem>
 #include <prep/macros.h>
 
-#define QUIX_HEADER_EXTENSION ".jh"
-#define QUIX_STATICS_FILE "~statics.jh"
+#define QUIX_HEADER_EXTENSION ".qh"
+#define QUIX_STATICS_FILE "~statics.qh"
 
 void libquixcc::PrepEngine::setup()
 {
@@ -180,7 +180,7 @@ bool libquixcc::PrepEngine::handle_import()
 
         if (!(f = fopen(filepath.c_str(), "r")))
         {
-            PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.j\" in include directories [%s]", filepath.c_str(), include_path.c_str());
+            PREPMSG(tok, Err::ERROR, "Could not open file: \"%s.q\" in include directories [%s]", filepath.c_str(), include_path.c_str());
             return false;
         }
 

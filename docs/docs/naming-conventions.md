@@ -75,11 +75,11 @@ The following table provides examples of each naming convention:
 - project
     - src
         - smb_server
-            - smb_server.j
-            - smb_server.jh
+            - smb_server.q
+            - smb_server.qh
         - app
-            - app.j
-            - app.jh
+            - app.q
+            - app.qh
     - README.md
 
 ```

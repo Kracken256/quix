@@ -38,3 +38,4 @@ build/
 temp/
 .vscode
 docs/Testing/Temporary/LastTest.log
+bin/

@@ -3,10 +3,8 @@
 import os
 import sys
 
-if not os.path.exists('build'):
-    os.makedirs('build')
+os.makedirs('build', exist_ok=True)
 os.chdir('build')
-
 
 if '--release' in sys.argv:
     os.system('cmake -DCMAKE_BUILD_TYPE=Release ..')
@@ -14,4 +12,9 @@ else:
     os.system('cmake ..')
 
 os.system('make -j`nproc`')
+os.chdir('..')
 
+os.makedirs('bin', exist_ok=True)
+os.system('cp build/quixcc/quixcc bin/')
+
+print('Build complete')

@@ -18,9 +18,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: JLang Docs
+title: QUIX Docs
 description: >- # this means to ignore newlines until "baseurl:"
-  JLang 1.0 documentation
+  QUIX 1.0 documentation
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 

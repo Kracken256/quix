@@ -1,6 +1,0 @@
-{
-    global:
-        jcc_*;
-    local:
-        *;
-};

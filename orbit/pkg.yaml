@@ -1,7 +1,7 @@
 metapackage:
   name: orbit
   version: 0.0.1
-  description: Orbit is the JLang standard library.
+  description: Orbit is the QUIX standard library.
   license: Proprietary
   items:
     - ./algorithm

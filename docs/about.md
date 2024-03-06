@@ -9,7 +9,7 @@ What is J?
 
 J is a high-level, statically typed, memory-safe, garbage-collected, high-performance, object-oriented, general-purpose systems programming language designed to be safe, expressive, and performant. J supports runtime reflection, low-level memory access, namespaces, mandatory explicit typing, packed data types, classes, operator overloading, coroutines, default initializers, arbitrary precision math, destructors, and automatic memory management.
 
-J may also be referred to as JLang, J Language, J++, or JXX.
+J may also be referred to as QUIX.
 
 J is especially well-suited for library development, game development, and systems programming. J is designed to be a modern, safe, and expressive alternative to C++ and Rust.
 

@@ -1,6 +1,6 @@
-# Orbit - The JLang Standard Library
+# Orbit - The QUIX Standard Library
 
-Orbit is the standard library for JLang. It contains all the built-in functions and classes available to JLang programs by default. It is a collection of packages that provide a wide range of functionality, including I/O, string manipulation, math, and more.
+Orbit is the standard library for QUIX. It contains all the built-in functions and classes available to QUIX programs by default. It is a collection of packages that provide a wide range of functionality, including I/O, string manipulation, math, and more.
 
 **Note:** Each bullet point is a package that contains multiple modules. The Orbit standard library is a bundle or `meta-package` of these packages.
 
@@ -128,7 +128,7 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
     | `pipe` | Operating system pipe manipulation functions |
     | `socket` | Socket manipulation functions |
     | `serial` | Serial port manipulation functions |
-    | `net` | TCP, UDP, QUIC transport layer protocols |
+    | `net` | TCP, UDP, QUIX transport layer protocols |
     | `tls` | TLS client and server support (OpenSSL) |   
     | `protocol` | Higher level protocols |
     | `@sysio` | Package for all sysio modules |
@@ -165,14 +165,14 @@ Orbit is the standard library for JLang. It contains all the built-in functions 
 # How to build?
 - Clone the repository
 - Navigate to the root of the repository
-- Run `jcc build -O5 -g2 -o orbit.jlib .`
-- It will take a while to build. Also, the output jlib file will be quite large. It contains extra debug symbols and JLang metadata sections. It will be significantly smaller when linked and stripped to a final executable.
+- Run `quixcc build -O5 -g2 -o orbit.jlib .`
+- It will take a while to build. Also, the output jlib file will be quite large. It contains extra debug symbols and QUIX metadata sections. It will be significantly smaller when linked and stripped to a final executable.
 
 # How to install?
-- Run `jcc install orbit.jlib`
+- Run `quixcc install orbit.jlib`
 - If the command fails, try running it with `sudo`
 
 # How to use?
-- Add `import [module]` to the top of your JLang source file. For example, `import string` to use the string manipulation functions.
-- Compile the JLang source file with `jcc`. Linking will be done automatically if the standard library is installed in the default location. If it is not, add the absolute path to the library to the `jcc` command. For example, `jcc /usr/lib/lib/orbit.jlib [source file] -o [output file]`
+- Add `import [module]` to the top of your QUIX source file. For example, `import string` to use the string manipulation functions.
+- Compile the QUIX source file with `quixcc`. Linking will be done automatically if the standard library is installed in the default location. If it is not, add the absolute path to the library to the `quixcc` command. For example, `quixcc /usr/lib/lib/orbit.jlib [source file] -o [output file]`
 

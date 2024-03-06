@@ -1,0 +1,6 @@
+{
+    global:
+        quixcc_*;
+    local:
+        *;
+};

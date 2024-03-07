@@ -24,7 +24,7 @@
 
 using namespace libquixcc;
 
-static void fold_const_string_expr(std::shared_ptr<libquixcc::ParseNode> parent, std::shared_ptr<libquixcc::ParseNode> *node)
+static void fold_const_string_expr(libquixcc::ParseNode *parent, std::shared_ptr<libquixcc::ParseNode> *node)
 {
     if ((*node)->ntype != NodeType::ConstBinaryExprNode)
         return;

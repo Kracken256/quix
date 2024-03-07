@@ -36,20 +36,20 @@ namespace libquixcc
 {
     class ParseNode;
 
-    class ParseNode : public std::enable_shared_from_this<ParseNode>
+    class ParseNode
     {
     public:
         ParseNode() = default;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) { return visitor.visit(std::static_pointer_cast<ParseNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) { return visitor.visit(std::static_pointer_cast<ParseNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const { return visitor.visit(this); }
 
         /// @brief Replace a child node with a new node.
-        /// @warning Careful, this function depends on wierd reinterpretation of shared_ptr.
+        /// @warning Careful, this function depends on wierd reinterpretation stuff.
         /// @param old_node **Reference** to the old node member in the parent node.
         /// @param new_node The new node to replace with.
-        void replace_child(std::shared_ptr<ParseNode> &old_node, std::shared_ptr<libquixcc::ParseNode> new_node);
+        void replace_child(std::shared_ptr<libquixcc::ParseNode> &old_node, const std::shared_ptr<libquixcc::ParseNode> new_node);
 
         /// @brief Count the number of nodes in the tree.
         /// @return The number of nodes in the tree.
@@ -65,8 +65,8 @@ namespace libquixcc
     public:
         ExprNode() = default;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ExprNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ExprNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const = 0;
@@ -77,8 +77,8 @@ namespace libquixcc
     public:
         ConstExprNode() { ntype = NodeType::ConstExprNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ConstExprNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ConstExprNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Constant *codegen(const CodegenVisitor &visitor) const override = 0;
@@ -89,8 +89,8 @@ namespace libquixcc
     public:
         StmtNode() { ntype = NodeType::StmtNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StmtNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StmtNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const = 0;
@@ -101,8 +101,8 @@ namespace libquixcc
     public:
         TypeNode() { ntype = NodeType::TypeNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<TypeNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const = 0;
@@ -114,8 +114,8 @@ namespace libquixcc
         UserTypeNode() { ntype = NodeType::UserTypeNode; }
         UserTypeNode(const std::string &name) : m_name(name) { ntype = NodeType::UserTypeNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UserTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UserTypeNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const { return nullptr; }
 
@@ -127,8 +127,8 @@ namespace libquixcc
     public:
         DeclNode() { ntype = NodeType::DeclNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<DeclNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<DeclNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
     };
 
@@ -137,8 +137,8 @@ namespace libquixcc
     public:
         DefNode() { ntype = NodeType::DefNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<DefNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<DefNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
     };
 
@@ -147,8 +147,8 @@ namespace libquixcc
     public:
         BlockNode() { ntype = NodeType::BlockNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BlockNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BlockNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
@@ -163,8 +163,8 @@ namespace libquixcc
     public:
         BasicTypeNode() { ntype = NodeType::BasicTypeNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BasicTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BasicTypeNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
     };
 }

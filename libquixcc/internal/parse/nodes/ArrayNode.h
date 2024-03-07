@@ -38,8 +38,8 @@ namespace libquixcc
         ArrayTypeNode() { ntype = NodeType::ArrayTypeNode; }
         ArrayTypeNode(std::shared_ptr<TypeNode> type, std::shared_ptr<ConstExprNode> size) : m_type(type), m_size(size) { ntype = NodeType::ArrayTypeNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ArrayTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<ArrayTypeNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }

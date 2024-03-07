@@ -34,11 +34,19 @@ namespace libquixcc
 {
     class U8TypeNode : public BasicTypeNode
     {
-    public:
         U8TypeNode() { ntype = NodeType::U8TypeNode; }
+        static std::shared_ptr<U8TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U8TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U8TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<U8TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<U8TypeNode>(new U8TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -46,11 +54,19 @@ namespace libquixcc
 
     class U16TypeNode : public BasicTypeNode
     {
-    public:
         U16TypeNode() { ntype = NodeType::U16TypeNode; }
+        static std::shared_ptr<U16TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U16TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U16TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<U16TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<U16TypeNode>(new U16TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -58,11 +74,19 @@ namespace libquixcc
 
     class U32TypeNode : public BasicTypeNode
     {
-    public:
         U32TypeNode() { ntype = NodeType::U32TypeNode; }
+        static std::shared_ptr<U32TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U32TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U32TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<U32TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<U32TypeNode>(new U32TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -70,11 +94,19 @@ namespace libquixcc
 
     class U64TypeNode : public BasicTypeNode
     {
-    public:
         U64TypeNode() { ntype = NodeType::U64TypeNode; }
+        static std::shared_ptr<U64TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U64TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<U64TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<U64TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<U64TypeNode>(new U64TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -82,11 +114,19 @@ namespace libquixcc
 
     class I8TypeNode : public BasicTypeNode
     {
-    public:
         I8TypeNode() { ntype = NodeType::I8TypeNode; }
+        static std::shared_ptr<I8TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I8TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I8TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<I8TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<I8TypeNode>(new I8TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -94,11 +134,19 @@ namespace libquixcc
 
     class I16TypeNode : public BasicTypeNode
     {
-    public:
         I16TypeNode() { ntype = NodeType::I16TypeNode; }
+        static std::shared_ptr<I16TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I16TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I16TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<I16TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<I16TypeNode>(new I16TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -106,11 +154,19 @@ namespace libquixcc
 
     class I32TypeNode : public BasicTypeNode
     {
-    public:
         I32TypeNode() { ntype = NodeType::I32TypeNode; }
+        static std::shared_ptr<I32TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I32TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I32TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<I32TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<I32TypeNode>(new I32TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -118,11 +174,19 @@ namespace libquixcc
 
     class I64TypeNode : public BasicTypeNode
     {
-    public:
         I64TypeNode() { ntype = NodeType::I64TypeNode; }
+        static std::shared_ptr<I64TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I64TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<I64TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<I64TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<I64TypeNode>(new I64TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -130,11 +194,19 @@ namespace libquixcc
 
     class F32TypeNode : public BasicTypeNode
     {
-    public:
         F32TypeNode() { ntype = NodeType::F32TypeNode; }
+        static std::shared_ptr<F32TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<F32TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<F32TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<F32TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<F32TypeNode>(new F32TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -142,11 +214,19 @@ namespace libquixcc
 
     class F64TypeNode : public BasicTypeNode
     {
-    public:
         F64TypeNode() { ntype = NodeType::F64TypeNode; }
+        static std::shared_ptr<F64TypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<F64TypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<F64TypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<F64TypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<F64TypeNode>(new F64TypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -154,11 +234,19 @@ namespace libquixcc
 
     class BoolTypeNode : public BasicTypeNode
     {
-    public:
         BoolTypeNode() { ntype = NodeType::BoolTypeNode; }
+        static std::shared_ptr<BoolTypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BoolTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<BoolTypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<BoolTypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<BoolTypeNode>(new BoolTypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -166,11 +254,19 @@ namespace libquixcc
 
     class CharTypeNode : public BasicTypeNode
     {
-    public:
         CharTypeNode() { ntype = NodeType::CharTypeNode; }
+        static std::shared_ptr<CharTypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<CharTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<CharTypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<CharTypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<CharTypeNode>(new CharTypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -178,11 +274,19 @@ namespace libquixcc
 
     class VoidTypeNode : public BasicTypeNode
     {
-    public:
         VoidTypeNode() { ntype = NodeType::VoidTypeNode; }
+        static std::shared_ptr<VoidTypeNode> m_instance;
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<VoidTypeNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<VoidTypeNode>(shared_from_this())); }
+    public:
+        static std::shared_ptr<VoidTypeNode> create()
+        {
+            if (m_instance == nullptr)
+                m_instance = std::shared_ptr<VoidTypeNode>(new VoidTypeNode());
+            return m_instance;
+        }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }

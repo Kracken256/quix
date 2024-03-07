@@ -24,7 +24,8 @@
 
 using namespace libquixcc;
 
-struct GetPropState {
+struct GetPropState
+{
     bool did_nothrow;
     bool did_foreign;
     bool did_pure;
@@ -173,7 +174,7 @@ bool libquixcc::parse_function(quixcc_job_t &job, std::shared_ptr<libquixcc::Sca
 
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
     {
-        fndecl->m_return_type = std::make_shared<VoidTypeNode>();
+        fndecl->m_return_type = VoidTypeNode::create();
         scanner->next();
         node = fndecl;
         return true;
@@ -205,7 +206,7 @@ bool libquixcc::parse_function(quixcc_job_t &job, std::shared_ptr<libquixcc::Sca
         return false;
 
     if (!fndecl->m_return_type)
-        fndecl->m_return_type = std::make_shared<VoidTypeNode>();
+        fndecl->m_return_type = VoidTypeNode::create();
 
     auto fndef = std::make_shared<FunctionDefNode>();
     fndef->m_decl = fndecl;

@@ -38,8 +38,8 @@ namespace libquixcc
         EnumDeclNode() { ntype = NodeType::EnumDeclNode; }
         EnumDeclNode(const std::string &name, const std::shared_ptr<TypeNode> &type) : m_name(name), m_type(type) { ntype = NodeType::EnumDeclNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumDeclNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumDeclNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
@@ -54,8 +54,8 @@ namespace libquixcc
         EnumFieldNode() { ntype = NodeType::EnumFieldNode; }
         EnumFieldNode(const std::string &name, const std::shared_ptr<ConstExprNode> &value) : m_name(name), m_value(value) { ntype = NodeType::EnumFieldNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumFieldNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumFieldNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
        
        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
@@ -70,8 +70,8 @@ namespace libquixcc
         EnumDefNode() { ntype = NodeType::EnumDefNode; }
         EnumDefNode(const std::string &name, const std::shared_ptr<TypeNode> &type) : m_name(name), m_type(type) { ntype = NodeType::EnumDefNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumDefNode>(shared_from_this())); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<EnumDefNode>(shared_from_this())); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }

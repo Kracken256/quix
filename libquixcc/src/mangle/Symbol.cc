@@ -145,20 +145,20 @@ static std::shared_ptr<libquixcc::TypeNode> deserialize_type(const std::string &
     using namespace libquixcc;
 
     static std::map<std::string, std::shared_ptr<TypeNode>> basic_typesmap = {
-        {"u0", std::make_shared<U8TypeNode>()},
-        {"u1", std::make_shared<U16TypeNode>()},
-        {"u2", std::make_shared<U32TypeNode>()},
-        {"u3", std::make_shared<U64TypeNode>()},
-        {"i0", std::make_shared<I8TypeNode>()},
-        {"i1", std::make_shared<I16TypeNode>()},
-        {"i2", std::make_shared<I32TypeNode>()},
-        {"i3", std::make_shared<I64TypeNode>()},
-        {"f0", std::make_shared<F32TypeNode>()},
-        {"f1", std::make_shared<F64TypeNode>()},
-        {"b", std::make_shared<BoolTypeNode>()},
-        {"c", std::make_shared<CharTypeNode>()},
+        {"u0", U8TypeNode::create()},
+        {"u1", U16TypeNode::create()},
+        {"u2", U32TypeNode::create()},
+        {"u3", U64TypeNode::create()},
+        {"i0", I8TypeNode::create()},
+        {"i1", I16TypeNode::create()},
+        {"i2", I32TypeNode::create()},
+        {"i3", I64TypeNode::create()},
+        {"f0", F32TypeNode::create()},
+        {"f1", F64TypeNode::create()},
+        {"b", BoolTypeNode::create()},
+        {"c", CharTypeNode::create()},
         {"s", StringTypeNode::create()},
-        {"v", std::make_shared<VoidTypeNode>()},
+        {"v", VoidTypeNode::create()},
     };
 
     if (basic_typesmap.contains(type))

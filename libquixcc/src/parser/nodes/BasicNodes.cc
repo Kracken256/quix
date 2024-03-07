@@ -21,12 +21,12 @@
 #include <parse/nodes/BasicNodes.h>
 #include <parse/nodes/AllNodes.h>
 
-void libquixcc::ParseNode::replace_child(std::shared_ptr<libquixcc::ParseNode> &find, std::shared_ptr<libquixcc::ParseNode> replace)
+void libquixcc::ParseNode::replace_child(std::shared_ptr<libquixcc::ParseNode> &old_node, std::shared_ptr<libquixcc::ParseNode> new_node)
 {
-    find = replace;
+    old_node = new_node;
 }
 
-static void nop(std::shared_ptr<libquixcc::ParseNode> parrent, std::shared_ptr<libquixcc::ParseNode> *node)
+static void nop(libquixcc::ParseNode *parrent, std::shared_ptr<libquixcc::ParseNode> *node)
 {
     return;
 }

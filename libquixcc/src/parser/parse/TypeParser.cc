@@ -25,20 +25,20 @@
 using namespace libquixcc;
 
 static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
-    {"u8", std::make_shared<U8TypeNode>()},
-    {"u16", std::make_shared<U16TypeNode>()},
-    {"u32", std::make_shared<U32TypeNode>()},
-    {"u64", std::make_shared<U64TypeNode>()},
-    {"i8", std::make_shared<I8TypeNode>()},
-    {"i16", std::make_shared<I16TypeNode>()},
-    {"i32", std::make_shared<I32TypeNode>()},
-    {"i64", std::make_shared<I64TypeNode>()},
-    {"f32", std::make_shared<F32TypeNode>()},
-    {"f64", std::make_shared<F64TypeNode>()},
-    {"bool", std::make_shared<BoolTypeNode>()},
-    {"char", std::make_shared<CharTypeNode>()},
+    {"u8", U8TypeNode::create()},
+    {"u16", U16TypeNode::create()},
+    {"u32", U32TypeNode::create()},
+    {"u64", U64TypeNode::create()},
+    {"i8", I8TypeNode::create()},
+    {"i16", I16TypeNode::create()},
+    {"i32", I32TypeNode::create()},
+    {"i64", I64TypeNode::create()},
+    {"f32", F32TypeNode::create()},
+    {"f64", F64TypeNode::create()},
+    {"bool", BoolTypeNode::create()},
+    {"char", CharTypeNode::create()},
     {"string", StringTypeNode::create()},
-    {"void", std::make_shared<VoidTypeNode>()}};
+    {"void", VoidTypeNode::create()}};
 
 bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<libquixcc::TypeNode> &node)
 {
@@ -48,7 +48,7 @@ bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
         switch (std::get<Keyword>(tok.val()))
         {
         case Keyword::Void:
-            node = std::make_shared<VoidTypeNode>();
+            node = VoidTypeNode::create();
             return true;
 
         default:

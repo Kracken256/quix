@@ -29,61 +29,6 @@
 
 namespace libquixcc
 {
-    class ParseNode;
-    class ExprNode;
-    class ConstExprNode;
-    class StmtNode;
-    class TypeNode;
-    class RootNode;
-    class DeclNode;
-    class DefNode;
-    class BlockNode;
-    class BasicTypeNode;
-    class ConstUnaryExprNode;
-    class ConstBinaryExprNode;
-    class IdentifierNode;
-    class U8TypeNode;
-    class U16TypeNode;
-    class U32TypeNode;
-    class U64TypeNode;
-    class I8TypeNode;
-    class I16TypeNode;
-    class I32TypeNode;
-    class I64TypeNode;
-    class F32TypeNode;
-    class F64TypeNode;
-    class BoolTypeNode;
-    class CharTypeNode;
-    class VoidTypeNode;
-    class StringTypeNode;
-    class StructTypeNode;
-    class UnionTypeNode;
-    class ArrayTypeNode;
-    class UserTypeNode;
-    class LiteralNode;
-    class IntegerLiteralNode;
-    class FloatLiteralNode;
-    class StringLiteralNode;
-    class CharLiteralNode;
-    class BoolLiteralNode;
-    class VarDeclNode;
-    class LetDeclNode;
-    class ConstDeclNode;
-    class StructDeclNode;
-    class UnionDeclNode;
-    class EnumDeclNode;
-    class FunctionDeclNode;
-    class StructDefNode;
-    class StructFieldNode;
-    class UnionDefNode;
-    class UnionFieldNode;
-    class EnumDefNode;
-    class EnumFieldNode;
-    class FunctionDefNode;
-    class FunctionParamNode;
-    class SubsystemNode;
-    class ExportNode;
-
     class ParseNodeJsonSerializerVisitor
     {
     public:
@@ -92,7 +37,6 @@ namespace libquixcc
         std::string visit(const ConstExprNode *node) const;
         std::string visit(const StmtNode *node) const;
         std::string visit(const TypeNode *node) const;
-        std::string visit(const RootNode *node) const;
         std::string visit(const DeclNode *node) const;
         std::string visit(const DefNode *node) const;
         std::string visit(const BlockNode *node) const;

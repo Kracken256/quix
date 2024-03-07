@@ -37,8 +37,8 @@ namespace libquixcc
     public:
         StructTypeNode() { ntype = NodeType::StructTypeNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructTypeNode>(shared_from_this())); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructTypeNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         llvm::Type *codegen(LLVMContext &ctx) const override;
@@ -51,8 +51,8 @@ namespace libquixcc
     public:
         StructDeclNode() { ntype = NodeType::StructDeclNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDeclNode>(shared_from_this())); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDeclNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         llvm::Value *codegen(LLVMContext &ctx) const override;
@@ -66,8 +66,8 @@ namespace libquixcc
         StructFieldNode() { ntype = NodeType::StructFieldNode; }
         StructFieldNode(const std::string &name, std::shared_ptr<TypeNode> type, std::shared_ptr<ConstExprNode> value = nullptr) : m_name(name), m_type(type), m_value(value) { ntype = NodeType::StructFieldNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructFieldNode>(shared_from_this())); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructFieldNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         llvm::Constant *codegen(LLVMContext &ctx) const override;
@@ -82,8 +82,8 @@ namespace libquixcc
     public:
         StructDefNode() { ntype = NodeType::StructDefNode; }
 
-        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
-        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDefNode>(shared_from_this())); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDefNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
         llvm::Constant *codegen(LLVMContext &ctx) const override;

@@ -96,11 +96,6 @@ std::string libquixcc::ParseNodeJsonSerializerVisitor::visit(const libquixcc::Ty
     return "{\"ntype\":\"TypeNode\"}";
 }
 
-std::string libquixcc::ParseNodeJsonSerializerVisitor::visit(const libquixcc::RootNode *node) const
-{
-    return "{\"ntype\":\"RootNode\"}";
-}
-
 std::string libquixcc::ParseNodeJsonSerializerVisitor::visit(const libquixcc::DeclNode *node) const
 {
     return "{\"ntype\":\"DeclNode\"}";
@@ -484,5 +479,7 @@ std::string libquixcc::ParseNodeJsonSerializerVisitor::visit(const libquixcc::Su
 
 std::string libquixcc::ParseNodeJsonSerializerVisitor::visit(const libquixcc::ExportNode *node) const
 {
-    return "{\"ntype\":\"ExportNode\"}";
+    std::string str = "{\"ntype\":\"ExportNode\",\"block\":";
+    str += node->m_stmt->to_json(*this);
+    return str + "}";
 }

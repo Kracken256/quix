@@ -26,10 +26,14 @@ void libquixcc::ParseNode::replace_child(std::shared_ptr<libquixcc::ParseNode> &
     find = replace;
 }
 
+static void nop(std::shared_ptr<libquixcc::ParseNode> parrent, std::shared_ptr<libquixcc::ParseNode> *node)
+{
+    return;
+}
+
 size_t libquixcc::ParseNode::count()
 {
-    /// TODO: fix
-    return 1;
+    return dfs_preorder(nop);
 }
 
 bool libquixcc::ParseNode::has_immidiate_child(std::shared_ptr<libquixcc::ParseNode> node)

@@ -289,7 +289,7 @@ static bool quixcc_mutate_ast(quixcc_job_t *job, std::shared_ptr<libquixcc::AST>
 
     libquixcc::PreliminaryOptimizer optimizer;
     optimizer.add_routine(libquixcc::optimize::FoldConstExpr);
-    // optimizer.run(ast);
+    optimizer.run(ast);
 
     /// TODO: Name resolution. Update all identifiers to use the fully qualified name
     /// TODO: Replace UserTypeNode with the defined type

@@ -36,11 +36,6 @@ size_t libquixcc::ParseNode::count()
     return dfs_preorder(nop);
 }
 
-bool libquixcc::ParseNode::has_immidiate_child(std::shared_ptr<libquixcc::ParseNode> node)
-{
-    return false;
-}
-
 llvm::Type *libquixcc::UserTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return nullptr;

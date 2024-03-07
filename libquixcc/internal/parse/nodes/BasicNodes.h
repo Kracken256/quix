@@ -45,9 +45,15 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) { return visitor.visit(std::static_pointer_cast<ParseNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const { return visitor.visit(this); }
 
+        /// @brief Replace a child node with a new node.
+        /// @warning Careful, this function depends on wierd reinterpretation of shared_ptr.
+        /// @param old_node **Reference** to the old node member in the parent node.
+        /// @param new_node The new node to replace with.
         void replace_child(std::shared_ptr<ParseNode> &old_node, std::shared_ptr<libquixcc::ParseNode> new_node);
+
+        /// @brief Count the number of nodes in the tree.
+        /// @return The number of nodes in the tree.
         size_t count();
-        bool has_immidiate_child(const std::shared_ptr<ParseNode> node);
 
         NodeType ntype = NodeType::ParseNode;
     };

@@ -36,9 +36,11 @@ namespace libquixcc
     {
     public:
         UnionTypeNode() { ntype = NodeType::UnionTypeNode; }
-        virtual ~UnionTypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
@@ -48,32 +50,43 @@ namespace libquixcc
     {
     public:
         UnionDeclNode() { ntype = NodeType::UnionDeclNode; }
-        virtual ~UnionDeclNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Value *codegen(LLVMContext &ctx) const override;
 
         std::string m_name;
+    };
+
+    class UnionFieldNode : public ParseNode
+    {
+    public:
+        UnionFieldNode() { ntype = NodeType::UnionFieldNode; }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
+        std::string m_name;
+        std::shared_ptr<TypeNode> m_type;
+        std::shared_ptr<ConstExprNode> m_value;
     };
 
     class UnionDefNode : public DefNode
     {
     public:
         UnionDefNode() { ntype = NodeType::UnionDefNode; }
-        virtual ~UnionDefNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
-        struct Field
-        {
-            std::string name;
-            std::shared_ptr<TypeNode> type;
-            std::shared_ptr<ConstExprNode> value;
-        };
-
         std::string m_name;
-        std::vector<Field> m_fields;
+        std::vector<std::shared_ptr<UnionFieldNode>> m_fields;
     };
 }
 

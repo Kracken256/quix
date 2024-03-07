@@ -20,11 +20,6 @@
 
 #include <parse/nodes/identifier.h>
 
-std::string libquixcc::IdentifierNode::to_json() const
-{
-    return "{\"ntype\":\"identifier\",\"name\":\"" + m_name + "\"}";
-}
-
 llvm::Value *libquixcc::IdentifierNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return ctx.m_named_values.at(m_name);

@@ -39,16 +39,15 @@ namespace libquixcc
     public:
         ConstUnaryExprNode() { ntype = NodeType::ConstUnaryExprNode; }
         ConstUnaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &expr) : m_op(op), m_expr(expr) { ntype = NodeType::ConstUnaryExprNode; }
-        virtual ~ConstUnaryExprNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_expr;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 
     class ConstBinaryExprNode : public ConstExprNode
@@ -57,17 +56,16 @@ namespace libquixcc
         ConstBinaryExprNode() { ntype = NodeType::ConstBinaryExprNode; }
         ConstBinaryExprNode(Operator op, const std::shared_ptr<ConstExprNode> &lhs, const std::shared_ptr<ConstExprNode> &rhs)
             : m_op(op), m_lhs(lhs), m_rhs(rhs) { ntype = NodeType::ConstBinaryExprNode; }
-        virtual ~ConstBinaryExprNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         Operator m_op;
         std::shared_ptr<ConstExprNode> m_lhs;
         std::shared_ptr<ConstExprNode> m_rhs;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 }
 

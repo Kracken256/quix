@@ -37,17 +37,16 @@ namespace libquixcc
     public:
         SubsystemNode() { ntype = NodeType::SubsystemNode; }
         SubsystemNode(const std::string &name, const std::set<std::string> &deps, const std::shared_ptr<BlockNode> &block) : m_name(name), m_deps(deps), m_block(block) { ntype = NodeType::SubsystemNode; }
-        virtual ~SubsystemNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Value *codegen(LLVMContext &ctx) const override;
 
         std::string m_name;
         std::set<std::string> m_deps;
         std::shared_ptr<libquixcc::BlockNode> m_block;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 }
 

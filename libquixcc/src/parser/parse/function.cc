@@ -116,7 +116,7 @@ static bool fn_get_property(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanne
     return false;
 }
 
-static bool parse_fn_parameter(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, FunctionDeclNode::Param &param)
+static bool parse_fn_parameter(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<FunctionParamNode> &param)
 {
     return false;
 }
@@ -153,7 +153,7 @@ bool libquixcc::parse_function(quixcc_job_t &job, std::shared_ptr<libquixcc::Sca
 
     while ((tok = scanner->next()).type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::CloseParen)
     {
-        FunctionDeclNode::Param param;
+        std::shared_ptr<FunctionParamNode> param;
 
         if (!parse_fn_parameter(job, scanner, param))
             return false;

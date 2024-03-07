@@ -37,9 +37,11 @@ namespace libquixcc
     public:
         IdentifierNode() { ntype = NodeType::IdentifierNode; }
         IdentifierNode(const std::string &name) : m_name(name) { ntype = NodeType::IdentifierNode; }
-        virtual ~IdentifierNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Value *codegen(LLVMContext &ctx) const override;
 
         std::string m_name;

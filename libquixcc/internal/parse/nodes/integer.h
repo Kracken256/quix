@@ -36,9 +36,11 @@ namespace libquixcc
     {
     public:
         U8TypeNode() { ntype = NodeType::U8TypeNode; }
-        virtual ~U8TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -46,9 +48,11 @@ namespace libquixcc
     {
     public:
         U16TypeNode() { ntype = NodeType::U16TypeNode; }
-        virtual ~U16TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -56,9 +60,11 @@ namespace libquixcc
     {
     public:
         U32TypeNode() { ntype = NodeType::U32TypeNode; }
-        virtual ~U32TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -66,9 +72,11 @@ namespace libquixcc
     {
     public:
         U64TypeNode() { ntype = NodeType::U64TypeNode; }
-        virtual ~U64TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -76,9 +84,11 @@ namespace libquixcc
     {
     public:
         I8TypeNode() { ntype = NodeType::I8TypeNode; }
-        virtual ~I8TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -86,9 +96,11 @@ namespace libquixcc
     {
     public:
         I16TypeNode() { ntype = NodeType::I16TypeNode; }
-        virtual ~I16TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -96,9 +108,11 @@ namespace libquixcc
     {
     public:
         I32TypeNode() { ntype = NodeType::I32TypeNode; }
-        virtual ~I32TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -106,9 +120,11 @@ namespace libquixcc
     {
     public:
         I64TypeNode() { ntype = NodeType::I64TypeNode; }
-        virtual ~I64TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -116,9 +132,11 @@ namespace libquixcc
     {
     public:
         F32TypeNode() { ntype = NodeType::F32TypeNode; }
-        virtual ~F32TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -126,9 +144,11 @@ namespace libquixcc
     {
     public:
         F64TypeNode() { ntype = NodeType::F64TypeNode; }
-        virtual ~F64TypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -136,9 +156,11 @@ namespace libquixcc
     {
     public:
         BoolTypeNode() { ntype = NodeType::BoolTypeNode; }
-        virtual ~BoolTypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 
@@ -146,9 +168,11 @@ namespace libquixcc
     {
     public:
         CharTypeNode() { ntype = NodeType::CharTypeNode; }
-        virtual ~CharTypeNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Type *codegen(LLVMContext &ctx) const override;
     };
 }

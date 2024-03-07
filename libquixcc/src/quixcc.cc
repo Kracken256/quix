@@ -548,7 +548,7 @@ static bool compile(quixcc_job_t *job)
         return false;
     libquixcc::message(*job, libquixcc::Err::DEBUG, "Finished building AST 1");
     if (job->m_debug)
-        libquixcc::message(*job, libquixcc::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast->to_json()));
+        libquixcc::message(*job, libquixcc::Err::DEBUG, "Dumping AST 1 (JSON): " + base64_encode(ast->to_json(libquixcc::ParseNodeJsonSerializerVisitor())));
     ///=========================================
     /// END: PARSER
     ///=========================================
@@ -566,7 +566,7 @@ static bool compile(quixcc_job_t *job)
         return false;
 
     if (job->m_debug)
-        libquixcc::message(*job, libquixcc::Err::DEBUG, "Dumping AST 2 (JSON): " + base64_encode(ast->to_json()));
+        libquixcc::message(*job, libquixcc::Err::DEBUG, "Dumping AST 2 (JSON): " + base64_encode(ast->to_json(libquixcc::ParseNodeJsonSerializerVisitor())));
 
     ///=========================================
     /// END: INTERMEDIATE PROCESSING

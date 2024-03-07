@@ -24,65 +24,85 @@
 
 using namespace libquixcc;
 
-static bool parse_union_field(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, UnionDefNode::Field &node)
+static bool parse_enum_field(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<EnumFieldNode> &node)
 {
+    // <name> [ = <value> ] [,]
+
     Token tok = scanner->next();
     if (tok.type() != TokenType::Identifier)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_FIELD_MISSING_IDENTIFIER]);
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_FIELD_EXPECTED_IDENTIFIER], tok.serialize().c_str());
         return false;
     }
 
-    node.name = std::get<std::string>(tok.val());
+    node = std::make_shared<EnumFieldNode>();
 
-    tok = scanner->next();
-    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Colon)
+    node->m_name = std::get<std::string>(tok.val());
+
+    tok = scanner->peek();
+    if (tok.type() == TokenType::Operator && std::get<Operator>(tok.val()) == Operator::Assign)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_FIELD_MISSING_COLON]);
-        return false;
+        scanner->next();
+        if (!parse_const_expr(job, scanner, Token(TokenType::Punctor, Punctor::Comma), node->m_value))
+        {
+            PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_FIELD_EXPECTED_CONST_EXPR], node->m_name.c_str());
+            return false;
+        }
+
+        tok = scanner->peek();
     }
 
-    if (!parse_type(job, scanner, node.type))
+    if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Comma)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_FIELD_TYPE_ERR], node.name.c_str());
-        return false;
+        scanner->next();
+        return true;
     }
 
-    tok = scanner->next();
-    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
+    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::CloseBrace)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_FIELD_MISSING_PUNCTOR]);
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_FIELD_EXPECTED_SEMICOLON], tok.serialize().c_str());
         return false;
     }
 
     return true;
 }
 
-bool libquixcc::parse_union(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<libquixcc::StmtNode> &node)
+bool libquixcc::parse_enum(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<libquixcc::StmtNode> &node)
 {
     Token tok = scanner->next();
     if (tok.type() != TokenType::Identifier)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_DECL_MISSING_IDENTIFIER]);
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_EXPECTED_IDENTIFIER], tok.serialize().c_str());
         return false;
     }
 
     std::string name = std::get<std::string>(tok.val());
 
     tok = scanner->next();
-    if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
+    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Colon)
     {
-        node = std::make_shared<UnionDeclNode>();
-        std::static_pointer_cast<UnionDeclNode>(node)->m_name = name;
-        return true;
-    }
-    else if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::OpenBrace)
-    {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_DEF_EXPECTED_OPEN_BRACE]);
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_EXPECTED_COLON], tok.serialize().c_str());
         return false;
     }
 
-    std::vector<UnionDefNode::Field> fields;
+    std::shared_ptr<TypeNode> type;
+    if (!parse_type(job, scanner, type))
+        return false;
+
+    tok = scanner->next();
+    if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
+    {
+        node = std::make_shared<EnumDeclNode>(name, type);
+        return true;
+    }
+
+    if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::OpenBrace)
+    {
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_EXPECTED_LEFT_BRACE], tok.serialize().c_str());
+        return false;
+    }
+
+    std::vector<std::shared_ptr<EnumFieldNode>> fields;
 
     while (true)
     {
@@ -93,8 +113,8 @@ bool libquixcc::parse_union(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanne
             break;
         }
 
-        UnionDefNode::Field field;
-        if (!parse_union_field(job, scanner, field))
+        std::shared_ptr<EnumFieldNode> field;
+        if (!parse_enum_field(job, scanner, field))
             return false;
         fields.push_back(field);
     }
@@ -102,13 +122,14 @@ bool libquixcc::parse_union(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanne
     tok = scanner->next();
     if (tok.type() != TokenType::Punctor || std::get<Punctor>(tok.val()) != Punctor::Semicolon)
     {
-        PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_DEF_EXPECTED_SEMICOLON]);
+        PARMSG(tok, libquixcc::Err::ERROR, feedback[ENUM_DEF_EXPECTED_SEMICOLON]);
         return false;
     }
 
-    auto sdef = std::make_shared<UnionDefNode>();
-    sdef->m_name = name;
-    sdef->m_fields = fields;
-    node = sdef;
+    auto edef = std::make_shared<EnumDefNode>();
+    edef->m_name = name;
+    edef->m_fields = fields;
+    edef->m_type = type;
+    node = edef;
     return true;
 }

@@ -16,70 +16,81 @@
 ///                                                                              ///
 ////////////////////////////////////////////////////////////////////////////////////
 
-#define QUIXCC_INTERNAL
+#ifndef __QUIXCC_PARSE_NODES_NODETYPES_H__
+#define __QUIXCC_PARSE_NODES_NODETYPES_H__
 
-#include <parse/nodes/literal.h>
+#ifndef __cplusplus
+#error "This header requires C++"
+#endif
 
-static uint8_t get_numbits(const std::string &s)
+namespace libquixcc
 {
-    if (s.find('.') != std::string::npos)
+    enum class NodeType : uint8_t
     {
-        float f0 = std::stof(s);
-        double f1 = std::stod(s);
-        const double delta = 0.0000001;
+        ParseNode,
+        ExprNode,
+        ConstExprNode,
+        StmtNode,
+        TypeNode,
+        RootNode,
+        DeclNode,
+        DefNode,
+        BlockNode,
+        BasicTypeNode,
 
-        return std::abs(f0 - f1) < delta ? 64 : 32;
-    }
+        ConstUnaryExprNode,
+        ConstBinaryExprNode,
 
-    uint64_t val = std::stoull(s);
-    uint8_t bits = 0;
-    while (val)
-    {
-        val >>= 1;
-        bits++;
-    }
+        IdentifierNode,
 
-    if (bits > 32)
-        return 64;
-    else if (bits > 16)
-        return 32;
-    else if (bits > 8)
-        return 16;
-    return 8;
+        U8TypeNode,
+        U16TypeNode,
+        U32TypeNode,
+        U64TypeNode,
+        I8TypeNode,
+        I16TypeNode,
+        I32TypeNode,
+        I64TypeNode,
+        F32TypeNode,
+        F64TypeNode,
+        BoolTypeNode,
+        CharTypeNode,
+        VoidTypeNode,
+        StringTypeNode,
+
+        StructTypeNode,
+        UnionTypeNode,
+        ArrayTypeNode,
+        UserTypeNode,
+
+        LiteralNode,
+        IntegerLiteralNode,
+        FloatLiteralNode,
+        StringLiteralNode,
+        CharLiteralNode,
+        BoolLiteralNode,
+
+        VarDeclNode,
+        LetDeclNode,
+        ConstDeclNode,
+
+        StructDeclNode,
+        UnionDeclNode,
+        EnumDeclNode,
+        FunctionDeclNode,
+
+        StructDefNode,
+        StructFieldNode,
+        UnionDefNode,
+        UnionFieldNode,
+        EnumDefNode,
+        EnumFieldNode,
+        FunctionDefNode,
+        FunctionParamNode,
+
+        SubsystemNode,
+        ExportNode,
+    };
 }
 
-llvm::Constant *libquixcc::IntegerLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(get_numbits(m_val), m_val, 10));
-}
-
-llvm::Constant *libquixcc::FloatLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    if (get_numbits(m_val) > 32)
-    {
-        return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(llvm::APFloat::IEEEdouble(), m_val));
-    }
-
-    return llvm::ConstantFP::get(*ctx.m_ctx, llvm::APFloat(llvm::APFloat::IEEEsingle(), m_val));
-}
-
-llvm::Constant *libquixcc::StringLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    auto str = llvm::ConstantDataArray::getString(*ctx.m_ctx, m_val);
-
-    llvm::GlobalVariable *global = new llvm::GlobalVariable(*ctx.m_module, str->getType(), true, llvm::GlobalValue::PrivateLinkage, str);
-
-    llvm::Constant *zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*ctx.m_ctx));
-    llvm::Constant *indices[] = {zero, zero};
-    return llvm::ConstantExpr::getGetElementPtr(str->getType(), global, indices, true);
-}
-
-llvm::Constant *libquixcc::CharLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(8, m_val[0]));
-}
-
-llvm::Constant *libquixcc::BoolLiteralNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    return llvm::ConstantInt::get(*ctx.m_ctx, llvm::APInt(1, m_val));
-}
+#endif // __QUIXCC_PARSE_NODES_NODETYPES_H__

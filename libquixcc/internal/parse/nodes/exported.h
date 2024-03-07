@@ -37,15 +37,14 @@ namespace libquixcc
     public:
         ExportNode() { ntype = NodeType::ExportNode; }
         ExportNode(std::shared_ptr<StmtNode> stmt) : m_stmt(stmt) { ntype = NodeType::ExportNode; }
-        virtual ~ExportNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Value *codegen(LLVMContext &ctx) const override;
 
         std::shared_ptr<libquixcc::StmtNode> m_stmt;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 }
 

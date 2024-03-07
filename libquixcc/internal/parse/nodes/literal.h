@@ -36,7 +36,6 @@ namespace libquixcc
     {
     public:
         LiteralNode() { ntype = NodeType::LiteralNode; }
-        virtual ~LiteralNode() = default;
     };
 
     class IntegerLiteralNode : public LiteralNode
@@ -44,9 +43,11 @@ namespace libquixcc
     public:
         IntegerLiteralNode() { ntype = NodeType::IntegerLiteralNode; }
         IntegerLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::IntegerLiteralNode; }
-        virtual ~IntegerLiteralNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         std::string m_val;
@@ -57,9 +58,11 @@ namespace libquixcc
     public:
         FloatLiteralNode() { ntype = NodeType::FloatLiteralNode; }
         FloatLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::FloatLiteralNode; }
-        virtual ~FloatLiteralNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         std::string m_val;
@@ -70,9 +73,11 @@ namespace libquixcc
     public:
         StringLiteralNode() { ntype = NodeType::StringLiteralNode; }
         StringLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::StringLiteralNode; }
-        virtual ~StringLiteralNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         std::string m_val;
@@ -83,9 +88,11 @@ namespace libquixcc
     public:
         CharLiteralNode() { ntype = NodeType::CharLiteralNode; }
         CharLiteralNode(const std::string &val) : m_val(val) { ntype = NodeType::CharLiteralNode; }
-        virtual ~CharLiteralNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         std::string m_val;
@@ -96,9 +103,11 @@ namespace libquixcc
     public:
         BoolLiteralNode() { ntype = NodeType::BoolLiteralNode; }
         BoolLiteralNode(bool val) : m_val(val) { ntype = NodeType::BoolLiteralNode; }
-        virtual ~BoolLiteralNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Constant *codegen(LLVMContext &ctx) const override;
 
         bool m_val;

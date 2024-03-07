@@ -20,11 +20,6 @@
 
 #include <parse/nodes/void.h>
 
-std::string libquixcc::VoidTypeNode::to_json() const
-{
-    return "{\"ntype\":\"void\"}";
-}
-
 llvm::Type *libquixcc::VoidTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Type::getVoidTy(*ctx.m_ctx);

@@ -20,23 +20,6 @@
 
 #include <parse/nodes/union.h>
 
-std::string libquixcc::UnionTypeNode::to_json() const
-{
-    std::string s = "{";
-    s += "\"ntype\":\"UnionTypeNode\",";
-    s += "\"fields\":[";
-    for (size_t i = 0; i < m_fields.size(); i++)
-    {
-        s += m_fields[i]->to_json();
-        if (i != m_fields.size() - 1)
-        {
-            s += ",";
-        }
-    }
-    s += "]}";
-    return s;
-}
-
 llvm::Type *libquixcc::UnionTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     std::vector<llvm::Type *> fields;
@@ -56,42 +39,9 @@ llvm::Type *libquixcc::UnionTypeNode::codegen(libquixcc::LLVMContext &ctx) const
     return llvm::StructType::create(*ctx.m_ctx, fields);
 }
 
-std::string libquixcc::UnionDeclNode::to_json() const
-{
-    std::string s = "{";
-    s += "\"ntype\":\"UnionDeclNode\",";
-    s += "\"name\":\"" + m_name + "\"";
-    s += "}";
-    return s;
-}
-
 llvm::Value *libquixcc::UnionDeclNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}
-
-std::string libquixcc::UnionDefNode::to_json() const
-{
-    std::string s = "{";
-    s += "\"ntype\":\"UnionDefNode\",";
-    s += "\"name\":\"" + m_name + "\",";
-    s += "\"fields\":[";
-    for (size_t i = 0; i < m_fields.size(); i++)
-    {
-        s += "{";
-        s += "\"name\":\"" + m_fields[i].name + "\",";
-        s += "\"type\":" + m_fields[i].type->to_json();
-        if (m_fields[i].value)
-            s += ",\"value\":" + m_fields[i].value->to_json();
-
-        s += "}";
-        if (i != m_fields.size() - 1)
-        {
-            s += ",";
-        }
-    }
-    s += "]}";
-    return s;
 }
 
 llvm::Constant *libquixcc::UnionDefNode::codegen(libquixcc::LLVMContext &ctx) const

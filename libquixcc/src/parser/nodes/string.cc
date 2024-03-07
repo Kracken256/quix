@@ -20,11 +20,6 @@
 
 #include <parse/nodes/string.h>
 
-std::string libquixcc::StringTypeNode::to_json() const
-{
-    return "{\"ntype\":\"StringTypeNode\"}";
-}
-
 llvm::Type *libquixcc::StringTypeNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     return llvm::Type::getInt8PtrTy(*ctx.m_ctx);

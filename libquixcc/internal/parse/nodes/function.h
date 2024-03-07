@@ -32,49 +32,54 @@
 
 namespace libquixcc
 {
+    class FunctionParamNode : public ParseNode
+    {
+    public:
+        FunctionParamNode() { ntype = NodeType::FunctionParamNode; }
+
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
+        std::string m_name;
+        std::shared_ptr<TypeNode> m_type;
+        std::shared_ptr<ConstExprNode> m_value;
+    };
+
     class FunctionDeclNode : public DeclNode
     {
     public:
         FunctionDeclNode() { ntype = NodeType::FunctionDeclNode; }
-        virtual ~FunctionDeclNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Function *codegen(LLVMContext &ctx) const override;
 
-        struct Param
-        {
-            std::string name;
-            std::shared_ptr<TypeNode> type;
-            std::shared_ptr<ConstExprNode> value;
-        };
-
         std::string m_name;
-        std::vector<Param> m_params;
+        std::vector<std::shared_ptr<FunctionParamNode>> m_params;
         std::shared_ptr<TypeNode> m_return_type;
         bool m_variadic = false;
         bool m_pure = false;
         bool m_thread_safe = false;
         bool m_foreign = false;
         bool m_nothrow = false;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 
     class FunctionDefNode : public DefNode
     {
     public:
         FunctionDefNode() { ntype = NodeType::FunctionDefNode; }
-        virtual ~FunctionDefNode() = default;
 
-        std::string to_json() const override;
+        virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return 1 + visitor.preorder(this); }
+        virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return 1 + visitor.postorder(this); }
+        virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
         llvm::Value *codegen(LLVMContext &ctx) const override;
 
         std::shared_ptr<FunctionDeclNode> m_decl;
         std::shared_ptr<BlockNode> m_body;
-
-        virtual size_t dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
-        virtual size_t dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback);
     };
 }
 

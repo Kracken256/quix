@@ -21,16 +21,6 @@
 #include <parse/nodes/const_expr.h>
 #include <lexer/lex.h>
 
-std::string libquixcc::ConstUnaryExprNode::to_json() const
-{
-    std::string json = "{";
-    json += "\"type\":\"ConstUnaryExprNode\",";
-    json += "\"operator\":\"" + operator_map_inverse.at(m_op) + "\",";
-    json += "\"expr\":" + m_expr->to_json();
-    json += "}";
-    return json;
-}
-
 llvm::Constant *libquixcc::ConstUnaryExprNode::codegen(libquixcc::LLVMContext &ctx) const
 {
     llvm::Constant *expr = m_expr->codegen(ctx);
@@ -54,33 +44,6 @@ llvm::Constant *libquixcc::ConstUnaryExprNode::codegen(libquixcc::LLVMContext &c
     default:
         return nullptr;
     }
-}
-
-size_t libquixcc::ConstUnaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
-{
-
-    if (ntype != NodeType::ConstUnaryExprNode)
-        return 1;
-    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libquixcc::ParseNode> *>(&m_expr));
-    return m_expr->dfs_preorder(callback) + 1;
-}
-
-size_t libquixcc::ConstUnaryExprNode::dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
-{
-    size_t ret = 1 + m_expr->dfs_postorder(callback);
-    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libquixcc::ParseNode> *>(&m_expr));
-    return ret + 1;
-}
-
-std::string libquixcc::ConstBinaryExprNode::to_json() const
-{
-    std::string json = "{";
-    json += "\"type\":\"ConstBinaryExprNode\",";
-    json += "\"operator\":\"" + operator_map_inverse.at(m_op) + "\",";
-    json += "\"lhs\":" + m_lhs->to_json() + ",";
-    json += "\"rhs\":" + m_rhs->to_json();
-    json += "}";
-    return json;
 }
 
 llvm::Constant *libquixcc::ConstBinaryExprNode::codegen(libquixcc::LLVMContext &ctx) const
@@ -136,27 +99,4 @@ llvm::Constant *libquixcc::ConstBinaryExprNode::codegen(libquixcc::LLVMContext &
     default:
         return nullptr;
     }
-}
-
-size_t libquixcc::ConstBinaryExprNode::dfs_preorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
-{
-    if (ntype != NodeType::ConstBinaryExprNode)
-        return 1;
-
-    size_t ret = 1;
-
-    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libquixcc::ParseNode> *>(&m_lhs));
-    ret += m_lhs->dfs_preorder(callback);
-    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libquixcc::ParseNode> *>(&m_rhs));
-    ret += m_rhs->dfs_preorder(callback);
-
-    return ret;
-}
-
-size_t libquixcc::ConstBinaryExprNode::dfs_postorder(std::function<void(std::shared_ptr<libquixcc::ParseNode>, std::shared_ptr<libquixcc::ParseNode>*)> callback)
-{
-    size_t ret = 1 + m_lhs->dfs_postorder(callback);
-    ret += m_rhs->dfs_postorder(callback);
-    callback(shared_from_this(), reinterpret_cast<std::shared_ptr<libquixcc::ParseNode> *>(&m_lhs));
-    return ret + 1;
 }

@@ -576,7 +576,7 @@ static bool compile(quixcc_job_t *job)
     /// BEGIN: GENERATOR
     ///=========================================
     libquixcc::message(*job, libquixcc::Err::DEBUG, "Generating output");
-    if (!libquixcc::Generator::generate(*job, ast))
+    if (!libquixcc::generate(*job, ast))
     {
         libquixcc::message(*job, libquixcc::Err::ERROR, "failed to generate output");
         return false;

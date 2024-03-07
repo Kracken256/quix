@@ -70,7 +70,7 @@ static std::map<std::string, std::string> acceptable_bingen_flags = {
     {"-fPIC", "-fPIC"},
     {"-fPIE", "-fPIE"}};
 
-bool libquixcc::Generator::write_IR(quixcc_job_t &ctx, std::shared_ptr<libquixcc::BlockNode> ast, const std::string &ir_filename)
+bool libquixcc::write_IR(quixcc_job_t &ctx, std::shared_ptr<libquixcc::BlockNode> ast, const std::string &ir_filename)
 {
     // Check if the quixcc_job_t is valid
     if (!ctx.m_inner)
@@ -121,7 +121,7 @@ bool libquixcc::Generator::write_IR(quixcc_job_t &ctx, std::shared_ptr<libquixcc
     return true;
 }
 
-bool libquixcc::Generator::write_asm(quixcc_job_t &ctx, const std::string &ir_filename, const std::string &asm_filename)
+bool libquixcc::write_asm(quixcc_job_t &ctx, const std::string &ir_filename, const std::string &asm_filename)
 {
     // LLVM createTargetMachine is bugging and not working
     // therefore, we will use clang binary to generate the assembly
@@ -150,7 +150,7 @@ bool libquixcc::Generator::write_asm(quixcc_job_t &ctx, const std::string &ir_fi
 #endif
 }
 
-bool libquixcc::Generator::write_obj(quixcc_job_t &ctx, const std::string &asm_filename, const std::string &obj_filename)
+bool libquixcc::write_obj(quixcc_job_t &ctx, const std::string &asm_filename, const std::string &obj_filename)
 {
 #if !defined(__linux__) && !defined(__APPLE__) && !defined(__unix__) && !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(__NetBSD__)
     message(ctx, libquixcc::Err::FATAL, "Unsupported operating system");
@@ -175,7 +175,7 @@ bool libquixcc::Generator::write_obj(quixcc_job_t &ctx, const std::string &asm_f
 #endif
 }
 
-bool libquixcc::Generator::write_bin(quixcc_job_t &ctx, const std::string &obj_filename, const std::string &bin_filename)
+bool libquixcc::write_bin(quixcc_job_t &ctx, const std::string &obj_filename, const std::string &bin_filename)
 {
 #if !defined(__linux__) && !defined(__APPLE__) && !defined(__unix__) && !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(__NetBSD__)
     message(ctx, libquixcc::Err::FATAL, "Unsupported operating system");
@@ -216,7 +216,7 @@ bool libquixcc::Generator::write_bin(quixcc_job_t &ctx, const std::string &obj_f
 #endif
 }
 
-bool libquixcc::Generator::generate(quixcc_job_t &job, std::shared_ptr<libquixcc::BlockNode> ast)
+bool libquixcc::generate(quixcc_job_t &job, std::shared_ptr<libquixcc::BlockNode> ast)
 {
     std::string ir_filename = std::tmpnam(nullptr) + std::string(".ll");
     std::string asm_filename = std::tmpnam(nullptr) + std::string(".s");
@@ -227,7 +227,7 @@ bool libquixcc::Generator::generate(quixcc_job_t &job, std::shared_ptr<libquixcc
     FILE *ir_out, *asm_out, *obj_out, *bin_out;
     ir_out = asm_out = obj_out = bin_out = nullptr;
 
-    if (!libquixcc::Generator::write_IR(job, ast, ir_filename))
+    if (!libquixcc::write_IR(job, ast, ir_filename))
     {
         libquixcc::message(job, libquixcc::Err::ERROR, "failed to generate output");
         goto remove_irfile_false;
@@ -264,7 +264,7 @@ bool libquixcc::Generator::generate(quixcc_job_t &job, std::shared_ptr<libquixcc
         return true;
     }
 
-    if (!libquixcc::Generator::write_asm(job, ir_filename, asm_filename))
+    if (!libquixcc::write_asm(job, ir_filename, asm_filename))
     {
         libquixcc::message(job, libquixcc::Err::ERROR, "failed to generate assembly");
         goto remove_irfile_asm_false;
@@ -303,7 +303,7 @@ bool libquixcc::Generator::generate(quixcc_job_t &job, std::shared_ptr<libquixcc
         return true;
     }
 
-    if (!libquixcc::Generator::write_obj(job, asm_filename, obj_filename))
+    if (!libquixcc::write_obj(job, asm_filename, obj_filename))
     {
         libquixcc::message(job, libquixcc::Err::ERROR, "failed to generate object file");
         goto remove_irfile_asm_obj_false;
@@ -342,7 +342,7 @@ bool libquixcc::Generator::generate(quixcc_job_t &job, std::shared_ptr<libquixcc
         return true;
     }
 
-    if (!libquixcc::Generator::write_bin(job, obj_filename, bin_filename))
+    if (!libquixcc::write_bin(job, obj_filename, bin_filename))
     {
         libquixcc::message(job, libquixcc::Err::ERROR, "failed to generate executable");
         goto remove_irfile_asm_obj_false;

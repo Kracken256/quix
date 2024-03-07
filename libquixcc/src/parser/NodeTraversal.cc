@@ -18,7 +18,7 @@
 
 #define QUIXCC_INTERNAL
 
-#include <parse/NodeTraveral.h>
+#include <parse/NodeTraversal.h>
 #include <parse/nodes/AllNodes.h>
 
 size_t libquixcc::ParseNodePreorderVisitor::visit(std::shared_ptr<libquixcc::ParseNode> node)

@@ -28,7 +28,7 @@
 #include <memory>
 
 #include <llvm/LLVMWrapper.h>
-#include <parse/NodeTraveral.h>
+#include <parse/NodeTraversal.h>
 #include <parse/JsonSerialize.h>
 #include <parse/NodeType.h>
 

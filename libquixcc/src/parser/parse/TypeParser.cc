@@ -37,7 +37,7 @@ static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
     {"f64", std::make_shared<F64TypeNode>()},
     {"bool", std::make_shared<BoolTypeNode>()},
     {"char", std::make_shared<CharTypeNode>()},
-    {"string", std::make_shared<StringTypeNode>()},
+    {"string", StringTypeNode::create()},
     {"void", std::make_shared<VoidTypeNode>()}};
 
 bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<libquixcc::TypeNode> &node)

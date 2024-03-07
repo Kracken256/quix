@@ -97,6 +97,7 @@ namespace libquixcc
 
         bool m_is_deprecated = false;
     };
+
 }
 
 #endif // __QUIXCC_PARSE_NODES_VARIABLE_H__

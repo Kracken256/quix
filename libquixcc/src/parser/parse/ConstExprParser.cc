@@ -52,25 +52,25 @@ bool libquixcc::parse_const_expr(quixcc_job_t &job, std::shared_ptr<libquixcc::S
         switch (tok.type())
         {
         case TokenType::IntegerLiteral:
-            stack.push(std::make_shared<libquixcc::IntegerLiteralNode>(std::get<std::string>(tok.val())));
+            stack.push(libquixcc::IntegerLiteralNode::create(std::get<std::string>(tok.val())));
             continue;
         case TokenType::FloatingLiteral:
-            stack.push(std::make_shared<libquixcc::FloatLiteralNode>(std::get<std::string>(tok.val())));
+            stack.push(libquixcc::FloatLiteralNode::create(std::get<std::string>(tok.val())));
             continue;
         case TokenType::StringLiteral:
-            stack.push(std::make_shared<libquixcc::StringLiteralNode>(std::get<std::string>(tok.val())));
+            stack.push(libquixcc::StringLiteralNode::create(std::get<std::string>(tok.val())));
             continue;
         case TokenType::CharLiteral:
-            stack.push(std::make_shared<libquixcc::CharLiteralNode>(std::get<std::string>(tok.val())));
+            stack.push(libquixcc::CharLiteralNode::create(std::get<std::string>(tok.val())));
             continue;
         case TokenType::Keyword:
             switch (std::get<Keyword>(tok.val()))
             {
             case Keyword::True:
-                stack.push(std::make_shared<libquixcc::BoolLiteralNode>(true));
+                stack.push(libquixcc::BoolLiteralNode::create(true));
                 continue;
             case Keyword::False:
-                stack.push(std::make_shared<libquixcc::BoolLiteralNode>(false));
+                stack.push(libquixcc::BoolLiteralNode::create(false));
                 continue;
             default:
                 PARMSG(tok, libquixcc::Err::ERROR, "Unexpected token %s 1",  tok.serialize().c_str());

@@ -34,8 +34,22 @@ namespace libquixcc
 {
     class StringTypeNode : public BasicTypeNode
     {
-    public:
         StringTypeNode() { ntype = NodeType::StringTypeNode; }
+
+        static std::shared_ptr<StringTypeNode> m_instance;
+
+    public:
+        StringTypeNode(StringTypeNode const &) = delete;
+        void operator=(StringTypeNode const &) = delete;
+
+        static std::shared_ptr<StringTypeNode> create()
+        {
+            if (m_instance != nullptr)
+                return m_instance;
+
+            m_instance = std::shared_ptr<StringTypeNode>(new StringTypeNode());
+            return m_instance;
+        }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StringTypeNode>(shared_from_this())); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StringTypeNode>(shared_from_this())); }

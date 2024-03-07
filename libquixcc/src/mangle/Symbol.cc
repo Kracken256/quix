@@ -157,7 +157,7 @@ static std::shared_ptr<libquixcc::TypeNode> deserialize_type(const std::string &
         {"f1", std::make_shared<F64TypeNode>()},
         {"b", std::make_shared<BoolTypeNode>()},
         {"c", std::make_shared<CharTypeNode>()},
-        {"s", std::make_shared<StringTypeNode>()},
+        {"s", StringTypeNode::create()},
         {"v", std::make_shared<VoidTypeNode>()},
     };
 

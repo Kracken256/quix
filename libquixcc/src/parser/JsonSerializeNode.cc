@@ -19,8 +19,8 @@
 #define QUIXCC_INTERNAL
 
 #include <parse/JsonSerialize.h>
-#include <parse/nodes/nodes.h>
-#include <lexer/lex.h>
+#include <parse/nodes/AllNodes.h>
+#include <lexer/Lex.h>
 
 std::string escape_json(const std::string &input)
 {

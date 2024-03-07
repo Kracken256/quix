@@ -25,7 +25,7 @@
 
 #include <string>
 
-#include <parse/nodetypes.h>
+#include <parse/NodeType.h>
 
 namespace libquixcc
 {

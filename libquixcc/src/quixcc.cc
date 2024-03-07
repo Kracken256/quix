@@ -27,15 +27,15 @@
 #include <regex>
 #include <filesystem>
 
-#include <llvm/llvm-ctx.h>
-#include <generate/generate.h>
-#include <lexer/lex.h>
-#include <prep/preprocess.h>
-#include <error/message.h>
-#include <error/exceptions.h>
-#include <parse/parser.h>
+#include <llvm/LLVMWrapper.h>
+#include <generate/Generate.h>
+#include <lexer/Lex.h>
+#include <prep/Preprocesser.h>
+#include <error/Message.h>
+#include <error/Exception.h>
+#include <parse/Parser.h>
 #include <libquixcc.h>
-#include <optimize/routines.h>
+#include <optimize/Routine.h>
 
 #define LIB_EXPORT extern "C" __attribute__((visibility("default")))
 
@@ -288,7 +288,7 @@ static bool quixcc_mutate_ast(quixcc_job_t *job, std::shared_ptr<libquixcc::AST>
     (void)ast;
 
     libquixcc::PreliminaryOptimizer optimizer;
-    optimizer.add_routine(libquixcc::optimize::fold_expr);
+    optimizer.add_routine(libquixcc::optimize::FoldConstExpr);
     // optimizer.run(ast);
 
     /// TODO: Name resolution. Update all identifiers to use the fully qualified name

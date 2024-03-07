@@ -35,19 +35,3 @@ size_t libquixcc::ParseNode::count()
 {
     return dfs_preorder(nop);
 }
-
-llvm::Type *libquixcc::UserTypeNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    return nullptr;
-}
-
-llvm::Value *libquixcc::BlockNode::codegen(libquixcc::LLVMContext &ctx) const
-{
-    for (auto &stmt : m_stmts)
-    {
-        llvm::Value *val = stmt->codegen(ctx);
-        if (!val)
-            return nullptr;
-    }
-    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx.m_ctx));
-}

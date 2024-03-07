@@ -41,7 +41,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UnionTypeNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Type *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
     };
@@ -55,7 +55,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UnionDeclNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Value *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
     };
@@ -68,6 +68,8 @@ namespace libquixcc
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UnionFieldNode>(shared_from_this())); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UnionFieldNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
+
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
 
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
@@ -83,7 +85,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<UnionDefNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
         std::vector<std::shared_ptr<UnionFieldNode>> m_fields;

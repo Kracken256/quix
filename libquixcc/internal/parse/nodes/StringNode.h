@@ -41,7 +41,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StringTypeNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Type *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
     };
 }
 

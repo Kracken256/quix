@@ -26,6 +26,7 @@
 #include <bits/types/FILE.h>
 #include <quixcc.h>
 #include <parse/Parser.h>
+#include <parse/NodeType.h>
 
 namespace libquixcc
 {
@@ -34,10 +35,6 @@ namespace libquixcc
     bool write_obj(quixcc_job_t &ctx, const std::string &asm_filename, const std::string &obj_filename);
     bool write_bin(quixcc_job_t &ctx, const std::string &obj_filename, const std::string &bin_filename);
     bool generate(quixcc_job_t &ctx, const std::shared_ptr<libquixcc::AST> ast);
-
-    class Generator
-    {
-    };
 };
 
 #endif // __QUIXCC_LLVM_GEN_H__

@@ -41,6 +41,8 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<FunctionParamNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
+
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
         std::shared_ptr<ConstExprNode> m_value;
@@ -55,7 +57,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<FunctionDeclNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Function *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Function *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
         std::vector<std::shared_ptr<FunctionParamNode>> m_params;
@@ -76,7 +78,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<FunctionDefNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Value *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::shared_ptr<FunctionDeclNode> m_decl;
         std::shared_ptr<BlockNode> m_body;

@@ -21,6 +21,7 @@
 /// TODO: make this code less horrible
 
 #include <generate/Generate.h>
+#include <generate/CodeGen.h>
 #include <stdlib.h>
 #include "llvm/LLVMWrapper.h"
 #include <error/Message.h>
@@ -94,7 +95,7 @@ bool libquixcc::write_IR(quixcc_job_t &ctx, std::shared_ptr<libquixcc::BlockNode
     // Add root nodes to the LLVMContext
     for (auto &node : ast->m_stmts)
     {
-        llvm::Value *val = node->codegen(llvm_ctx);
+        llvm::Value *val = node->codegen(CodegenVisitor(&llvm_ctx));
         if (!val)
         {
             message(ctx, libquixcc::Err::ERROR, "Failed to generate code for node");

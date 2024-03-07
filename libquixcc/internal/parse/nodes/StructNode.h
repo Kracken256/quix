@@ -41,7 +41,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructTypeNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Type *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::vector<std::shared_ptr<TypeNode>> m_fields;
     };
@@ -55,7 +55,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDeclNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Value *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
     };
@@ -70,7 +70,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructFieldNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
         std::shared_ptr<TypeNode> m_type;
@@ -86,7 +86,7 @@ namespace libquixcc
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(std::static_pointer_cast<StructDefNode>(shared_from_this())); }
         virtual std::string to_json(ParseNodeJsonSerializerVisitor visitor) const override { return visitor.visit(this); }
 
-        llvm::Constant *codegen(LLVMContext &ctx) const override;
+        virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
         std::vector<std::shared_ptr<StructFieldNode>> m_fields;

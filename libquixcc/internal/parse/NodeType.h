@@ -23,6 +23,8 @@
 #error "This header requires C++"
 #endif
 
+#include <cstdint>
+
 namespace libquixcc
 {
     enum class NodeType : uint8_t

@@ -42,8 +42,8 @@ static bool parse_struct_field(quixcc_job_t &job, std::shared_ptr<libquixcc::Sca
         return false;
     }
 
-    std::shared_ptr<TypeNode> type;
-    if (!parse_type(job, scanner, type))
+    TypeNode *type;
+    if (!parse_type(job, scanner, &type))
     {
         PARMSG(tok, libquixcc::Err::ERROR, feedback[STRUCT_FIELD_TYPE_ERR], name.c_str());
         return false;

@@ -36,17 +36,17 @@ namespace libquixcc
     {
         StringTypeNode() { ntype = NodeType::StringTypeNode; }
 
-        static std::shared_ptr<StringTypeNode> m_instance;
+        static StringTypeNode *m_instance;
 
     public:
         StringTypeNode(StringTypeNode const &) = delete;
         void operator=(StringTypeNode const &) = delete;
 
-        static std::shared_ptr<StringTypeNode> create()
+        static StringTypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<StringTypeNode>(new StringTypeNode());
-            
+                m_instance = new StringTypeNode();
+
             return m_instance;
         }
 

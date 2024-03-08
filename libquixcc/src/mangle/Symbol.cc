@@ -132,7 +132,7 @@ static std::string serialize_type(const libquixcc::TypeNode *type)
         auto st = static_cast<const StructTypeNode *>(type);
         std::string s;
         for (auto &field : st->m_fields)
-            s += wrap_tag(serialize_type(field.get()));
+            s += wrap_tag(serialize_type(field));
 
         return "t" + s;
     }
@@ -140,11 +140,11 @@ static std::string serialize_type(const libquixcc::TypeNode *type)
     return "";
 }
 
-static std::shared_ptr<libquixcc::TypeNode> deserialize_type(const std::string &type)
+static libquixcc::TypeNode *deserialize_type(const std::string &type)
 {
     using namespace libquixcc;
 
-    static std::map<std::string, std::shared_ptr<TypeNode>> basic_typesmap = {
+    static std::map<std::string, TypeNode *> basic_typesmap = {
         {"u0", U8TypeNode::create()},
         {"u1", U16TypeNode::create()},
         {"u2", U32TypeNode::create()},
@@ -170,16 +170,17 @@ static std::shared_ptr<libquixcc::TypeNode> deserialize_type(const std::string &
         if (!unwrap_tags(type.substr(1), fields))
             return nullptr;
 
-        auto st = std::make_shared<StructTypeNode>();
+        std::vector<TypeNode *> fields_nodes;
         for (auto &field : fields)
         {
-            std::shared_ptr<TypeNode> t;
+            TypeNode *t;
             if ((t = deserialize_type(field)) == nullptr)
                 return nullptr;
-            st->m_fields.push_back(t);
+            // st->m_fields.push_back(t);
+            fields_nodes.push_back(t);
         }
 
-        return st;
+        return StructTypeNode::create(fields_nodes);
     }
 
     return nullptr;
@@ -187,7 +188,7 @@ static std::shared_ptr<libquixcc::TypeNode> deserialize_type(const std::string &
 
 std::string libquixcc::Symbol::mangle(std::shared_ptr<libquixcc::DeclNode> node, const std::string &prefix)
 {
-    return mangle(node.get(), prefix);
+    return mangle(node, prefix);
 }
 
 std::string libquixcc::Symbol::mangle(const libquixcc::DeclNode *node, const std::string &prefix)
@@ -201,7 +202,7 @@ std::string libquixcc::Symbol::mangle(const libquixcc::DeclNode *node, const std
         res += "v";
         auto var = static_cast<const libquixcc::VarDeclNode *>(node);
         res += wrap_tag(serialize_ns(prefix + var->m_name));
-        res += wrap_tag(serialize_type(var->m_type.get()));
+        res += wrap_tag(serialize_type(var->m_type));
 
         std::string flags;
         if (var->m_is_mut)
@@ -221,7 +222,7 @@ std::string libquixcc::Symbol::mangle(const libquixcc::DeclNode *node, const std
         res += "l";
         auto var = static_cast<const libquixcc::LetDeclNode *>(node);
         res += wrap_tag(serialize_ns(prefix + var->m_name));
-        res += wrap_tag(serialize_type(var->m_type.get()));
+        res += wrap_tag(serialize_type(var->m_type));
 
         std::string flags;
         if (var->m_is_mut)
@@ -241,7 +242,7 @@ std::string libquixcc::Symbol::mangle(const libquixcc::DeclNode *node, const std
         res += "c";
         auto var = static_cast<const libquixcc::ConstDeclNode *>(node);
         res += wrap_tag(serialize_ns(prefix + var->m_name));
-        res += wrap_tag(serialize_type(var->m_type.get()));
+        res += wrap_tag(serialize_type(var->m_type));
 
         std::string flags;
         if (var->m_is_deprecated)

@@ -42,9 +42,9 @@ bool libquixcc::parse_let(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner>
         return false;
     }
 
-    std::shared_ptr<TypeNode> type;
+    TypeNode *type;
 
-    if (!parse_type(job, scanner, type))
+    if (!parse_type(job, scanner, &type))
     {
         PARMSG(tok, libquixcc::Err::ERROR, feedback[LET_DECL_TYPE_ERR], name.c_str());
         return false;
@@ -54,7 +54,7 @@ bool libquixcc::parse_let(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner>
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Semicolon)
     {
         // No initializer
-        node = std::make_shared<LetDeclNode>(name, std::static_pointer_cast<TypeNode>(type), nullptr);
+        node = std::make_shared<LetDeclNode>(name, type, nullptr);
     }
     else if (tok.type() == TokenType::Operator && std::get<Operator>(tok.val()) == Operator::Assign)
     {
@@ -73,7 +73,7 @@ bool libquixcc::parse_let(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner>
             return false;
         }
 
-        node = std::make_shared<LetDeclNode>(name, std::static_pointer_cast<TypeNode>(type), init);
+        node = std::make_shared<LetDeclNode>(name, type, init);
     }
     else
     {

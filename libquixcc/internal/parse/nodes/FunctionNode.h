@@ -44,7 +44,7 @@ namespace libquixcc
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
 
         std::string m_name;
-        std::shared_ptr<TypeNode> m_type;
+        TypeNode *m_type;
         std::shared_ptr<ConstExprNode> m_value;
     };
 
@@ -61,7 +61,7 @@ namespace libquixcc
 
         std::string m_name;
         std::vector<std::shared_ptr<FunctionParamNode>> m_params;
-        std::shared_ptr<TypeNode> m_return_type;
+        TypeNode *m_return_type;
         bool m_variadic = false;
         bool m_pure = false;
         bool m_thread_safe = false;

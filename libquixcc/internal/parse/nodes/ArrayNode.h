@@ -34,9 +34,19 @@ namespace libquixcc
 {
     class ArrayTypeNode : public TypeNode
     {
+        ArrayTypeNode(TypeNode *type, std::shared_ptr<ConstExprNode> size) : m_type(type), m_size(size) { ntype = NodeType::ArrayTypeNode; }
+        static std::map<std::pair<TypeNode *, std::shared_ptr<ConstExprNode>>, ArrayTypeNode *> m_instances;
+
     public:
-        ArrayTypeNode() { ntype = NodeType::ArrayTypeNode; }
-        ArrayTypeNode(std::shared_ptr<TypeNode> type, std::shared_ptr<ConstExprNode> size) : m_type(type), m_size(size) { ntype = NodeType::ArrayTypeNode; }
+        static ArrayTypeNode *create(TypeNode *type, std::shared_ptr<ConstExprNode> size)
+        {
+            auto key = std::make_pair(type, size);
+            if (m_instances.contains(key))
+                return m_instances[key];
+            auto instance = new ArrayTypeNode(type, size);
+            m_instances[key] = instance;
+            return instance;
+        }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
@@ -44,7 +54,7 @@ namespace libquixcc
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
-        std::shared_ptr<TypeNode> m_type;
+        TypeNode *m_type;
         std::shared_ptr<const ConstExprNode> m_size;
     };
 }

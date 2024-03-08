@@ -34,8 +34,19 @@ namespace libquixcc
 {
     class StructTypeNode : public TypeNode
     {
-    public:
         StructTypeNode() { ntype = NodeType::StructTypeNode; }
+        static std::map<std::vector<TypeNode *>, StructTypeNode *> m_instances;
+
+    public:
+        static StructTypeNode *create(const std::vector<TypeNode *> &fields)
+        {
+            if (m_instances.contains(fields))
+                return m_instances[fields];
+            auto instance = new StructTypeNode();
+            instance->m_fields = fields;
+            m_instances[fields] = instance;
+            return instance;
+        }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
@@ -43,7 +54,7 @@ namespace libquixcc
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
-        std::vector<std::shared_ptr<TypeNode>> m_fields;
+        std::vector<TypeNode *> m_fields;
     };
 
     class StructDeclNode : public DeclNode
@@ -64,7 +75,7 @@ namespace libquixcc
     {
     public:
         StructFieldNode() { ntype = NodeType::StructFieldNode; }
-        StructFieldNode(const std::string &name, std::shared_ptr<TypeNode> type, std::shared_ptr<ConstExprNode> value = nullptr) : m_name(name), m_type(type), m_value(value) { ntype = NodeType::StructFieldNode; }
+        StructFieldNode(const std::string &name, TypeNode *type, std::shared_ptr<ConstExprNode> value = nullptr) : m_name(name), m_type(type), m_value(value) { ntype = NodeType::StructFieldNode; }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
@@ -73,7 +84,7 @@ namespace libquixcc
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
         std::string m_name;
-        std::shared_ptr<TypeNode> m_type;
+        TypeNode *m_type;
         std::shared_ptr<ConstExprNode> m_value;
     };
 

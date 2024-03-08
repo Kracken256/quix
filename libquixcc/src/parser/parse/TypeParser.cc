@@ -24,7 +24,7 @@
 
 using namespace libquixcc;
 
-static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
+static std::map<std::string, TypeNode *> primitive_types = {
     {"u8", U8TypeNode::create()},
     {"u16", U16TypeNode::create()},
     {"u32", U32TypeNode::create()},
@@ -40,7 +40,7 @@ static std::map<std::string, std::shared_ptr<TypeNode>> primitive_types = {
     {"string", StringTypeNode::create()},
     {"void", VoidTypeNode::create()}};
 
-bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, std::shared_ptr<libquixcc::TypeNode> &node)
+bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner> scanner, TypeNode **node)
 {
     Token tok = scanner->next();
     if (tok.type() == TokenType::Keyword)
@@ -48,7 +48,7 @@ bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
         switch (std::get<Keyword>(tok.val()))
         {
         case Keyword::Void:
-            node = VoidTypeNode::create();
+            *node = VoidTypeNode::create();
             return true;
 
         default:
@@ -59,12 +59,12 @@ bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
     {
         if (primitive_types.contains(std::get<std::string>(tok.val())))
         {
-            node = primitive_types[std::get<std::string>(tok.val())];
+            *node = primitive_types[std::get<std::string>(tok.val())];
             return true;
         }
         else
         {
-            node = std::make_shared<UserTypeNode>(std::get<std::string>(tok.val()));
+            *node = UserTypeNode::create(std::get<std::string>(tok.val()));
             return true;
         }
     }
@@ -72,8 +72,8 @@ bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
     {
         // Array type
         // syntax [type; size]
-        std::shared_ptr<TypeNode> type;
-        if (!parse_type(job, scanner, type))
+        TypeNode *type;
+        if (!parse_type(job, scanner, &type))
         {
             PARMSG(tok, libquixcc::Err::ERROR, feedback[TYPE_EXPECTED_TYPE]);
             return false;
@@ -100,7 +100,7 @@ bool libquixcc::parse_type(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
             return false;
         }
 
-        node = std::make_shared<ArrayTypeNode>(type, size);
+        *node = ArrayTypeNode::create(type, size);
         return true;
     }
     else

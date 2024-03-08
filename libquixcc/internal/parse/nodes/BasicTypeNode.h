@@ -35,13 +35,13 @@ namespace libquixcc
     class U8TypeNode : public BasicTypeNode
     {
         U8TypeNode() { ntype = NodeType::U8TypeNode; }
-        static std::shared_ptr<U8TypeNode> m_instance;
+        static U8TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<U8TypeNode> create()
+        static U8TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<U8TypeNode>(new U8TypeNode());
+                m_instance = new U8TypeNode();
             return m_instance;
         }
 
@@ -55,13 +55,13 @@ namespace libquixcc
     class U16TypeNode : public BasicTypeNode
     {
         U16TypeNode() { ntype = NodeType::U16TypeNode; }
-        static std::shared_ptr<U16TypeNode> m_instance;
+        static U16TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<U16TypeNode> create()
+        static U16TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<U16TypeNode>(new U16TypeNode());
+                m_instance = new U16TypeNode();
             return m_instance;
         }
 
@@ -75,13 +75,13 @@ namespace libquixcc
     class U32TypeNode : public BasicTypeNode
     {
         U32TypeNode() { ntype = NodeType::U32TypeNode; }
-        static std::shared_ptr<U32TypeNode> m_instance;
+        static U32TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<U32TypeNode> create()
+        static U32TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<U32TypeNode>(new U32TypeNode());
+                m_instance = new U32TypeNode();
             return m_instance;
         }
 
@@ -95,13 +95,13 @@ namespace libquixcc
     class U64TypeNode : public BasicTypeNode
     {
         U64TypeNode() { ntype = NodeType::U64TypeNode; }
-        static std::shared_ptr<U64TypeNode> m_instance;
+        static U64TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<U64TypeNode> create()
+        static U64TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<U64TypeNode>(new U64TypeNode());
+                m_instance = new U64TypeNode();
             return m_instance;
         }
 
@@ -115,13 +115,13 @@ namespace libquixcc
     class I8TypeNode : public BasicTypeNode
     {
         I8TypeNode() { ntype = NodeType::I8TypeNode; }
-        static std::shared_ptr<I8TypeNode> m_instance;
+        static I8TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<I8TypeNode> create()
+        static I8TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<I8TypeNode>(new I8TypeNode());
+                m_instance = new I8TypeNode();
             return m_instance;
         }
 
@@ -135,13 +135,13 @@ namespace libquixcc
     class I16TypeNode : public BasicTypeNode
     {
         I16TypeNode() { ntype = NodeType::I16TypeNode; }
-        static std::shared_ptr<I16TypeNode> m_instance;
+        static I16TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<I16TypeNode> create()
+        static I16TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<I16TypeNode>(new I16TypeNode());
+                m_instance = new I16TypeNode();
             return m_instance;
         }
 
@@ -155,13 +155,13 @@ namespace libquixcc
     class I32TypeNode : public BasicTypeNode
     {
         I32TypeNode() { ntype = NodeType::I32TypeNode; }
-        static std::shared_ptr<I32TypeNode> m_instance;
+        static I32TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<I32TypeNode> create()
+        static I32TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<I32TypeNode>(new I32TypeNode());
+                m_instance = new I32TypeNode();
             return m_instance;
         }
 
@@ -175,13 +175,13 @@ namespace libquixcc
     class I64TypeNode : public BasicTypeNode
     {
         I64TypeNode() { ntype = NodeType::I64TypeNode; }
-        static std::shared_ptr<I64TypeNode> m_instance;
+        static I64TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<I64TypeNode> create()
+        static I64TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<I64TypeNode>(new I64TypeNode());
+                m_instance = new I64TypeNode();
             return m_instance;
         }
 
@@ -195,13 +195,13 @@ namespace libquixcc
     class F32TypeNode : public BasicTypeNode
     {
         F32TypeNode() { ntype = NodeType::F32TypeNode; }
-        static std::shared_ptr<F32TypeNode> m_instance;
+        static F32TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<F32TypeNode> create()
+        static F32TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<F32TypeNode>(new F32TypeNode());
+                m_instance = new F32TypeNode();
             return m_instance;
         }
 
@@ -215,13 +215,13 @@ namespace libquixcc
     class F64TypeNode : public BasicTypeNode
     {
         F64TypeNode() { ntype = NodeType::F64TypeNode; }
-        static std::shared_ptr<F64TypeNode> m_instance;
+        static F64TypeNode *m_instance;
 
     public:
-        static std::shared_ptr<F64TypeNode> create()
+        static F64TypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<F64TypeNode>(new F64TypeNode());
+                m_instance = new F64TypeNode();
             return m_instance;
         }
 
@@ -235,13 +235,13 @@ namespace libquixcc
     class BoolTypeNode : public BasicTypeNode
     {
         BoolTypeNode() { ntype = NodeType::BoolTypeNode; }
-        static std::shared_ptr<BoolTypeNode> m_instance;
+        static BoolTypeNode *m_instance;
 
     public:
-        static std::shared_ptr<BoolTypeNode> create()
+        static BoolTypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<BoolTypeNode>(new BoolTypeNode());
+                m_instance = new BoolTypeNode();
             return m_instance;
         }
 
@@ -255,13 +255,13 @@ namespace libquixcc
     class CharTypeNode : public BasicTypeNode
     {
         CharTypeNode() { ntype = NodeType::CharTypeNode; }
-        static std::shared_ptr<CharTypeNode> m_instance;
+        static CharTypeNode *m_instance;
 
     public:
-        static std::shared_ptr<CharTypeNode> create()
+        static CharTypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<CharTypeNode>(new CharTypeNode());
+                m_instance = new CharTypeNode();
             return m_instance;
         }
 
@@ -275,13 +275,13 @@ namespace libquixcc
     class VoidTypeNode : public BasicTypeNode
     {
         VoidTypeNode() { ntype = NodeType::VoidTypeNode; }
-        static std::shared_ptr<VoidTypeNode> m_instance;
+        static VoidTypeNode *m_instance;
 
     public:
-        static std::shared_ptr<VoidTypeNode> create()
+        static VoidTypeNode *create()
         {
             if (m_instance == nullptr)
-                m_instance = std::shared_ptr<VoidTypeNode>(new VoidTypeNode());
+                m_instance = new VoidTypeNode();
             return m_instance;
         }
 

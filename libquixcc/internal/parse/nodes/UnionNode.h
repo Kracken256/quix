@@ -34,8 +34,19 @@ namespace libquixcc
 {
     class UnionTypeNode : public TypeNode
     {
-    public:
         UnionTypeNode() { ntype = NodeType::UnionTypeNode; }
+        static std::map<std::vector<TypeNode *>, UnionTypeNode *> m_instances;
+
+    public:
+        static UnionTypeNode *create(const std::vector<TypeNode *> &fields)
+        {
+            if (m_instances.contains(fields))
+                return m_instances[fields];
+            auto instance = new UnionTypeNode();
+            m_instances[fields] = instance;
+            instance->m_fields = fields;
+            return instance;
+        }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }
@@ -43,7 +54,7 @@ namespace libquixcc
 
         virtual llvm::Type *codegen(const CodegenVisitor &visitor) const override { return visitor.visit(this); }
 
-        std::vector<std::shared_ptr<TypeNode>> m_fields;
+        std::vector<TypeNode *> m_fields;
     };
 
     class UnionDeclNode : public DeclNode
@@ -72,7 +83,7 @@ namespace libquixcc
         virtual llvm::Value *codegen(const CodegenVisitor &visitor) const { return visitor.visit(this); }
 
         std::string m_name;
-        std::shared_ptr<TypeNode> m_type;
+        TypeNode *m_type;
         std::shared_ptr<ConstExprNode> m_value;
     };
 

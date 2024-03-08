@@ -183,7 +183,7 @@ bool libquixcc::parse_function(quixcc_job_t &job, std::shared_ptr<libquixcc::Sca
     if (tok.type() == TokenType::Punctor && std::get<Punctor>(tok.val()) == Punctor::Colon)
     {
         scanner->next();
-        if (!parse_type(job, scanner, fndecl->m_return_type))
+        if (!parse_type(job, scanner, &fndecl->m_return_type))
             return false;
 
         tok = scanner->peek();

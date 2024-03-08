@@ -85,8 +85,8 @@ bool libquixcc::parse_enum(quixcc_job_t &job, std::shared_ptr<libquixcc::Scanner
         return false;
     }
 
-    std::shared_ptr<TypeNode> type;
-    if (!parse_type(job, scanner, type))
+    TypeNode *type;
+    if (!parse_type(job, scanner, &type))
         return false;
 
     tok = scanner->next();

@@ -44,7 +44,7 @@ static bool parse_union_field(quixcc_job_t &job, std::shared_ptr<libquixcc::Scan
         return false;
     }
 
-    if (!parse_type(job, scanner, node->m_type))
+    if (!parse_type(job, scanner, &node->m_type))
     {
         PARMSG(tok, libquixcc::Err::ERROR, feedback[UNION_FIELD_TYPE_ERR], node->m_name.c_str());
         return false;

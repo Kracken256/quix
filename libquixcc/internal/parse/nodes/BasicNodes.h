@@ -110,9 +110,23 @@ namespace libquixcc
 
     class UserTypeNode : public TypeNode
     {
-    public:
-        UserTypeNode() { ntype = NodeType::UserTypeNode; }
         UserTypeNode(const std::string &name) : m_name(name) { ntype = NodeType::UserTypeNode; }
+        static std::unordered_map<std::string, UserTypeNode *> m_instances;
+
+    public:
+        static UserTypeNode *create(const std::string &name)
+        {
+            if (m_instances.contains(name))
+            {
+                return m_instances[name];
+            }
+            else
+            {
+                auto node = new UserTypeNode(name);
+                m_instances[name] = node;
+                return node;
+            }
+        }
 
         virtual size_t dfs_preorder(ParseNodePreorderVisitor visitor) override { return visitor.visit(this); }
         virtual size_t dfs_postorder(ParseNodePostorderVisitor visitor) override { return visitor.visit(this); }

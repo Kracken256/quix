@@ -270,16 +270,15 @@ llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::FloatLiteralNo
     return llvm::ConstantFP::get(*m_ctx->m_ctx, llvm::APFloat(llvm::APFloat::IEEEsingle(), node->m_val));
 }
 
-llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::StringLiteralNode *node) const
-{
+llvm::Constant* libquixcc::CodegenVisitor::visit(const libquixcc::StringLiteralNode* node) const {
     auto str = llvm::ConstantDataArray::getString(*m_ctx->m_ctx, node->m_val);
 
-    llvm::GlobalVariable *global = new llvm::GlobalVariable(*m_ctx->m_module, str->getType(), true, llvm::GlobalValue::PrivateLinkage, str);
+    llvm::Constant* zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*m_ctx->m_ctx));
+    llvm::Constant* indices[] = {zero, zero};
 
-    llvm::Constant *zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*m_ctx->m_ctx));
-    llvm::Constant *indices[] = {zero, zero};
-    return llvm::ConstantExpr::getGetElementPtr(str->getType(), global, indices, true);
+    return llvm::ConstantExpr::getGetElementPtr(str->getType(), str, indices, true);
 }
+
 
 llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::CharLiteralNode *node) const
 {

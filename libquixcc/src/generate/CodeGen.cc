@@ -270,15 +270,15 @@ llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::FloatLiteralNo
     return llvm::ConstantFP::get(*m_ctx->m_ctx, llvm::APFloat(llvm::APFloat::IEEEsingle(), node->m_val));
 }
 
-llvm::Constant* libquixcc::CodegenVisitor::visit(const libquixcc::StringLiteralNode* node) const {
+llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::StringLiteralNode *node) const
+{
     auto str = llvm::ConstantDataArray::getString(*m_ctx->m_ctx, node->m_val);
 
-    llvm::Constant* zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*m_ctx->m_ctx));
-    llvm::Constant* indices[] = {zero, zero};
+    llvm::Constant *zero = llvm::Constant::getNullValue(llvm::IntegerType::getInt32Ty(*m_ctx->m_ctx));
+    llvm::Constant *indices[] = {zero, zero};
 
     return llvm::ConstantExpr::getGetElementPtr(str->getType(), str, indices, true);
 }
-
 
 llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::CharLiteralNode *node) const
 {
@@ -292,74 +292,83 @@ llvm::Constant *libquixcc::CodegenVisitor::visit(const libquixcc::BoolLiteralNod
 
 llvm::Value *libquixcc::CodegenVisitor::visit(const libquixcc::VarDeclNode *node) const
 {
-    llvm::Type *type = node->m_type->codegen(*this);
-    if (!type)
-    {
-        return nullptr;
-    }
+    llvm::Type *type;
 
-    llvm::Constant *init = nullptr;
-    if (node->m_init)
-    {
-        init = static_cast<llvm::Constant *>(node->m_init->codegen(*this));
-        if (!init)
-        {
-            return nullptr;
-        }
-    }
+    if (!(type = node->m_type->codegen(*this)))
+        return nullptr;
+
+    m_ctx->m_module->getOrInsertGlobal(Symbol::mangle(node, m_ctx->prefix), type);
+    llvm::GlobalVariable *gvar = m_ctx->m_module->getGlobalVariable(Symbol::mangle(node, m_ctx->prefix));
 
     if (m_ctx->m_pub)
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::ExternalLinkage);
     else
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::PrivateLinkage);
+
+    if (node->m_init)
+    {
+        llvm::Constant *init;
+        if (!(init = static_cast<llvm::Constant *>(node->m_init->codegen(*this))))
+            return nullptr;
+
+        gvar->setInitializer(init);
+    }
+
+    return gvar;
 }
 
 llvm::Value *libquixcc::CodegenVisitor::visit(const libquixcc::LetDeclNode *node) const
 {
-    llvm::Type *type = node->m_type->codegen(*this);
-    if (!type)
-    {
-        return nullptr;
-    }
+    llvm::Type *type;
 
-    llvm::Constant *init = nullptr;
-    if (node->m_init)
-    {
-        init = static_cast<llvm::Constant *>(node->m_init->codegen(*this));
-        if (!init)
-        {
-            return nullptr;
-        }
-    }
+    if (!(type = node->m_type->codegen(*this)))
+        return nullptr;
+
+    m_ctx->m_module->getOrInsertGlobal(Symbol::mangle(node, m_ctx->prefix), type);
+    llvm::GlobalVariable *gvar = m_ctx->m_module->getGlobalVariable(Symbol::mangle(node, m_ctx->prefix));
 
     if (m_ctx->m_pub)
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::ExternalLinkage);
     else
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::PrivateLinkage);
+
+    if (node->m_init)
+    {
+        llvm::Constant *init;
+        if (!(init = static_cast<llvm::Constant *>(node->m_init->codegen(*this))))
+            return nullptr;
+
+        gvar->setInitializer(init);
+    }
+
+    return gvar;
 }
 
 llvm::Value *libquixcc::CodegenVisitor::visit(const libquixcc::ConstDeclNode *node) const
 {
-    llvm::Type *type = node->m_type->codegen(*this);
-    if (!type)
-    {
-        return nullptr;
-    }
+    llvm::Type *type;
 
-    llvm::Constant *init = nullptr;
-    if (node->m_init)
-    {
-        init = static_cast<llvm::Constant *>(node->m_init->codegen(*this));
-        if (!init)
-        {
-            return nullptr;
-        }
-    }
+    if (!(type = node->m_type->codegen(*this)))
+        return nullptr;
+
+    m_ctx->m_module->getOrInsertGlobal(Symbol::mangle(node, m_ctx->prefix), type);
+    llvm::GlobalVariable *gvar = m_ctx->m_module->getGlobalVariable(Symbol::mangle(node, m_ctx->prefix));
 
     if (m_ctx->m_pub)
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::ExternalLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::ExternalLinkage);
     else
-        return new llvm::GlobalVariable(*m_ctx->m_module, type, false, llvm::GlobalValue::PrivateLinkage, init, Symbol::mangle(node, m_ctx->prefix));
+        gvar->setLinkage(llvm::GlobalValue::PrivateLinkage);
+
+    if (node->m_init)
+    {
+        llvm::Constant *init;
+        if (!(init = static_cast<llvm::Constant *>(node->m_init->codegen(*this))))
+            return nullptr;
+
+        gvar->setInitializer(init);
+    }
+
+    return gvar;
 }
 
 llvm::Value *libquixcc::CodegenVisitor::visit(const libquixcc::StructDeclNode *node) const

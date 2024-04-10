@@ -44,30 +44,30 @@ type EnginePoint = f32;     ~> The floating point type used for engine points
 type EP = EnginePoint;      ~> Alias for EnginePoint
 
 struct Point {              ~> A point in 2D space
-    x: EP = 0.0;            ~> The x-coordinate
-    y: EP = 0.0;            ~> The y-coordinate
-};                          ~> End of Point struct
+    x: EP = 0.0,            ~> The x-coordinate
+    y: EP = 0.0,            ~> The y-coordinate
+}                           ~> End of Point struct
 
 struct Line {               ~> A line in 2D space
-    start: Point;           ~> The start point of the line
-    end: Point;             ~> The end point of the line
-};
+    start: Point,           ~> The start point of the line
+    end: Point,             ~> The end point of the line
+} 
 
 struct Circle {             ~> A circle in 2D space
-    center: Point;          ~> The center of the circle
-    radius: EP;             ~> The radius of the circle
-};
+    center: Point,          ~> The center of the circle
+    radius: EP,             ~> The radius of the circle
+}
 
 struct Rectangle {          ~> A rectangle in 2D space
-    top_left: Point;        ~> The top-left corner
-    bottom_right: Point;    ~> The bottom-right corner
-};
+    top_left: Point,        ~> The top-left corner
+    bottom_right: Point,    ~> The bottom-right corner
+}
 
 struct Triangle {           ~> A triangle in 2D space
-    a: Point;               ~> The first point
-    b: Point;               ~> The second point
-    c: Point;               ~> The third point
-};
+    a: Point,               ~> The first point
+    b: Point,               ~> The second point
+    c: Point,               ~> The third point
+}
 
 let world_line: Line;       ~> A line in the world
 let world_circle: Circle;   ~> A circle in the world

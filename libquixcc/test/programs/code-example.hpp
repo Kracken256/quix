@@ -78,11 +78,11 @@ fn calculate_yada(): i8 {   ~> A function that calculates yada
     let x: i8 = 0;          ~> A variable x
     let y: i8 = 0;          ~> A variable y
 
-    return (x+1) >> 2 & y;  ~> Return the result of some operations
+    ret (x+1) >> 2 & y;  ~> Return the result of some operations
 }
 
 fn main(): i8 {             ~> The main function
-    return 0;               ~> Return 0
+    ret 0;               ~> Return 0
 }
 )";
 

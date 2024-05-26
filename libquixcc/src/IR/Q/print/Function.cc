@@ -74,7 +74,7 @@ bool libquixcc::ir::q::Segment::print_impl(std::ostream &os, libquixcc::ir::PSta
     if (constraints.contains(FConstraint::ThreadSafe))
         os << "tsafe ";
     if (constraints.contains(FConstraint::NoThrow))
-        os << "nothrow ";
+        os << "noexcept ";
     if (constraints.contains(FConstraint::C_ABI))
         os << "cextern ";
 
